@@ -8,7 +8,7 @@
         <scene sceneID="cUi-kZ-frf">
             <objects>
                 <navigationController id="rS3-R9-Ivy" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="yXu-0R-QUA">
+                    <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" barStyle="black" id="yXu-0R-QUA">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -310,7 +310,7 @@
         <scene sceneID="BTB-QB-Fng">
             <objects>
                 <navigationController definesPresentationContext="YES" id="aR6-qg-8f2" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="K6A-YV-mKZ">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="K6A-YV-mKZ">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -321,7 +321,7 @@
             </objects>
             <point key="canvasLocation" x="-24" y="766"/>
         </scene>
-        <!--Upcoming Controller - Friends to See-->
+        <!--Upcoming Controller - The Sands of Time-->
         <scene sceneID="rna-Ai-2GJ">
             <objects>
                 <collectionViewController autoresizesArchivedViewToFullSize="NO" id="jC6-0L-hTW" customClass="UpcomingController" sceneMemberID="viewController">
@@ -392,7 +392,7 @@
                             <outletCollection property="gestureRecognizers" destination="lXx-qj-euO" appends="YES" id="ZM0-h6-brR"/>
                         </connections>
                     </collectionView>
-                    <navigationItem key="navigationItem" title="Friends to See" id="G3W-MW-IBk"/>
+                    <navigationItem key="navigationItem" title="The Sands of Time" id="G3W-MW-IBk"/>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qQ9-n1-gbN" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="lXx-qj-euO"/>
