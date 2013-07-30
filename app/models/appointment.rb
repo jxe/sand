@@ -14,11 +14,5 @@ end
 
 class Appointment < Struct.new(:when, :what)
   def self.all
-  	IOSCalendar.request_permission
-  	events = IOSCalendar.events(nil, Time.now - 2.hours, Time.now + 9.days) || []
-  	events = events.select{ |ev| !ev.allDay? }
-  	events.map do |ev|
-  		Appointment.new(ev.startDate.string_with_format("E H:m"), ev.title)
-  	end
   end
 end
