@@ -24,7 +24,7 @@ class UpcomingController < UICollectionViewController
 	def fetch_events start_date, end_date
 		@event_store ||= EKEventStore.alloc.init
 	 	@event_store.requestAccessToEntityType(EKEntityTypeEvent, completion: nil);
-	 	p = @event_store.predicateForEventsWithStartDate(start_date, endDate:end_date, calendars:calendars)
+	 	p = @event_store.predicateForEventsWithStartDate(start_date, endDate: end_date, calendars: nil)
 		@event_store.eventsMatchingPredicate(p)
 	end
 
@@ -188,6 +188,7 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def hidden_events
-		NSUserDefaults['hidden_events'] ||= []
+		NSUserDefaults['hidden_events'] = [] unless NSUserDefaults['hidden_events'].respond_to?(:include?)
+		NSUserDefaults['hidden_events']
 	end
 end
