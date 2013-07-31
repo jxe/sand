@@ -392,7 +392,16 @@
                             <outletCollection property="gestureRecognizers" destination="lXx-qj-euO" appends="YES" id="ZM0-h6-brR"/>
                         </connections>
                     </collectionView>
-                    <navigationItem key="navigationItem" title="The Sands of Time" id="G3W-MW-IBk"/>
+                    <navigationItem key="navigationItem" title="The Sands of Time" id="G3W-MW-IBk">
+                        <barButtonItem key="rightBarButtonItem" tag="200" systemItem="compose" id="INq-lV-5Qd">
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="outlet" value="compose"/>
+                            </userDefinedRuntimeAttributes>
+                            <connections>
+                                <action selector="composeAction" destination="jC6-0L-hTW" id="AEn-uw-XT8"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qQ9-n1-gbN" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="lXx-qj-euO"/>

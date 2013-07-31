@@ -1,19 +1,21 @@
 class UpcomingController < UICollectionViewController
 
+
+
 	############
 	# lifecycle
 
 	def viewDidLoad
 		super
 		load_events
-		self.collectionView.delegate = self
-		self.collectionView.dataSource = self
-		self.collectionView.gestureRecognizers[2].addTarget(self, action: :longPress)
+		collectionView.delegate = self
+		collectionView.dataSource = self
+		collectionView.gestureRecognizers[2].addTarget(self, action: :longPress)
 	end
 
 	def viewWillAppear(animated)
 		super
-		@ekobserver = App.notification_center.observe(EKEventStoreChangedNotification){reload}
+		@ekobserver = App.notification_center.observe(EKEventStoreChangedNotification){ |x| reload }
 	end
 
 	def viewWillDisappear(animated)
@@ -35,7 +37,7 @@ class UpcomingController < UICollectionViewController
 		events.each do |ev|
 			next if ev.allDay? or ev.availability == EKEventAvailabilityFree
 			next if ev.endDate.timeIntervalSinceDate(ev.startDate) > 18.hours
-			next if hidden_events.include?(ev.eventIdentifier)
+			next if Event.is_hidden?(ev.eventIdentifier)
 			morning = ev.startDate.start_of_day
 			section = @sections[morning] ||= []
 			section << ev unless section.detect{ |existing| existing.title == ev.title }
@@ -47,12 +49,25 @@ class UpcomingController < UICollectionViewController
 
 	def reload
   		load_events
-  		self.collectionView.reloadData
+  		collectionView.reloadData
 	end
 
 
 	############
 	# actions
+
+	def composeAction
+		@event_store ||= EKEventStore.alloc.init
+		c = EKEventEditViewController.alloc.init.tap do |c|
+			c.eventStore = @event_store
+		    c.editViewDelegate = self
+		end
+    	presentViewController c, animated: true, completion: nil
+	end
+
+	def eventEditViewController(c, didCompleteWithAction: action)
+		dismissViewControllerAnimated true, completion: nil
+	end
 
 	def collectionView(cv, didSelectItemAtIndexPath:path)
 		s = @sections[@section_order[path.section]]
@@ -63,15 +78,16 @@ class UpcomingController < UICollectionViewController
 		eventViewController = EKEventViewController.alloc.init
 		eventViewController.event = ev
 		eventViewController.allowsEditing = true
-		self.navigationController.pushViewController(eventViewController, animated: true)
+		navigationController.pushViewController(eventViewController, animated: true)
 	end
 
 	def longPress
-		gr = self.collectionView.gestureRecognizers[2]
+		gr = collectionView.gestureRecognizers[2]
 		return unless gr.state == UIGestureRecognizerStateBegan
 
-		p = gr.locationInView(self.collectionView)
-    	ev = event_at_index_path(self.collectionView.indexPathForItemAtPoint(p))
+		p = gr.locationInView(collectionView)
+		path = collectionView.indexPathForItemAtPoint(p)
+    	ev = event_at_index_path(path)
     	return unless ev
 
 		UIActionSheet.alert 'Hmm', buttons: ['Cancel', 'Link friend', 'Hide'],
@@ -79,9 +95,14 @@ class UpcomingController < UICollectionViewController
 		  success: proc { |pressed|
 		  	case pressed
 		  	when 'Hide';
-		  		add_hidden_event ev.eventIdentifier
+		  		Event.hide(ev.eventIdentifier)
 		  		reload
 		  	when 'Link friend';
+		  		AddressBook.pick do |person|
+		  			return unless person
+		  			Event.assign(ev.eventIdentifier, person)
+		  			collectionView.reloadItemsAtIndexPaths([path])
+		  		end
 		  	end
 	  	  }
 	end
@@ -114,7 +135,7 @@ class UpcomingController < UICollectionViewController
 
 		# configure cell
 		timelabel.text   = time_of_day(ev.startDate)
-		imageview.image  = image_for_event(ev){ cv.reloadItemsAtIndexPaths([path]) }
+		imageview.image  = Event.image(ev){ cv.reloadItemsAtIndexPaths([path]) }
 		personlabel.text = if ev.organizer && !ev.organizer.isCurrentUser
 			ev.organizer.name.split[0]
 		else
@@ -136,34 +157,6 @@ class UpcomingController < UICollectionViewController
 	###############################
 	# image, time, and title logic
 
-	def image_for_event(ev, &changed)
-		return nil if !ev.organizer or ev.organizer.isCurrentUser
-
-		url = ev.organizer.URL
-		@cached_images ||= {}
-		@callbacks     ||= {}
-		cached = @cached_images[url]
-
-		(@callbacks[url]||=[]) << changed if cached == 'loading' or !cached
-		return nil if cached == 'loading' or cached == 'none'
-		return cached if cached
-
-		# load it
-		@cached_images[url] = 'loading'
-		Dispatch::Queue.concurrent.async do 
-			record = ev.organizer.ABRecordWithAddressBook(AddressBook.address_book)
-			person = record && AddressBook::Person.new(nil, record)
-			photo = person && person.photo
-			@cached_images[url] = (photo ? UIImage.alloc.initWithData(photo) : 'none')
-			if photo and callbacks = @callbacks[url]
-				Dispatch::Queue.main.async do
-					@callbacks[url].each{ |cb| cb.call } 
-					@callbacks.delete(url)
-				end
-			end
-		end
-	end
-
 	def day_of_week t
 		return "TODAY" if t.today?
 		return "TOMORROW" if t.same_day?(NSDate.tomorrow)
@@ -181,14 +174,5 @@ class UpcomingController < UICollectionViewController
 		return 'LATE'
 
 		# .string_with_format("h:mma")
-	end
-
-	def add_hidden_event event_id
-		NSUserDefaults['hidden_events'] = [event_id] + hidden_events
-	end
-
-	def hidden_events
-		NSUserDefaults['hidden_events'] = [] unless NSUserDefaults['hidden_events'].respond_to?(:include?)
-		NSUserDefaults['hidden_events']
 	end
 end

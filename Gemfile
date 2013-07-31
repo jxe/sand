@@ -6,3 +6,4 @@ gem 'sugarcube', :require => ['sugarcube-nsdate', 'sugarcube-timer', 'sugarcube-
 gem 'geomotion'
 gem 'motion-addressbook'
 gem 'bubble-wrap'
+gem 'ib'

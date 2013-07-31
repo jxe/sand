@@ -10,7 +10,19 @@
         <attribute name="quality" optional="YES" attributeType="String" syncable="YES"/>
         <userInfo/>
     </entity>
+    <entity name="Event" syncable="YES">
+        <attribute name="event_identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="friend_ab_record_id" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="friend_image" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="friend_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="friend_url" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="is_exact_time" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="is_hidden" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="start_date" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="suggested_idea" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <elements>
         <element name="Contact" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Event" positionX="0" positionY="0" width="0" height="0"/>
     </elements>
 </model>
