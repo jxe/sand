@@ -12,8 +12,11 @@ Motion::Project::App.setup do |app|
   app.name = 'Sands'
   app.identifier = 'org.nxhx.Sands'
   app.version = '1.0.0'
-  app.frameworks += ['EventKit', 'EventKitUI', 'AddressBook', 'AddressBookUI']
+  app.frameworks += ['EventKit', 'EventKitUI', 'AddressBook', 'AddressBookUI', 'QuartzCore']
   app.icons = ['hourglass.png']
   app.files += Dir.glob("./src/*.rb")
   app.build_dir = '/tmp/build-sands/'
+  # app.pods do
+  #   pod 'FlatUIKit'
+  # end
 end

@@ -60,7 +60,7 @@ class Event < Nitron::Model
 			record = ev.organizer.ABRecordWithAddressBook(AddressBook.address_book)
 			person = record && AddressBook::Person.new(nil, record)
 			e = person && assign(ev.eventIdentifier, person)
-			Dispatch::Queue.main.async(&callback) if e.friend_image
+			Dispatch::Queue.main.async(&callback) if e and e.friend_image
 		end
 	end
 end
