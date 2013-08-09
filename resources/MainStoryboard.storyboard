@@ -334,15 +334,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <gestureRecognizers/>
-                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="0.0" id="DHo-br-aXn">
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="2" id="DHo-br-aXn">
                             <size key="itemSize" width="75" height="75"/>
-                            <size key="headerReferenceSize" width="50" height="21"/>
+                            <size key="headerReferenceSize" width="50" height="35"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="5" minY="0.0" maxX="5" maxY="10"/>
+                            <inset key="sectionInset" minX="7" minY="0.0" maxX="7" maxY="10"/>
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Appt" id="7er-FW-gwm">
-                                <rect key="frame" x="5" y="85" width="75" height="75"/>
+                                <rect key="frame" x="7" y="99" width="75" height="75"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="75" height="75"/>
@@ -359,7 +359,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </imageView>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="101" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Time" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hjJ-kK-ufR">
-                                            <rect key="frame" x="1" y="-5" width="64" height="21"/>
+                                            <rect key="frame" x="3" y="-4" width="64" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="9"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -379,14 +379,14 @@
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
-                                <color key="backgroundColor" red="0.70083220108695654" green="0.70083220108695654" blue="0.70083220108695654" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="0.86909765005111694" green="0.86907166242599487" blue="0.86908638477325439" alpha="1" colorSpace="calibratedRGB"/>
                                 <gestureRecognizers/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
                                         <integer key="value" value="5"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="layer.shadowOpacity">
-                                        <real key="value" value="0.5"/>
+                                        <real key="value" value="0.29999999999999999"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="NO"/>
                                     <userDefinedRuntimeAttribute type="size" keyPath="layer.shadowOffset">
@@ -398,7 +398,7 @@
                                 </userDefinedRuntimeAttributes>
                             </collectionViewCell>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Plus" id="Ysi-jn-9hm">
-                                <rect key="frame" x="83" y="85" width="75" height="75"/>
+                                <rect key="frame" x="84" y="99" width="75" height="75"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="75" height="75"/>
@@ -408,7 +408,7 @@
                                             <rect key="frame" x="16" y="20" width="42" height="28"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="32"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
@@ -417,14 +417,14 @@
                             </collectionViewCell>
                         </cells>
                         <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Section" id="UB1-3M-ga0">
-                            <rect key="frame" x="0.0" y="64" width="320" height="21"/>
+                            <rect key="frame" x="0.0" y="64" width="320" height="35"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NKx-5n-rhd">
-                                    <rect key="frame" x="7" y="0.0" width="134" height="21"/>
+                                    <rect key="frame" x="7" y="11" width="134" height="21"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                    <color key="textColor" red="0.88647216558456421" green="0.47450202703475952" blue="0.40868312120437622" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="textColor" red="0.59820258617401123" green="0.60350966453552246" blue="0.62901365756988525" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                             </subviews>
@@ -438,12 +438,17 @@
                     </collectionView>
                     <navigationItem key="navigationItem" title="the sands of time" id="G3W-MW-IBk">
                         <barButtonItem key="backBarButtonItem" title="Sands" id="qMf-eg-LUT"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="organize" id="PZP-kb-WXt">
+                            <connections>
+                                <action selector="choose_paint" destination="jC6-0L-hTW" id="Czk-uC-aUy"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" tag="200" systemItem="edit" id="INq-lV-5Qd">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="outlet" value="compose"/>
                             </userDefinedRuntimeAttributes>
                             <connections>
-                                <action selector="composeAction" destination="jC6-0L-hTW" id="AEn-uw-XT8"/>
+                                <action selector="edit_action" destination="jC6-0L-hTW" id="2jg-aN-JSk"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
