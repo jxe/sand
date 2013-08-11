@@ -1,7 +1,72 @@
 class Contact < Nitron::Model
 end
 
+
+class NSDate
+	HOUR_RANGES = {
+		predawn: 0...5,
+		dawn: 5...8,
+		bfst: 8...10,
+		morn: 10...12,
+		lunch: 12...14,
+		aft: 14...16,
+		hpy_hr: 16...18,
+		dinner: 18...21,
+		night: 21...24
+	}
+	def day_of_week_label
+		return "TODAY" if today?
+		return "TOMORROW" if same_day?(NSDate.tomorrow)
+		return strftime("%A").upcase
+	end
+
+	def time_of_day_label
+			HOUR_RANGES.each do |k,v|
+			return k if v.include? hour
+		end
+	end
+end
+
+
 class Event < Nitron::Model
+
+
+	##########
+	# calendar
+
+
+	def self.add_event start_time, friend, title = nil
+		puts "add_event: #{start_time.inspect} #{friend.inspect} #{title.inspect}"
+		@event_store ||= EKEventStore.alloc.init
+		ev = EKEvent.eventWithEventStore(@event_store)
+		ev.startDate = start_time
+		ev.endDate = start_time + 2.hours
+		ev.title = title || (friend && "with #{friend.composite_name}") || "New event"
+		ev.setCalendar(@event_store.defaultCalendarForNewEvents)
+		error = Pointer.new('@')
+		@event_store.saveEvent(ev, span:EKSpanThisEvent, commit:true, error:error)
+		Event.assign(ev.eventIdentifier, friend) if friend
+	end
+
+	def self.fetch_events start_date, end_date
+		@event_store ||= EKEventStore.alloc.init
+	 	@event_store.requestAccessToEntityType(EKEntityTypeEvent, completion: nil);
+	 	p = @event_store.predicateForEventsWithStartDate(start_date, endDate: end_date, calendars: nil)
+		@event_store.eventsMatchingPredicate(p)
+	end
+
+	def self.legit_events(tf)
+		events = fetch_events(*tf) || []
+		puts "#{events.length} events from cal"
+		events.select do |ev|
+			next if ev.allDay? or ev.availability == EKEventAvailabilityFree
+			next if ev.endDate.timeIntervalSinceDate(ev.startDate) > 18.hours
+			next if ev.startDate.timeIntervalSinceNow < -20.hours
+			next if Event.is_hidden?(ev.eventIdentifier)
+			true
+		end
+	end
+
 
 
 	##########
@@ -22,6 +87,25 @@ class Event < Nitron::Model
 	##########
 	# getters
 
+	def self.unlinked_painted?(ev)
+		return painted?(ev) && unlinked?(ev)
+	end
+
+	def self.unlinked?(ev)
+		event = find_by_event_identifier(ev.eventIdentifier)
+		return !event || !event.friend_ab_record_id
+	end
+
+	def self.delete!(ev)
+		@event_store ||= EKEventStore.alloc.init
+		error = Pointer.new('@')
+		@event_store.removeEvent(ev, span:EKSpanThisEvent, commit:true, error:error)
+	end
+
+	def self.painted?(ev)
+		return %{ creative exercise sweet }.include?(ev.title || '?')
+	end
+
 	def self.is_hidden? event_id
 		event = find_by_event_identifier(event_id)
 		event && event.is_hidden
@@ -32,7 +116,15 @@ class Event < Nitron::Model
 			return UIImage.alloc.initWithData(e.friend_image) if e.friend_image
 			return nil if e.friend_ab_record_id
 		end
+
 		fetch_image_for_organizer(ev, callback)
+
+		case ev.title
+		when 'creative'; return UIImage.imageNamed('creative.jpg')
+		when 'sweet'; return UIImage.imageNamed('sweet.jpg')
+		when 'exercise'; return UIImage.imageNamed('exercise.jpg')
+		end
+
 		nil
 	end
 

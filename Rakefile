@@ -9,7 +9,7 @@ Bundler.require
 
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
-  app.name = 'Sands'
+  app.name = 'Sand'
   app.identifier = 'org.nxhx.Sands'
   app.version = '1.0.0'
   app.frameworks += ['EventKit', 'EventKitUI', 'AddressBook', 'AddressBookUI', 'QuartzCore']

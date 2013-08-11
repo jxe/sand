@@ -1,8 +1,41 @@
+class Paints
+	def self.menu_options
+		['Add friend date', 'Add some exercise', 'Add creative work', 'Add something sweet']
+	end
+
+	def self.from_menu_option o
+		word = o.split[-1]
+		return "creative" if word == 'work'
+		return word
+	end
+
+	def self.prompt word
+		{
+			'exercise' => 'Add exercise', 
+			'creative' => 'Add creative',
+			'sweet'    => 'Add something sweet'
+		}[word]
+	end
+end
+
+class EventCell < UICollectionReusableView
+	def initWithCoder(c)
+		super
+		gradient = CAGradientLayer.layer
+		gradient.frame = bounds
+		sand = UIColor.colorWithHue(0.12, saturation:0.04, brightness:0.97, alpha:1.0)
+		# UIColor.colorWithWhite(0.9, alpha: 1.0)
+ 		gradient.colors = [sand.CGColor, UIColor.whiteColor.CGColor]
+ 		layer.insertSublayer(gradient, atIndex:0)
+ 		self
+	end
+end
+
 class UpcomingController < UICollectionViewController
 
 
-	################
-	# calendar model
+	#########################
+	# calendar display model
 
 	def timeframe
 		dates = timeframe_dates
@@ -15,8 +48,9 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def load_events
+		puts "loading events"
 		@events_by_day = {}
-		legit_events(timeframe).each do |ev|
+		Event.legit_events(timeframe).each do |ev|
 			morning = ev.startDate.start_of_day
 			section = @events_by_day[morning] ||= []
 			section << ev unless section.detect{ |existing| existing.title == ev.title and existing.startDate == ev.startDate }
@@ -64,97 +98,32 @@ class UpcomingController < UICollectionViewController
 		return [plus_indexes, rm_sections]
 	end
 
+	def reload_plusses
+		plus_indexes, extra_sections = *only_when_editing
+		collectionView.reloadItemsAtIndexPaths(plus_indexes.map(&:nsindexpath))
+	end
+
 	def toggle_editing
-		@editing = !@editing
+		puts "toggle_editing called"
 		plus_indexes, extra_sections = *only_when_editing
 		batch_updates do |cv|
+			@editing = !@editing
+			puts "running batch updates"
+			puts "#{@editing.inspect}: #{extra_sections.inspect}"
 			if @editing
+				puts "inserting"
 				cv.insertSections(extra_sections.nsindexset)
 				cv.insertItemsAtIndexPaths(plus_indexes.map(&:nsindexpath))
 			else
+				puts "deleting"
 				cv.deleteItemsAtIndexPaths(plus_indexes.map(&:nsindexpath))
 				cv.deleteSections(extra_sections.nsindexset)
 			end
 		end
+		puts "updates completed"
 	end
 
 
-
-	################
-	# calendar model
-
-	def add_event start_time, friend, title = nil
-		return AddressBook.pick do |person|
-			add_event(start_time, person, title)
-		end if friend == :pick
-
-		@event_store ||= EKEventStore.alloc.init
-		ev = EKEvent.eventWithEventStore(@event_store)
-		ev.startDate = start_time
-		ev.endDate = start_time + 2.hours
-		ev.title = title || (friend && "with #{friend.composite_name}") || "New event"
-		ev.setCalendar(@event_store.defaultCalendarForNewEvents)
-		error = Pointer.new('@')
-		@event_store.saveEvent(ev, span:EKSpanThisEvent, commit:true, error:error)
-		Event.assign(ev.eventIdentifier, friend) if friend
-	end
-
-	def fetch_events start_date, end_date
-		@event_store ||= EKEventStore.alloc.init
-	 	@event_store.requestAccessToEntityType(EKEntityTypeEvent, completion: nil);
-	 	p = @event_store.predicateForEventsWithStartDate(start_date, endDate: end_date, calendars: nil)
-		@event_store.eventsMatchingPredicate(p)
-	end
-
-	def legit_events(tf)
-		events = fetch_events(*tf) || []
-		puts "#{events.length} events from cal"
-		events.select do |ev|
-			next if ev.allDay? or ev.availability == EKEventAvailabilityFree
-			next if ev.endDate.timeIntervalSinceDate(ev.startDate) > 18.hours
-			next if ev.startDate.timeIntervalSinceNow < -20.hours
-			next if Event.is_hidden?(ev.eventIdentifier)
-			true
-		end
-	end
-
-	def day_of_week t
-		return "TODAY" if t.today?
-		return "TOMORROW" if t.same_day?(NSDate.tomorrow)
-		return t.strftime("%A     (%m/%d)").upcase
-	end
-
-	HOUR_RANGES = {
-		predawn: 0...5,
-		dawn: 5...8,
-		bfst: 8...10,
-		morn: 10...12,
-		lunch: 12...14,
-		aft: 14...16,
-		hpy_hr: 16...18,
-		dinner: 18...21,
-		night: 21...24
-	}
-
-	KEY_HOUR_RANGES = %w{ bfst morn lunch aft hpy_hr dinner night }
-
-	def time_of_day t
-		HOUR_RANGES.each do |k,v|
-			return k if v.include? t.hour
-		end
-	end
-
-	# def time_of_day t
-	# 	return 'DAWN' if t.hour < 8
-	# 	return 'BFST' if t.hour < 10
-	# 	return 'MORN'  if t.hour < 12
-	# 	return 'LUNCH' if t.hour < 14
-	# 	return 'AFT'   if t.hour < 16
-	# 	return 'HPY HR' if t.hour < 18
-	# 	return 'DINNER' if t.hour < 21
-	# 	return 'LATE'
-	# 	# .string_with_format("h:mma")
-	# end
 
 
 	############
@@ -162,15 +131,13 @@ class UpcomingController < UICollectionViewController
 
 	def viewDidLoad
 		super
+		puts "viewDidLoad"
 		load_events
 		collectionView.delegate = self
 		collectionView.dataSource = self
 		collectionView.gestureRecognizers[2].addTarget(self, action: :longPress)
-		# navigationController.navigationBar.configureFlatNavigationBarWithColor(UIColor.carrotColor)
-		# UIColor.midnightBlueColor
-		# UIBarButtonItem.configureFlatButtonsWithColor(UIColor.peterRiverColor, 
-  #                             highlightedColor: UIColor.belizeHoleColor,
-  #                                 cornerRadius: 3)
+		navigationController.navigationBar.setBackgroundImage(UIImage.imageNamed("sandbar.png"), forBarMetrics: UIBarMetricsDefault)
+		navigationController.navigationBar.setTitleVerticalPositionAdjustment(10, forBarMetrics:UIBarMetricsDefault)
 	end
 
 	def viewWillAppear(animated)
@@ -184,8 +151,12 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def reload
+		puts "reloading events"
   		load_events
+  		puts "updatign collectionview"
   		collectionView.reloadData
+		@view_editing = @editing
+		puts "done reloading"
 	end
 
 
@@ -193,73 +164,134 @@ class UpcomingController < UICollectionViewController
 	############
 	# actions
 
+	def add_event start_time, friend, title = nil
+		puts "add_event: #{friend.inspect} #{title.inspect}"
+
+		return AddressBook.pick do |person|
+			add_event(start_time, person, title)
+		end if friend == :pick
+
+		puts "add_event: #{friend.inspect} #{title.inspect}"
+		Event.add_event(start_time, friend, title)
+	end
+
 	def choose_paint
 		# simple risky brainy active sweet outdoor quiet creative rowdy
-		menu2000 %w{ exercise creative sweet } do |paint|
-			puts "...got paint #{paint.inspect}"
-			paint_with paint if paint
+		canceled = proc{ @paint = nil; done_action }
+		menu Paints.menu_options, canceled do |picked|
+			case picked
+			when 'Add friend date';    paint_with nil; edit_action
+			else paint_with Paints.from_menu_option(picked)
+			end
 		end
 	end
 
 	def done_action
-		paint_with nil
+		# paint_with nil
 		toggle_editing if @editing
-		navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemEdit, target: self, action: :edit_action)
+		# navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemEdit, target: self, action: :edit_action)
+		navigationItem.setLeftBarButtonItem(nil)
 	end
 
 	def edit_action
 		toggle_editing unless @editing
-		navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemDone, target: self, action: :done_action)
+    	navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemCancel, target:self, action: :done_action))
+		# navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemDone, target: self, action: :done_action)
 	end
 
-	def options_menu_for_event ev
-    	menu2000 ['Link friend', 'Hide'] do |pressed|
-		  	case pressed
-		  	when 'Hide';
-		  		Event.hide(ev.eventIdentifier)
-		  		reload
-		  	when 'Link friend';
+	def options_menu_for_event ev, path
+		options = ['View']
+
+		if Event.unlinked?(ev)
+			options << 'Add friend' 
+		else
+			options << 'Unlink friend'
+		end
+
+		if ev.calendar.allowsContentModifications
+			options << 'Reschedule' << 'Delete'
+		else
+			options << 'Hide'
+		end
+
+		menu options do |x|
+			case x
+			when 'View'
+				view_event ev
+			when 'Add friend'
 		  		AddressBook.pick do |person|
 		  			next unless person
 		  			Event.assign(ev.eventIdentifier, person)
 		  			collectionView.reloadItemsAtIndexPaths([path])
 		  		end
-		  	end
-    	end
+			when 'Unlink friend'
+			when 'Reschedule'
+			when 'Delete'
+		  		Event.delete!(ev)
+
+			when 'Hide'
+		  		Event.hide(ev.eventIdentifier)
+		  		reload
+			end
+		end
 	end
-
-
-
-	############
-	# controller model stuff
 
 	def paint_with paint
-		return unless @paint = paint
-		puts "got paint #{paint.inspect}"
-		navigationController.navigationBar.prompt = paint && "Painting with #{paint}"
-		edit_action
+		@paint = paint
+		# navigationController.navigationBar.prompt = paint && "Painting with #{paint}"
+		if paint and not @editing
+			edit_action
+		elsif @editing
+			# change pluses
+			reload_plusses
+		end
 	end
+
+	def add_event_on_date date
+		paint_was = @paint
+		menu %w{ bfst morn lunch aft hpy_hr dinner night } do |pressed|
+			next unless range = NSDate::HOUR_RANGES[pressed.to_sym]
+			@editing = nil
+			start_time = date + range.begin.hours
+			# puts "paint: #{@paint.inspect}"
+			# puts "add_event_on_date: #{start_time.inspect} #{paint_was.inspect}"
+			# puts "foo #{paint_was.inspect}"
+			if paint_was
+				@paint = nil
+				Event.add_event(start_time, nil, paint_was)
+			else
+				AddressBook.pick do |person|
+					Event.add_event(start_time, person)
+				end
+			end
+	  		puts "added"
+	    end
+	end
+
+	def view_event ev
+		return false unless ev
+		eventViewController = EKEventViewController.alloc.init
+		eventViewController.event = ev
+		eventViewController.allowsEditing = true
+		navigationController.pushViewController(eventViewController, animated: true)
+	end
+
+
+	##############
+	# wiring
 
 	def collectionView(cv, didSelectItemAtIndexPath:path)
 		kind, thing = thing_at_index_path path
 		case kind
 		when :event
-			return false unless ev = thing
-			return options_menu_for_event ev if @editing
-			eventViewController = EKEventViewController.alloc.init
-			eventViewController.event = ev
-			eventViewController.allowsEditing = true
-			navigationController.pushViewController(eventViewController, animated: true)
+			if Event.unlinked_painted?(thing) or @editing
+				options_menu_for_event(thing, path)
+			else
+				view_event(thing)
+			end
+			
 		when :plus
-			date = thing
-			menu2000 KEY_HOUR_RANGES do |pressed|
-				range = HOUR_RANGES[pressed.to_sym]
-				next unless range
-				start_time = date + range.begin.hours
-		  		add_event(start_time, @paint ? nil : :pick, @paint)
-				paint_with nil if @paint
-				done_action
-		    end
+			add_event_on_date thing
 		end
 	end
 
@@ -269,14 +301,14 @@ class UpcomingController < UICollectionViewController
 
 		p = gr.locationInView(collectionView)
 		path = collectionView.indexPathForItemAtPoint(p)
+		return unless path
+		if path.section and not path.row
+			return add_event_on_date sections[path.section]
+		end
     	kind, ev = thing_at_index_path(path)
     	return unless kind == :event and ev
-    	options_menu_for_event ev
+    	options_menu_for_event ev, path
 	end
-
-
-	##############
-	# misc controller wireups
 
 	def eventEditViewController(c, didCompleteWithAction: action)
 		dismissViewControllerAnimated true, completion: nil
@@ -300,12 +332,13 @@ class UpcomingController < UICollectionViewController
 		personlabel = cell.contentView.viewWithTag(102)
 
 		# configure cell
-		timelabel.text   = time_of_day(ev.startDate)
+		timelabel.text   = ev.startDate.time_of_day_label.sub('_', ' ').upcase
+		timelabel.sizeToFit
 		imageview.image  = Event.image(ev){ cv.reloadItemsAtIndexPaths([path]) }
 		personlabel.text = if ev.organizer && !ev.organizer.isCurrentUser
 			ev.organizer.name.split[0]
 		else
-			ev.title
+			Event.painted?(ev) ? "" : ev.title
 		end
 		cell
 	end
@@ -319,7 +352,9 @@ class UpcomingController < UICollectionViewController
 			return setup_event_cell(cell, ev)
 
 		when :plus
-			return cv.dequeueReusableCellWithReuseIdentifier('Plus', forIndexPath:path)
+			cell = cv.dequeueReusableCellWithReuseIdentifier('Plus', forIndexPath:path)
+			cell.contentView.viewWithTag(110).text = @paint ? Paints.prompt(@paint) : 'Add friend date'
+			cell
 		end
 	end
 
@@ -327,7 +362,8 @@ class UpcomingController < UICollectionViewController
 		return unless kind == UICollectionElementKindSectionHeader
 		view = cv.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier:'Section', forIndexPath:path)
 		section_date = sections[path.section]
-		view.subviews[0].text = day_of_week(section_date)
+		view.subviews[0].text = section_date.day_of_week_label
+		view.subviews[1].text = section_date.strftime("%m/%d")
 		view
 	end
 
@@ -336,13 +372,12 @@ class UpcomingController < UICollectionViewController
 	##############
 	# improve uikit
 
-	def menu2000 options, &cb
-		puts "menu2000 called"
+	def menu options, canceled = nil, &cb
+		puts "menu called"
 		UIActionSheet.alert nil, buttons: ['Cancel', nil, *options], success: proc{ |thing|
-			puts "Got: #{thing.inspect}"
 			cb.call(thing) unless thing == 'Cancel' or thing == :Cancel
 		}, cancel: proc{
-			puts "cancel..."
+			canceled.call() if canceled
 		}
 	end
 
