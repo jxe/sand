@@ -4,10 +4,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3697.3"/>
     </dependencies>
     <scenes>
-        <!--View Controller - About-->
+        <!--Pause Controller - About-->
         <scene sceneID="drR-QJ-PVM">
             <objects>
-                <viewController storyboardIdentifier="About" title="About" id="AOO-OS-eVF" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="About" title="About" id="AOO-OS-eVF" customClass="PauseController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="LOz-13-hBb"/>
                         <viewControllerLayoutGuide type="bottom" id="GyL-t7-qcd"/>
@@ -16,15 +16,55 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="About Sand" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uEi-Y2-Y57">
-                                <rect key="frame" x="119" y="207" width="91" height="21"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="About Sand" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uEi-Y2-Y57">
+                                <rect key="frame" x="20" y="471" width="280" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="like sand through the hourglass" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ymd-3L-3wC">
+                                <rect key="frame" x="41" y="37" width="238" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="AmericanTypewriter-Light" family="American Typewriter" pointSize="15"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="UIn-M4-nyo">
+                                <rect key="frame" x="20" y="233" width="280" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <segments>
+                                    <segment title="cameraderie"/>
+                                    <segment title="sunshine"/>
+                                    <segment title="quiet"/>
+                                </segments>
+                            </segmentedControl>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Sand is a calendar app by Joe Edelman, under arrangement with my former startup, Citizen Logistics." lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="QCf-yr-GaQ">
+                                <rect key="frame" x="20" y="500" width="280" height="48"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <color key="textColor" red="0.64175158739089966" green="0.47540730237960815" blue="0.22475135326385498" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="2he-73-D2w">
+                                <rect key="frame" x="20" y="261" width="280" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <segments>
+                                    <segment title="adventure"/>
+                                    <segment title="heart"/>
+                                    <segment title="intellectuality"/>
+                                </segments>
+                            </segmentedControl>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="What's missing?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jkx-Cq-wCT">
+                                <rect key="frame" x="20" y="204" width="280" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.98741060495376587" green="0.98260951042175293" blue="0.86507052183151245" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="tintColor" red="0.64175158740000005" green="0.47540730240000001" blue="0.22475135330000001" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="About" id="5fQ-2u-fAd"/>
                 </viewController>
@@ -42,7 +82,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" red="0.22344666719436646" green="0.50399518013000488" blue="0.85131150484085083" alpha="1" colorSpace="calibratedRGB"/>
                         <textAttributes key="titleTextAttributes">
-                            <fontDescription key="fontDescription" name="AmericanTypewriter-Light" family="American Typewriter" pointSize="22"/>
+                            <fontDescription key="fontDescription" name="AmericanTypewriter-Light" family="American Typewriter" pointSize="26"/>
                             <color key="textColor" red="0.24214252829551697" green="0.27836489677429199" blue="0.31419175863265991" alpha="0.93000000000000005" colorSpace="calibratedRGB"/>
                             <color key="textShadowColor" red="0.95127487182617188" green="0.91839140653610229" blue="0.85148847103118896" alpha="0.67000000000000004" colorSpace="calibratedRGB"/>
                             <offsetWrapper key="textShadowOffset" horizontal="0.0" vertical="-1"/>
@@ -56,7 +96,7 @@
             </objects>
             <point key="canvasLocation" x="-24" y="766"/>
         </scene>
-        <!--Upcoming Controller - the hourglass-->
+        <!--Upcoming Controller - Hourglass-->
         <scene sceneID="rna-Ai-2GJ">
             <objects>
                 <collectionViewController autoresizesArchivedViewToFullSize="NO" id="jC6-0L-hTW" customClass="UpcomingController" sceneMemberID="viewController">
@@ -68,13 +108,13 @@
                         <inset key="scrollIndicatorInsets" minX="0.0" minY="94" maxX="0.0" maxY="0.0"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="2" id="DHo-br-aXn">
                             <size key="itemSize" width="73" height="84"/>
-                            <size key="headerReferenceSize" width="50" height="24"/>
+                            <size key="headerReferenceSize" width="50" height="26"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                             <inset key="sectionInset" minX="6" minY="3" maxX="6" maxY="42"/>
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Appt" id="7er-FW-gwm">
-                                <rect key="frame" x="6" y="91" width="73" height="84"/>
+                                <rect key="frame" x="6" y="93" width="73" height="84"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="73" height="84"/>
@@ -132,7 +172,7 @@
                                 <gestureRecognizers/>
                             </collectionViewCell>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Plus" id="Ysi-jn-9hm">
-                                <rect key="frame" x="84" y="91" width="73" height="84"/>
+                                <rect key="frame" x="84" y="93" width="73" height="84"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="73" height="84"/>
@@ -158,11 +198,11 @@
                             </collectionViewCell>
                         </cells>
                         <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Section" id="UB1-3M-ga0" customClass="EventCell">
-                            <rect key="frame" x="0.0" y="64" width="320" height="24"/>
+                            <rect key="frame" x="0.0" y="64" width="320" height="26"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NKx-5n-rhd">
-                                    <rect key="frame" x="7" y="3" width="130" height="21"/>
+                                    <rect key="frame" x="7" y="6" width="130" height="21"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <rect key="contentStretch" x="1" y="0.0" width="1" height="1"/>
                                     <fontDescription key="fontDescription" name="Copperplate-Bold" family="Copperplate" pointSize="12"/>
@@ -172,7 +212,7 @@
                                     <size key="shadowOffset" width="0.0" height="1"/>
                                 </label>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="301" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fnp-GL-Ebw">
-                                    <rect key="frame" x="272" y="1" width="42" height="21"/>
+                                    <rect key="frame" x="272" y="4" width="42" height="21"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <fontDescription key="fontDescription" name="Copperplate-Light" family="Copperplate" pointSize="11"/>
                                     <color key="textColor" red="0.71399897336959839" green="0.68815666437149048" blue="0.59646803140640259" alpha="1" colorSpace="calibratedRGB"/>
@@ -194,7 +234,7 @@
                             <outletCollection property="gestureRecognizers" destination="lXx-qj-euO" appends="YES" id="ZM0-h6-brR"/>
                         </connections>
                     </collectionView>
-                    <navigationItem key="navigationItem" title="the hourglass" id="G3W-MW-IBk">
+                    <navigationItem key="navigationItem" title="Hourglass" id="G3W-MW-IBk">
                         <barButtonItem key="backBarButtonItem" title="Sand" id="qMf-eg-LUT"/>
                         <barButtonItem key="leftBarButtonItem" systemItem="pause" id="mUQ-56-cGX">
                             <connections>

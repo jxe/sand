@@ -154,8 +154,16 @@ class UpcomingController < UICollectionViewController
  		# navigationController.navigationBar.layer.insertSublayer(gradient, atIndex:0)
 
 		# navigationController.navigationBar.setBackgroundImage(UIImage.imageNamed("sandbar2.png"), forBarMetrics: UIBarMetricsDefault)
-		navigationController.navigationBar.setTitleVerticalPositionAdjustment(6, forBarMetrics:UIBarMetricsDefault)
+		navigationController.navigationBar.setTitleVerticalPositionAdjustment(4, forBarMetrics:UIBarMetricsDefault)
+
+
+		view.addGestureRecognizer(UIPanGestureRecognizer.alloc.initWithTarget(self, action: :swipeHandler))
 	end
+
+	def swipeHandler sender = nil
+		sideMenu.showFromPanGesture(sender)
+	end
+
 
 	def viewWillAppear(animated)
 		super
@@ -214,6 +222,7 @@ class UpcomingController < UICollectionViewController
 		toggle_editing if @editing
 		# navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemEdit, target: self, action: :edit_action)
 		navigationItem.setLeftBarButtonItem(nil)
+		navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemPause, target:self, action: :menu_action))
 	end
 
 	def edit_action
@@ -352,7 +361,7 @@ class UpcomingController < UICollectionViewController
 		item_count_for_section section
 	end
 
-	def setup_event_cell(cell, ev)
+	def setup_event_cell(cv, path, cell, ev)
 		imageview = cell.contentView.viewWithTag(100)
 		timelabel = cell.contentView.viewWithTag(101)
 		personlabel = cell.contentView.viewWithTag(102)
@@ -362,6 +371,7 @@ class UpcomingController < UICollectionViewController
 		# timelabel.sizeToFit
 		# w = CGRectGetWidth(timelabel.frame) + 4
 		# timelabel.frame = CGRectMake(73-w,0,w,13)
+
 		imageview.image  = Event.image(ev){ cv.reloadItemsAtIndexPaths([path]) }
 		personlabel.text = if ev.organizer && !ev.organizer.isCurrentUser
 			ev.organizer.name.split[0]
@@ -378,7 +388,7 @@ class UpcomingController < UICollectionViewController
 		when :event
 			return nil unless ev
 			cell = cv.dequeueReusableCellWithReuseIdentifier('Appt', forIndexPath:path)
-			return setup_event_cell(cell, ev)
+			return setup_event_cell(cv, path, cell, ev)
 
 		when :plus
 			cell = cv.dequeueReusableCellWithReuseIdentifier('Plus', forIndexPath:path)
