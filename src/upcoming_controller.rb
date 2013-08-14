@@ -1,3 +1,5 @@
+LIVE = []
+
 class Paints
 	def self.menu_options
 		['Add friend date', 'Add some exercise', 'Add creative work', 'Add something sweet']
@@ -23,9 +25,11 @@ class EventCell < UICollectionReusableView
 		super
 		gradient = CAGradientLayer.layer
 		gradient.frame = bounds
-		sand = UIColor.colorWithHue(0.12, saturation:0.04, brightness:0.97, alpha:1.0)
+		gradient.endPoint = [0.5, 0.4]
+		startColor = UIColor.colorWithHue(0.12, saturation:0.12, brightness:0.88, alpha:0.4)
+		sandClear = UIColor.colorWithHue(0.12, saturation:0.12, brightness:1.0, alpha:0.01)
 		# UIColor.colorWithWhite(0.9, alpha: 1.0)
- 		gradient.colors = [sand.CGColor, UIColor.whiteColor.CGColor]
+ 		gradient.colors = [startColor.CGColor, sandClear.CGColor]
  		layer.insertSublayer(gradient, atIndex:0)
  		self
 	end
@@ -136,13 +140,28 @@ class UpcomingController < UICollectionViewController
 		collectionView.delegate = self
 		collectionView.dataSource = self
 		collectionView.gestureRecognizers[2].addTarget(self, action: :longPress)
-		navigationController.navigationBar.setBackgroundImage(UIImage.imageNamed("sandbar.png"), forBarMetrics: UIBarMetricsDefault)
-		navigationController.navigationBar.setTitleVerticalPositionAdjustment(10, forBarMetrics:UIBarMetricsDefault)
+		# self.automaticallyAdjustsScrollViewInsets = false
+		# collectionView.contentInset = UIEdgeInsetsMake(94,0,0,0)
+
+		navigationController.navigationBar.barTintColor = UIColor.colorWithHue(0.12, saturation:0.42, brightness:0.94, alpha:0.6)
+
+		# gradient = CAGradientLayer.layer
+		# gradient.frame = navigationController.navigationBar.bounds
+		# sand = UIColor.colorWithHue(0.12, saturation:0.3, brightness:0.80, alpha:0.4)
+		# sandClear = UIColor.colorWithHue(0.12, saturation:0.00, brightness:1.0, alpha:0.01)
+		# UIColor.colorWithWhite(0.9, alpha: 1.0)
+ 		# gradient.colors = [sand.CGColor, sand.CGColor]
+ 		# navigationController.navigationBar.layer.insertSublayer(gradient, atIndex:0)
+
+		# navigationController.navigationBar.setBackgroundImage(UIImage.imageNamed("sandbar2.png"), forBarMetrics: UIBarMetricsDefault)
+		navigationController.navigationBar.setTitleVerticalPositionAdjustment(6, forBarMetrics:UIBarMetricsDefault)
 	end
 
 	def viewWillAppear(animated)
 		super
+		LIVE[0] = self
 		@ekobserver = App.notification_center.observe(EKEventStoreChangedNotification){ |x| reload }
+		navigationController.setToolbarHidden(true,animated:true)
 	end
 
 	def viewWillDisappear(animated)
@@ -163,6 +182,10 @@ class UpcomingController < UICollectionViewController
 
 	############
 	# actions
+
+	def menu_action
+		self.sideMenu.show
+	end
 
 	def add_event start_time, friend, title = nil
 		puts "add_event: #{friend.inspect} #{title.inspect}"
@@ -252,6 +275,7 @@ class UpcomingController < UICollectionViewController
 		menu %w{ bfst morn lunch aft hpy_hr dinner night } do |pressed|
 			next unless range = NSDate::HOUR_RANGES[pressed.to_sym]
 			@editing = nil
+			navigationItem.setLeftBarButtonItem(nil)
 			start_time = date + range.begin.hours
 			# puts "paint: #{@paint.inspect}"
 			# puts "add_event_on_date: #{start_time.inspect} #{paint_was.inspect}"
@@ -273,6 +297,7 @@ class UpcomingController < UICollectionViewController
 		eventViewController = EKEventViewController.alloc.init
 		eventViewController.event = ev
 		eventViewController.allowsEditing = true
+		eventViewController.delegate = self
 		navigationController.pushViewController(eventViewController, animated: true)
 	end
 
@@ -310,8 +335,9 @@ class UpcomingController < UICollectionViewController
     	options_menu_for_event ev, path
 	end
 
-	def eventEditViewController(c, didCompleteWithAction: action)
-		dismissViewControllerAnimated true, completion: nil
+	def eventViewController(c, didCompleteWithAction: action)
+		dismissViewControllerAnimated true
+		# navigationController.setToolbarHidden(true,animated:true)
 	end
 
 
@@ -333,12 +359,15 @@ class UpcomingController < UICollectionViewController
 
 		# configure cell
 		timelabel.text   = ev.startDate.time_of_day_label.sub('_', ' ').upcase
-		timelabel.sizeToFit
+		# timelabel.sizeToFit
+		# w = CGRectGetWidth(timelabel.frame) + 4
+		# timelabel.frame = CGRectMake(73-w,0,w,13)
 		imageview.image  = Event.image(ev){ cv.reloadItemsAtIndexPaths([path]) }
 		personlabel.text = if ev.organizer && !ev.organizer.isCurrentUser
 			ev.organizer.name.split[0]
 		else
-			Event.painted?(ev) ? "" : ev.title
+			ev.title
+			# Event.painted?(ev) ? "" : 
 		end
 		cell
 	end

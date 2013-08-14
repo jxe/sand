@@ -120,9 +120,9 @@ class Event < Nitron::Model
 		fetch_image_for_organizer(ev, callback)
 
 		case ev.title
-		when 'creative'; return UIImage.imageNamed('creative.jpg')
-		when 'sweet'; return UIImage.imageNamed('sweet.jpg')
-		when 'exercise'; return UIImage.imageNamed('exercise.jpg')
+		when 'creative'; return UIImage.imageNamed('creative.png')
+		when 'sweet'; return UIImage.imageNamed('sweet.png')
+		when 'exercise'; return UIImage.imageNamed('exercise.png')
 		end
 
 		nil
