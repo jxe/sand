@@ -17,3 +17,5 @@ nbproject
 ib.xcodeproj
 .dat*
 *.sublime-workspace
+art
+vendor
