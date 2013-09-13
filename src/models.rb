@@ -34,7 +34,6 @@ class Event < Nitron::Model
 	##########
 	# calendar
 
-
 	def self.add_event start_time, friend, title = nil
 		puts "add_event: #{start_time.inspect} #{friend.inspect} #{title.inspect}"
 		@event_store ||= EKEventStore.alloc.init
@@ -48,15 +47,14 @@ class Event < Nitron::Model
 		Event.assign(ev.eventIdentifier, friend) if friend
 	end
 
-	def self.fetch_events start_date, end_date
+	def self.fetch_events start_date, end_date, cb = nil
 		@event_store ||= EKEventStore.alloc.init
-	 	@event_store.requestAccessToEntityType(EKEntityTypeEvent, completion: nil);
 	 	p = @event_store.predicateForEventsWithStartDate(start_date, endDate: end_date, calendars: nil)
 		@event_store.eventsMatchingPredicate(p)
 	end
 
-	def self.legit_events(tf)
-		events = fetch_events(*tf) || []
+	def self.legit_events(tf, cb = nil)
+		events = fetch_events(*tf, cb) || []
 		puts "#{events.length} events from cal"
 		events.select do |ev|
 			next if ev.allDay? or ev.availability == EKEventAvailabilityFree

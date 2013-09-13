@@ -20,6 +20,62 @@ class Paints
 	end
 end
 
+
+class AuthenticationController < UIViewController
+	def button_pressed
+		please_authenticate_both_with_callback do
+			dismissViewControllerAnimated(true, completion: nil)
+			App.notification_center.postNotificationName(EKEventStoreChangedNotification, object: self)
+		end
+	end
+
+	def please_authenticate_both_with_callback(&cb)
+		cb.call if cal_authed? and contacts_authed?
+		@on_both_authenticated = cb
+		prompt_for_cal_auth unless cal_authed?
+		prompt_for_contacts_auth unless contacts_authed?
+	end
+
+	def prompt_for_cal_auth
+		@event_store ||= EKEventStore.alloc.init
+		@event_store.requestAccessToEntityType(EKEntityTypeEvent, completion: proc{ |granted, error|
+			cal_authed! if granted
+		})
+	end
+
+	def prompt_for_contacts_auth
+		AddressBook.request_authorization{ |authed| contacts_authed! }
+	end
+
+	def self.both_authed?
+		NSUserDefaults['cal_authed'] and NSUserDefaults['contacts_authed']
+	end
+
+	def cal_authed?
+		NSUserDefaults['cal_authed']
+	end
+
+	def contacts_authed?
+		NSUserDefaults['contacts_authed']
+	end
+
+	def cal_authed!
+		NSUserDefaults['cal_authed'] = true
+		check_if_both_authed
+	end
+
+	def contacts_authed!
+		NSUserDefaults['contacts_authed'] = true
+		check_if_both_authed
+	end
+
+	def check_if_both_authed		
+		Dispatch::Queue.main.async{ @on_both_authenticated.call } if cal_authed? and contacts_authed? and @on_both_authenticated
+	end
+end
+
+
+
 class EventCell < UICollectionReusableView
 	def initWithCoder(c)
 		super
@@ -52,9 +108,10 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def load_events
-		puts "loading events"
 		@events_by_day = {}
-		Event.legit_events(timeframe).each do |ev|
+		return unless AuthenticationController.both_authed?
+
+		Event.legit_events(timeframe, proc{ reload }).each do |ev|
 			morning = ev.startDate.start_of_day
 			section = @events_by_day[morning] ||= []
 			section << ev unless section.detect{ |existing| existing.title == ev.title and existing.startDate == ev.startDate }
@@ -143,7 +200,11 @@ class UpcomingController < UICollectionViewController
 		# self.automaticallyAdjustsScrollViewInsets = false
 		# collectionView.contentInset = UIEdgeInsetsMake(94,0,0,0)
 
-		navigationController.navigationBar.barTintColor = UIColor.colorWithHue(0.12, saturation:0.42, brightness:0.94, alpha:0.6)
+		navbar = navigationController.navigationBar
+
+		if navbar.respond_to?(:barTintColor=)
+			navbar.barTintColor = UIColor.colorWithHue(0.12, saturation:0.42, brightness:0.94, alpha:0.6)
+		end
 
 		# gradient = CAGradientLayer.layer
 		# gradient.frame = navigationController.navigationBar.bounds
@@ -155,7 +216,6 @@ class UpcomingController < UICollectionViewController
 
 		# navigationController.navigationBar.setBackgroundImage(UIImage.imageNamed("sandbar2.png"), forBarMetrics: UIBarMetricsDefault)
 		navigationController.navigationBar.setTitleVerticalPositionAdjustment(4, forBarMetrics:UIBarMetricsDefault)
-
 
 		view.addGestureRecognizer(UIPanGestureRecognizer.alloc.initWithTarget(self, action: :swipeHandler))
 	end
@@ -180,10 +240,8 @@ class UpcomingController < UICollectionViewController
 	def reload
 		puts "reloading events"
   		load_events
-  		puts "updatign collectionview"
   		collectionView.reloadData
 		@view_editing = @editing
-		puts "done reloading"
 	end
 
 
@@ -221,7 +279,7 @@ class UpcomingController < UICollectionViewController
 		# paint_with nil
 		toggle_editing if @editing
 		# navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemEdit, target: self, action: :edit_action)
-		navigationItem.setLeftBarButtonItem(nil)
+		# navigationItem.setLeftBarButtonItem(nil)
 		navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemPause, target:self, action: :menu_action))
 	end
 
@@ -284,7 +342,7 @@ class UpcomingController < UICollectionViewController
 		menu %w{ bfst morn lunch aft hpy_hr dinner night } do |pressed|
 			next unless range = NSDate::HOUR_RANGES[pressed.to_sym]
 			@editing = nil
-			navigationItem.setLeftBarButtonItem(nil)
+			navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemPause, target:self, action: :menu_action))
 			start_time = date + range.begin.hours
 			# puts "paint: #{@paint.inspect}"
 			# puts "add_event_on_date: #{start_time.inspect} #{paint_was.inspect}"
