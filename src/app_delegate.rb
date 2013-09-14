@@ -28,7 +28,7 @@ class AppDelegate
 	])
 	window.makeKeyAndVisible
 
-	unless AuthenticationController.both_authed?
+	unless AuthenticationController.all_authed?
 		auth_controller = s.instantiateViewControllerWithIdentifier('Auth')
 		window.rootViewController.presentModalViewController(auth_controller, animated: false)
 	end
@@ -36,4 +36,15 @@ class AppDelegate
 	true
   end
 
+  def applicationDidBecomeActive(application)
+    # We need to properly handle activation of the application with regards to SSO
+    # (e.g., returning from iOS 6.0 authorization dialog or from fast app switching).
+    FBSession.activeSession.handleDidBecomeActive
+  end
+  
+  def applicationWillTerminate(application)
+    # Kill the Facebook session when the application terminates
+    FBSession.activeSession.close
+  end
+  
 end

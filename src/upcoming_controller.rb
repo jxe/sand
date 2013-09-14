@@ -21,60 +21,6 @@ class Paints
 end
 
 
-class AuthenticationController < UIViewController
-	def button_pressed
-		please_authenticate_both_with_callback do
-			dismissViewControllerAnimated(true, completion: nil)
-			App.notification_center.postNotificationName(EKEventStoreChangedNotification, object: self)
-		end
-	end
-
-	def please_authenticate_both_with_callback(&cb)
-		cb.call if cal_authed? and contacts_authed?
-		@on_both_authenticated = cb
-		prompt_for_cal_auth unless cal_authed?
-		prompt_for_contacts_auth unless contacts_authed?
-	end
-
-	def prompt_for_cal_auth
-		@event_store ||= EKEventStore.alloc.init
-		@event_store.requestAccessToEntityType(EKEntityTypeEvent, completion: proc{ |granted, error|
-			cal_authed! if granted
-		})
-	end
-
-	def prompt_for_contacts_auth
-		AddressBook.request_authorization{ |authed| contacts_authed! }
-	end
-
-	def self.both_authed?
-		NSUserDefaults['cal_authed'] and NSUserDefaults['contacts_authed']
-	end
-
-	def cal_authed?
-		NSUserDefaults['cal_authed']
-	end
-
-	def contacts_authed?
-		NSUserDefaults['contacts_authed']
-	end
-
-	def cal_authed!
-		NSUserDefaults['cal_authed'] = true
-		check_if_both_authed
-	end
-
-	def contacts_authed!
-		NSUserDefaults['contacts_authed'] = true
-		check_if_both_authed
-	end
-
-	def check_if_both_authed		
-		Dispatch::Queue.main.async{ @on_both_authenticated.call } if cal_authed? and contacts_authed? and @on_both_authenticated
-	end
-end
-
-
 
 class EventCell < UICollectionReusableView
 	def initWithCoder(c)
@@ -109,7 +55,7 @@ class UpcomingController < UICollectionViewController
 
 	def load_events
 		@events_by_day = {}
-		return unless AuthenticationController.both_authed?
+		return unless AuthenticationController.all_authed?
 
 		Event.legit_events(timeframe, proc{ reload }).each do |ev|
 			morning = ev.startDate.start_of_day
@@ -290,6 +236,7 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def options_menu_for_event ev, path
+		puts ev.inspect
 		options = ['View']
 
 		if Event.unlinked?(ev)
@@ -320,7 +267,7 @@ class UpcomingController < UICollectionViewController
 		  		Event.delete!(ev)
 
 			when 'Hide'
-		  		Event.hide(ev.eventIdentifier)
+		  		Event.hide_matching(ev)
 		  		reload
 			end
 		end
@@ -361,6 +308,9 @@ class UpcomingController < UICollectionViewController
 
 	def view_event ev
 		return false unless ev
+
+		Event.refresh(ev)
+
 		eventViewController = EKEventViewController.alloc.init
 		eventViewController.event = ev
 		eventViewController.allowsEditing = true
@@ -393,7 +343,7 @@ class UpcomingController < UICollectionViewController
 
 		p = gr.locationInView(collectionView)
 		path = collectionView.indexPathForItemAtPoint(p)
-		return unless path
+		return choose_paint unless path
 		if path.section and not path.row
 			return add_event_on_date sections[path.section]
 		end
@@ -403,7 +353,7 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def eventViewController(c, didCompleteWithAction: action)
-		dismissViewControllerAnimated true
+		dismissViewControllerAnimated true, completion:nil
 		# navigationController.setToolbarHidden(true,animated:true)
 	end
 
