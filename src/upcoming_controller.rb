@@ -146,11 +146,11 @@ class UpcomingController < UICollectionViewController
 		# self.automaticallyAdjustsScrollViewInsets = false
 		# collectionView.contentInset = UIEdgeInsetsMake(94,0,0,0)
 
-		navbar = navigationController.navigationBar
+		# navbar = navigationController.navigationBar
 
-		if navbar.respond_to?(:barTintColor=)
-			navbar.barTintColor = UIColor.colorWithHue(0.12, saturation:0.42, brightness:0.94, alpha:0.6)
-		end
+		# if navbar.respond_to?(:barTintColor=)
+		# 	navbar.barTintColor = UIColor.colorWithHue(0.12, saturation:0.42, brightness:0.94, alpha:0.6)
+		# end
 
 		# gradient = CAGradientLayer.layer
 		# gradient.frame = navigationController.navigationBar.bounds
@@ -161,7 +161,7 @@ class UpcomingController < UICollectionViewController
  		# navigationController.navigationBar.layer.insertSublayer(gradient, atIndex:0)
 
 		# navigationController.navigationBar.setBackgroundImage(UIImage.imageNamed("sandbar2.png"), forBarMetrics: UIBarMetricsDefault)
-		navigationController.navigationBar.setTitleVerticalPositionAdjustment(4, forBarMetrics:UIBarMetricsDefault)
+		# navigationController.navigationBar.setTitleVerticalPositionAdjustment(4, forBarMetrics:UIBarMetricsDefault)
 
 		view.addGestureRecognizer(UIPanGestureRecognizer.alloc.initWithTarget(self, action: :swipeHandler))
 	end
@@ -226,12 +226,12 @@ class UpcomingController < UICollectionViewController
 		toggle_editing if @editing
 		# navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemEdit, target: self, action: :edit_action)
 		# navigationItem.setLeftBarButtonItem(nil)
-		navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemPause, target:self, action: :menu_action))
+		# navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemPause, target:self, action: :menu_action))
 	end
 
 	def edit_action
 		toggle_editing unless @editing
-    	navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemCancel, target:self, action: :done_action))
+    	# navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemCancel, target:self, action: :done_action))
 		# navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemDone, target: self, action: :done_action)
 	end
 
@@ -289,7 +289,7 @@ class UpcomingController < UICollectionViewController
 		menu %w{ bfst morn lunch aft hpy_hr dinner night } do |pressed|
 			next unless range = NSDate::HOUR_RANGES[pressed.to_sym]
 			@editing = nil
-			navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemPause, target:self, action: :menu_action))
+			# navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemPause, target:self, action: :menu_action))
 			start_time = date + range.begin.hours
 			# puts "paint: #{@paint.inspect}"
 			# puts "add_event_on_date: #{start_time.inspect} #{paint_was.inspect}"
@@ -315,7 +315,9 @@ class UpcomingController < UICollectionViewController
 		eventViewController.event = ev
 		eventViewController.allowsEditing = true
 		eventViewController.delegate = self
-		navigationController.pushViewController(eventViewController, animated: true)
+		nc = UINavigationController.alloc.initWithRootViewController(eventViewController)
+		presentModalViewController(nc, animated: true)
+		# navigationController.pushViewController(eventViewController, animated: true)
 	end
 
 
