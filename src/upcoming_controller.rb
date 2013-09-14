@@ -142,6 +142,7 @@ class UpcomingController < UICollectionViewController
 		load_events
 		collectionView.delegate = self
 		collectionView.dataSource = self
+		collectionView.contentInset = UIEdgeInsetsMake(34,0,0,0)
 		collectionView.gestureRecognizers[2].addTarget(self, action: :longPress)
 		# self.automaticallyAdjustsScrollViewInsets = false
 		# collectionView.contentInset = UIEdgeInsetsMake(94,0,0,0)
@@ -175,7 +176,7 @@ class UpcomingController < UICollectionViewController
 		super
 		LIVE[0] = self
 		@ekobserver = App.notification_center.observe(EKEventStoreChangedNotification){ |x| reload }
-		navigationController.setToolbarHidden(true,animated:true)
+		# navigationController.setToolbarHidden(true,animated:true)
 	end
 
 	def viewWillDisappear(animated)
