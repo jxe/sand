@@ -142,7 +142,7 @@ class UpcomingController < UICollectionViewController
 		load_events
 		collectionView.delegate = self
 		collectionView.dataSource = self
-		collectionView.contentInset = UIEdgeInsetsMake(34,0,0,0)
+		collectionView.contentInset = UIEdgeInsetsMake(44,0,0,0)
 		collectionView.gestureRecognizers[2].addTarget(self, action: :longPress)
 		# self.automaticallyAdjustsScrollViewInsets = false
 		# collectionView.contentInset = UIEdgeInsetsMake(94,0,0,0)
@@ -213,6 +213,7 @@ class UpcomingController < UICollectionViewController
 
 	def choose_paint
 		# simple risky brainy active sweet outdoor quiet creative rowdy
+		edit_action
 		canceled = proc{ @paint = nil; done_action }
 		menu Paints.menu_options, canceled do |picked|
 			case picked
@@ -247,7 +248,7 @@ class UpcomingController < UICollectionViewController
 		end
 
 		if ev.calendar.allowsContentModifications
-			options << 'Reschedule' << 'Delete'
+			options << 'Delete'
 		else
 			options << 'Hide'
 		end
@@ -263,10 +264,10 @@ class UpcomingController < UICollectionViewController
 		  			collectionView.reloadItemsAtIndexPaths([path])
 		  		end
 			when 'Unlink friend'
-			when 'Reschedule'
+				Event.unassign(ev.eventIdentifier)
+	  			collectionView.reloadItemsAtIndexPaths([path])
 			when 'Delete'
 		  		Event.delete!(ev)
-
 			when 'Hide'
 		  		Event.hide_matching(ev)
 		  		reload
@@ -346,7 +347,9 @@ class UpcomingController < UICollectionViewController
 
 		p = gr.locationInView(collectionView)
 		path = collectionView.indexPathForItemAtPoint(p)
+
 		return choose_paint unless path
+
 		if path.section and not path.row
 			return add_event_on_date sections[path.section]
 		end
@@ -376,6 +379,14 @@ class UpcomingController < UICollectionViewController
 		imageview = cell.contentView.viewWithTag(100)
 		timelabel = cell.contentView.viewWithTag(101)
 		personlabel = cell.contentView.viewWithTag(102)
+
+		comboview = cell.contentView.viewWithTag(112)
+		comboview.layer.masksToBounds = false
+		comboview.layer.cornerRadius = 8
+		comboview.layer.shadowOffset = CGSizeMake(0, 2)
+		comboview.layer.shadowRadius = 3
+		comboview.layer.shadowOpacity = 0.3
+		comboview.layer.shadowColor = UIColor.blackColor.CGColor
 
 		# configure cell
 		timelabel.text   = ev.startDate.time_of_day_label.sub('_', ' ').upcase
@@ -413,7 +424,7 @@ class UpcomingController < UICollectionViewController
 		view = cv.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier:'Section', forIndexPath:path)
 		section_date = sections[path.section]
 		view.subviews[0].text = section_date.day_of_week_label
-		view.subviews[1].text = section_date.strftime("%m/%d")
+		view.subviews[1].text = section_date.strftime("%b %d")
 		view
 	end
 

@@ -60,6 +60,13 @@ class Event < Nitron::Model
 			friend_image: person.photo,
 	end
 
+	def self.unassign event_id
+		post event_id,
+			friend_ab_record_id: nil,
+			friend_name: nil,
+			friend_image: nil,
+	end
+
 
 	##########
 	# getters
