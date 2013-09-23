@@ -300,7 +300,7 @@ class UpcomingController < UICollectionViewController
 				@paint = nil
 				Event.add_event(start_time, nil, paint_was)
 			else
-				AddressBook.pick do |person|
+				AddressBook.pick :autofocus_search => true do |person|
 					Event.add_event(start_time, person)
 				end
 			end

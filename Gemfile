@@ -11,7 +11,7 @@ gem 'sugarcube', :require => [
 	'sugarcube-foundation'
 ]
 gem 'geomotion'
-gem 'motion-addressbook'
+gem 'motion-addressbook', :git => 'git://github.com/jxe/motion-addressbook.git'
 gem 'bubble-wrap'
 gem 'ib'
 # gem 'cocoapods'
