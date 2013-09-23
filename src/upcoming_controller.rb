@@ -65,18 +65,20 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def sections
-		@editing ? timeframe_dates : @events_by_day.keys.sort
+		timeframe_dates
+		# @editing ? timeframe_dates : @events_by_day.keys.sort
 	end
 
 	def item_count_for_section n
 		date = sections[n]
 		events = @events_by_day[date] || []
-		@editing ? events.length + 1 : events.length
+		events.length
+		# @editing ? events.length + 1 : events.length
 	end
 
-	def unscheduled_sections
-		timeframe_dates - @events_by_day.keys
-	end
+	# def unscheduled_sections
+	# 	timeframe_dates - @events_by_day.keys
+	# end
 
 	def thing_at_index_path p
 		date = sections[p.section]
