@@ -138,8 +138,13 @@ class UpcomingController < UICollectionViewController
 	############
 	# lifecycle
 
+	def self.instance
+		@@instance
+	end
+
 	def viewDidLoad
 		super
+		@@instance = self
 		puts "viewDidLoad"
 		load_events
 		collectionView.delegate = self

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="12E55" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="jC6-0L-hTW">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="12E55" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="tDS-eb-6wY">
     <dependencies>
         <deployment version="1552" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3742"/>
@@ -168,12 +168,68 @@
             </objects>
             <point key="canvasLocation" x="-1716" y="-355"/>
         </scene>
+        <!--Main Controller-->
+        <scene sceneID="OZd-mi-cQv">
+            <objects>
+                <viewController id="tDS-eb-6wY" customClass="MainController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="a3B-ZR-RJC"/>
+                        <viewControllerLayoutGuide type="bottom" id="oJ3-dd-cyM"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="F3U-Yo-Cqc">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <userGuides>
+                            <userLayoutGuide location="284" affinity="minY"/>
+                        </userGuides>
+                        <subviews>
+                            <containerView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d7S-Kh-NDE">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="481"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="449" id="VxF-mE-zNe"/>
+                                </constraints>
+                                <connections>
+                                    <segue destination="jC6-0L-hTW" kind="embed" id="wkY-ak-blc"/>
+                                </connections>
+                            </containerView>
+                            <containerView contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xnf-oV-jbb">
+                                <rect key="frame" x="0.0" y="481" width="320" height="87"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                <connections>
+                                    <segue destination="p8B-Qs-KYj" kind="embed" id="vW8-rP-gPB"/>
+                                </connections>
+                            </containerView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="Xnf-oV-jbb" firstAttribute="leading" secondItem="F3U-Yo-Cqc" secondAttribute="leading" id="5uw-Ml-3sF"/>
+                            <constraint firstItem="Xnf-oV-jbb" firstAttribute="trailing" secondItem="d7S-Kh-NDE" secondAttribute="trailing" id="Bx2-U9-JGf"/>
+                            <constraint firstItem="d7S-Kh-NDE" firstAttribute="top" secondItem="F3U-Yo-Cqc" secondAttribute="top" id="I6R-9L-2P0"/>
+                            <constraint firstAttribute="bottom" secondItem="d7S-Kh-NDE" secondAttribute="bottom" constant="87" id="QFE-dl-V5T"/>
+                            <constraint firstItem="Xnf-oV-jbb" firstAttribute="leading" secondItem="d7S-Kh-NDE" secondAttribute="leading" id="WNO-Vy-r3X"/>
+                            <constraint firstAttribute="trailing" secondItem="Xnf-oV-jbb" secondAttribute="trailing" id="a0J-ac-mgm"/>
+                            <constraint firstAttribute="bottom" secondItem="Xnf-oV-jbb" secondAttribute="bottom" id="imK-wu-1lt"/>
+                        </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="ShW-lK-WCm" appends="YES" id="1yV-FR-2NB"/>
+                        </connections>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eN3-Q6-l8u" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" maximumNumberOfTouches="1" id="ShW-lK-WCm"/>
+            </objects>
+            <point key="canvasLocation" x="-1817" y="351"/>
+        </scene>
         <!--Upcoming Controller - Hourglass-->
         <scene sceneID="rna-Ai-2GJ">
             <objects>
                 <collectionViewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="jC6-0L-hTW" customClass="UpcomingController" sceneMemberID="viewController">
                     <collectionView key="view" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" id="xa1-yV-bGb">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="481"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.9498564600944519" green="0.9495854377746582" blue="0.87882000207901001" alpha="1" colorSpace="calibratedRGB"/>
                         <gestureRecognizers/>
@@ -384,7 +440,115 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qQ9-n1-gbN" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="lXx-qj-euO"/>
             </objects>
-            <point key="canvasLocation" x="-1316" y="292"/>
+            <point key="canvasLocation" x="-1312" y="292"/>
+        </scene>
+        <!--Dock Controller-->
+        <scene sceneID="12x-5U-azS">
+            <objects>
+                <collectionViewController autoresizesArchivedViewToFullSize="NO" id="p8B-Qs-KYj" customClass="DockController" sceneMemberID="viewController">
+                    <collectionView key="view" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" id="c2u-Eu-UIs">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="87"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.84771561622619629" green="0.81125164031982422" blue="0.59447818994522095" alpha="1" colorSpace="calibratedRGB"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="2" id="U2H-Uc-SeA">
+                            <size key="itemSize" width="73" height="73"/>
+                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="7" minY="0.0" maxX="7" maxY="0.0"/>
+                        </collectionViewFlowLayout>
+                        <cells>
+                            <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Appt" id="M3M-fe-6Y3">
+                                <rect key="frame" x="7" y="7" width="73" height="73"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="73" height="73"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <view tag="112" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mzn-kb-AAK">
+                                            <rect key="frame" x="0.0" y="0.0" width="73" height="73"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" tag="100" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6p8-Fp-F8C">
+                                                    <rect key="frame" x="0.0" y="0.0" width="73" height="73"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" red="0.85867083070000005" green="0.84836924079999998" blue="0.77491807940000001" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="73" id="KuK-C3-4Vb"/>
+                                                    </constraints>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                            <integer key="value" value="5"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                        <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                                    </userDefinedRuntimeAttributes>
+                                                </imageView>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="102" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bIy-Wb-09w">
+                                                    <rect key="frame" x="0.0" y="58" width="73" height="12"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" red="0.11877520380000001" green="0.069701358680000006" blue="0.0040703238919999997" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
+                                                    <color key="tintColor" red="0.45893897140000001" green="0.5852769592" blue="0.83124575410000001" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
+                                                    <fontDescription key="fontDescription" name="Copperplate-Light" family="Copperplate" pointSize="10"/>
+                                                    <color key="textColor" red="1" green="0.99997437" blue="0.99999129769999995" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                    <color key="shadowColor" red="0.0" green="0.0" blue="0.0" alpha="0.37" colorSpace="calibratedRGB"/>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                            <integer key="value" value="5"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                        <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                                    </userDefinedRuntimeAttributes>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstItem="6p8-Fp-F8C" firstAttribute="leading" secondItem="Mzn-kb-AAK" secondAttribute="leading" id="6TD-Nr-Pkx"/>
+                                                <constraint firstAttribute="trailing" secondItem="6p8-Fp-F8C" secondAttribute="trailing" id="9m9-fK-p0v"/>
+                                                <constraint firstAttribute="bottom" secondItem="6p8-Fp-F8C" secondAttribute="bottom" id="D6C-oa-8Jb"/>
+                                                <constraint firstAttribute="bottom" secondItem="bIy-Wb-09w" secondAttribute="bottom" id="LLv-8f-XZ1"/>
+                                                <constraint firstItem="6p8-Fp-F8C" firstAttribute="trailing" secondItem="bIy-Wb-09w" secondAttribute="trailing" id="LtV-Jk-YUu"/>
+                                                <constraint firstItem="6p8-Fp-F8C" firstAttribute="leading" secondItem="bIy-Wb-09w" secondAttribute="leading" id="dm5-jk-oaD"/>
+                                                <constraint firstItem="6p8-Fp-F8C" firstAttribute="top" secondItem="Mzn-kb-AAK" secondAttribute="top" id="xyA-rr-Y0L"/>
+                                            </constraints>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                    <integer key="value" value="5"/>
+                                                </userDefinedRuntimeAttribute>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.shadowOpacity">
+                                                    <real key="value" value="0.80000000000000004"/>
+                                                </userDefinedRuntimeAttribute>
+                                                <userDefinedRuntimeAttribute type="size" keyPath="layer.shadowOffset">
+                                                    <size key="value" width="0.0" height="1.3"/>
+                                                </userDefinedRuntimeAttribute>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.shadowRadius">
+                                                    <integer key="value" value="3"/>
+                                                </userDefinedRuntimeAttribute>
+                                                <userDefinedRuntimeAttribute type="color" keyPath="layer.shadowColor">
+                                                    <color key="value" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                </userDefinedRuntimeAttribute>
+                                                <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="NO"/>
+                                            </userDefinedRuntimeAttributes>
+                                        </view>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                                <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="Mzn-kb-AAK" secondAttribute="bottom" id="5zk-6i-qUn"/>
+                                    <constraint firstItem="Mzn-kb-AAK" firstAttribute="leading" secondItem="M3M-fe-6Y3" secondAttribute="leading" id="8rc-J0-dpo"/>
+                                    <constraint firstAttribute="trailing" secondItem="Mzn-kb-AAK" secondAttribute="trailing" id="DcJ-h0-wht"/>
+                                </constraints>
+                            </collectionViewCell>
+                        </cells>
+                        <connections>
+                            <outlet property="dataSource" destination="p8B-Qs-KYj" id="ngP-PB-Miw"/>
+                            <outlet property="delegate" destination="p8B-Qs-KYj" id="o9V-XM-TvG"/>
+                        </connections>
+                    </collectionView>
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3y9-qV-te5" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1312" y="826"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
