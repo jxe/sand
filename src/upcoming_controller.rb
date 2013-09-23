@@ -341,6 +341,11 @@ class UpcomingController < UICollectionViewController
 		end
 	end
 
+	def section_for_point(p)
+		# find the first section header after the point, and subtract one
+		# layoutAttributesForSupplementaryElementOfKind:atIndexPath
+	end
+
 	def longPress
 		gr = collectionView.gestureRecognizers[2]
 		return unless gr.state == UIGestureRecognizerStateBegan
@@ -348,7 +353,16 @@ class UpcomingController < UICollectionViewController
 		p = gr.locationInView(collectionView)
 		path = collectionView.indexPathForItemAtPoint(p)
 
-		return choose_paint unless path
+		if not path
+			# return choose_paint 
+			rect = CGRect.make(origin: p, size: CGSizeMake(1,1))
+			attrs = collectionView.collectionViewLayout.layoutAttributesForElementsInRect(rect)
+			if attrs[0] and section = attrs[0].indexPath.section
+				return add_event_on_date sections[section]
+			else
+				return choose_paint 
+			end
+		end
 
 		if path.section and not path.row
 			return add_event_on_date sections[path.section]
