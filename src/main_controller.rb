@@ -15,40 +15,33 @@ class MainController < UIViewController
 		when UIGestureRecognizerStateBegan
 			dock = DockController.instance.collectionView
 			dockFrame = dock.superview.superview.frame
-			if pt.inside?(dockFrame)
-				# really started, from inside the dock
-				puts "drag started! #{dockFrame.inspect}"
-				pt = gr.locationInView(dock)
-				path = dock.indexPathForItemAtPoint(pt)
-				cell = dock.cellForItemAtIndexPath(path)
-				puts "got cell: #{cell.inspect}"
-				imgview = cell.contentView.viewWithTag(100)
-				@img = UIImageView.alloc.initWithImage(imgview.image)
-				@img.center = gr.locationInView(view)
-				view.addSubview(@img)
+			return gr.reset unless pt.inside?(dockFrame)
+			pt = gr.locationInView(dock)
+			path = dock.indexPathForItemAtPoint(pt)
+			cell = dock.cellForItemAtIndexPath(path)
+			return gr.reset unless cell
+			imgview = cell.contentView.viewWithTag(100)
+			@text = cell.contentView.viewWithTag(102).text
+			@img = UIImageView.alloc.initWithImage(imgview.image)
+			@img.frame = CGRect.make(origin: @img.frame.origin, size: CGSizeMake(50,50))
+			@img.center = gr.locationInView(view)
+			view.addSubview(@img)
 
-				# fetch hit targets from target
-				# get the img from the cell that we started on
-				# put the img in the overlaypane
-
-			else
-				gr.reset
-			end
 		when UIGestureRecognizerStateChanged
-			puts "dragging! #{dockFrame.inspect}"
-			if @img
-				@img.center = gr.locationInView(view)
-			end
-				# hit detection... light up targets
-
+			# LATER: detect hovers and ask for hit targets...
+			# puts "dragging! #{dockFrame.inspect}"
+			return unless @img
+			@img.center = gr.locationInView(view)
 
 		when UIGestureRecognizerStateEnded
-			puts "dropped! #{dockFrame.inspect}"
-			if @img
-				@img.removeFromSuperview
-				@img = nil
-			end
-			# ask row to open and reregister hit targets
+			puts "dropped!"
+			return unless @text
+			upcoming = UpcomingController.instance
+			point = gr.locationInView(upcoming.collectionView)
+			upcoming.dropped(@text, point)
+			return unless @img
+			@img.removeFromSuperview
+			@img = nil
 
 		end
 	end

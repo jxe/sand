@@ -203,6 +203,43 @@ class UpcomingController < UICollectionViewController
 	############
 	# actions
 
+	def dropped(text, p)
+		section = section_for_point(p)
+		if section
+			if text =~ /friend/
+				@paint = nil
+			else
+				@paint = text
+			end
+			add_event_on_date sections[section]
+		end
+		# rect = CGRect.make(origin: p, size: CGSizeMake(1,1))
+		# attrs = collectionView.collectionViewLayout.layoutAttributesForElementsInRect(rect)
+		# if attrs[0] and section = attrs[0].indexPath.section
+		# 	if text =~ /friend/
+		# 		@paint = nil
+		# 	else
+		# 		@paint = text
+		# 	end
+		# 	add_event_on_date sections[section]
+		# end
+	end
+
+		# find the first section header after the point, and subtract one
+		# layoutAttributesForSupplementaryElementOfKind:atIndexPath
+		# UICollectionElementKindSectionHeader
+	def section_for_point(p)
+		prev_top = nil
+		(0..sections.size-1).each do |i|
+			path = [i].nsindexpath
+			attrs = collectionView.layoutAttributesForSupplementaryElementOfKind(UICollectionElementKindSectionHeader, atIndexPath: path)
+			top = attrs.frame.origin.y
+			return prev_top if top > p.y
+			prev_top = i
+		end
+		return prev_top
+	end
+
 	def menu_action
 		self.sideMenu.show
 	end
@@ -346,11 +383,6 @@ class UpcomingController < UICollectionViewController
 		when :plus
 			add_event_on_date thing
 		end
-	end
-
-	def section_for_point(p)
-		# find the first section header after the point, and subtract one
-		# layoutAttributesForSupplementaryElementOfKind:atIndexPath
 	end
 
 	def longPress
