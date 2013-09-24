@@ -110,9 +110,10 @@ class Event < Nitron::Model
 		possibly_fetch_background_image(ev, callback)
 
 		case ev.title
-		when 'creative'; return UIImage.imageNamed('creative.png')
+		when /creative|work/; return UIImage.imageNamed('creative.png')
 		when 'sweet'; return UIImage.imageNamed('sweet.png')
-		when 'exercise'; return UIImage.imageNamed('exercise.png')
+		when /exercise/; return UIImage.imageNamed('exercise.png')
+		when /quiet/; return UIImage.imageNamed('peace_and_quiet.jpg')
 		end
 
 		nil

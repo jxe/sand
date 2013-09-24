@@ -25,14 +25,14 @@ end
 class EventCell < UICollectionReusableView
 	def initWithCoder(c)
 		super
-		gradient = CAGradientLayer.layer
-		gradient.frame = bounds
-		gradient.endPoint = [0.5, 0.4]
-		startColor = UIColor.colorWithHue(0.12, saturation:0.12, brightness:0.88, alpha:0.4)
-		sandClear = UIColor.colorWithHue(0.12, saturation:0.12, brightness:1.0, alpha:0.01)
-		# UIColor.colorWithWhite(0.9, alpha: 1.0)
- 		gradient.colors = [startColor.CGColor, sandClear.CGColor]
- 		layer.insertSublayer(gradient, atIndex:0)
+		# gradient = CAGradientLayer.layer
+		# gradient.frame = bounds
+		# gradient.endPoint = [0.5, 0.4]
+		# startColor = UIColor.colorWithHue(0.12, saturation:0.12, brightness:0.88, alpha:0.4)
+		# sandClear = UIColor.colorWithHue(0.12, saturation:0.12, brightness:1.0, alpha:0.01)
+		# # UIColor.colorWithWhite(0.9, alpha: 1.0)
+ 	# 	gradient.colors = [startColor.CGColor, sandClear.CGColor]
+ 	# 	layer.insertSublayer(gradient, atIndex:0)
  		self
 	end
 end
@@ -149,7 +149,7 @@ class UpcomingController < UICollectionViewController
 		load_events
 		collectionView.delegate = self
 		collectionView.dataSource = self
-		collectionView.contentInset = UIEdgeInsetsMake(44,0,0,0)
+		collectionView.contentInset = UIEdgeInsetsMake(38,0,0,0)
 		collectionView.gestureRecognizers[2].addTarget(self, action: :longPress)
 		# self.automaticallyAdjustsScrollViewInsets = false
 		# collectionView.contentInset = UIEdgeInsetsMake(94,0,0,0)
