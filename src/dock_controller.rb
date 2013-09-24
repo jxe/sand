@@ -48,17 +48,17 @@ class DockController < UICollectionViewController
 
 		case path.row
 		when 0
-			imageview.image  = UIImage.imageNamed('exercise.png')
-			personlabel.text = "exercise"
-		when 1
-			imageview.image  = UIImage.imageNamed('creative.png')
-			personlabel.text = "work"
-		when 2
-			imageview.image  = UIImage.imageNamed('peace_and_quiet.jpg')
-			personlabel.text = "quiet"
-		when 3
 			imageview.image  = UIImage.imageNamed('sweet.png')
 			personlabel.text = "add friend"
+		when 1
+			imageview.image  = UIImage.imageNamed('peace_and_quiet.jpg')
+			personlabel.text = "quiet"
+		when 2
+			imageview.image  = UIImage.imageNamed('exercise.png')
+			personlabel.text = "exercise"
+		when 3
+			imageview.image  = UIImage.imageNamed('creative.png')
+			personlabel.text = "work"
 		end
 		cell
 	end
