@@ -31,8 +31,10 @@ class DockController < UICollectionViewController
 		1
 	end
 
+	DEFAULT_DOCK = ["a friend", "sunshine", "exercise", "work", "cooking"]
+
 	def collectionView(cv, numberOfItemsInSection: section)
-		4
+		DEFAULT_DOCK.size
 	end
 
 	def setup_event_cell(cv, path, cell)
@@ -45,21 +47,8 @@ class DockController < UICollectionViewController
 		comboview.layer.shadowRadius = 3
 		comboview.layer.shadowOpacity = 0.3
 		comboview.layer.shadowColor = UIColor.blackColor.CGColor
-
-		case path.row
-		when 0
-			imageview.image  = UIImage.imageNamed('sweet.png')
-			personlabel.text = "add friend"
-		when 1
-			imageview.image  = UIImage.imageNamed('peace_and_quiet.jpg')
-			personlabel.text = "quiet"
-		when 2
-			imageview.image  = UIImage.imageNamed('exercise.png')
-			personlabel.text = "exercise"
-		when 3
-			imageview.image  = UIImage.imageNamed('creative.png')
-			personlabel.text = "work"
-		end
+		personlabel.text = DEFAULT_DOCK[path.row]
+		imageview.image = Event.image_from_title(personlabel.text)
 		cell
 	end
 

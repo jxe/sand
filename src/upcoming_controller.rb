@@ -1,26 +1,5 @@
 LIVE = []
 
-class Paints
-	def self.menu_options
-		['Add friend date', 'Add some exercise', 'Add creative work', 'Add something sweet']
-	end
-
-	def self.from_menu_option o
-		word = o.split[-1]
-		return "creative" if word == 'work'
-		return word
-	end
-
-	def self.prompt word
-		{
-			'exercise' => 'Add exercise', 
-			'creative' => 'Add creative',
-			'sweet'    => 'Add something sweet'
-		}[word]
-	end
-end
-
-
 
 class EventCell < UICollectionReusableView
 	def initWithCoder(c)
@@ -149,7 +128,7 @@ class UpcomingController < UICollectionViewController
 		load_events
 		collectionView.delegate = self
 		collectionView.dataSource = self
-		collectionView.contentInset = UIEdgeInsetsMake(38,0,0,0)
+		collectionView.contentInset = UIEdgeInsetsMake(20,0,0,0)
 		collectionView.gestureRecognizers[2].addTarget(self, action: :longPress)
 		# self.automaticallyAdjustsScrollViewInsets = false
 		# collectionView.contentInset = UIEdgeInsetsMake(94,0,0,0)
@@ -203,6 +182,22 @@ class UpcomingController < UICollectionViewController
 	############
 	# actions
 
+	def highlight_droptarget(p)
+		section = section_for_point(p)
+		return if @highlighted_section == section
+		unhighlight_droptargets if @highlighted_section
+		if section
+			@highlighted_section = section
+			# hightlight
+		end
+	end
+
+	def unhighlight_droptargets
+		if @highlighted_section
+			# unhighlight
+		end
+	end
+
 	def dropped(text, p)
 		section = section_for_point(p)
 		if section
@@ -253,18 +248,6 @@ class UpcomingController < UICollectionViewController
 
 		puts "add_event: #{friend.inspect} #{title.inspect}"
 		Event.add_event(start_time, friend, title)
-	end
-
-	def choose_paint
-		# simple risky brainy active sweet outdoor quiet creative rowdy
-		edit_action
-		canceled = proc{ @paint = nil; done_action }
-		menu Paints.menu_options, canceled do |picked|
-			case picked
-			when 'Add friend date';    paint_with nil; edit_action
-			else paint_with Paints.from_menu_option(picked)
-			end
-		end
 	end
 
 	def done_action
@@ -393,19 +376,17 @@ class UpcomingController < UICollectionViewController
 		path = collectionView.indexPathForItemAtPoint(p)
 
 		if not path
-			# return choose_paint 
-			rect = CGRect.make(origin: p, size: CGSizeMake(1,1))
-			attrs = collectionView.collectionViewLayout.layoutAttributesForElementsInRect(rect)
-			if attrs[0] and section = attrs[0].indexPath.section
-				return add_event_on_date sections[section]
-			else
-				return choose_paint 
-			end
+			return
+			# rect = CGRect.make(origin: p, size: CGSizeMake(1,1))
+			# attrs = collectionView.collectionViewLayout.layoutAttributesForElementsInRect(rect)
+			# if attrs[0] and section = attrs[0].indexPath.section
+			# 	return add_event_on_date sections[section]
+			# end
 		end
 
-		if path.section and not path.row
-			return add_event_on_date sections[path.section]
-		end
+		# if path.section and not path.row
+		# 	return add_event_on_date sections[path.section]
+		# end
     	kind, ev = thing_at_index_path(path)
     	return unless kind == :event and ev
     	options_menu_for_event ev, path
@@ -436,9 +417,9 @@ class UpcomingController < UICollectionViewController
 		comboview = cell.contentView.viewWithTag(112)
 		comboview.layer.masksToBounds = false
 		comboview.layer.cornerRadius = 8
-		comboview.layer.shadowOffset = CGSizeMake(0, 2)
-		comboview.layer.shadowRadius = 3
-		comboview.layer.shadowOpacity = 0.3
+		comboview.layer.shadowOffset = CGSizeMake(0, 0.6)
+		comboview.layer.shadowRadius = 0.4
+		comboview.layer.shadowOpacity = 0.7
 		comboview.layer.shadowColor = UIColor.blackColor.CGColor
 
 		# configure cell
@@ -464,11 +445,6 @@ class UpcomingController < UICollectionViewController
 			return nil unless ev
 			cell = cv.dequeueReusableCellWithReuseIdentifier('Appt', forIndexPath:path)
 			return setup_event_cell(cv, path, cell, ev)
-
-		when :plus
-			cell = cv.dequeueReusableCellWithReuseIdentifier('Plus', forIndexPath:path)
-			cell.contentView.viewWithTag(110).text = @paint ? Paints.prompt(@paint) : 'Add friend date'
-			cell
 		end
 	end
 

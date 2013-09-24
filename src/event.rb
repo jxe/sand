@@ -101,6 +101,26 @@ class Event < Nitron::Model
 		event && event.is_hidden
 	end
 
+	def self.image_from_title(title)
+		case title
+		when /friend/;   return UIImage.imageNamed('friends.jpg')
+		when /sunshine|fresh/; return UIImage.imageNamed('fresh_air.jpg')
+		when /exercise/; return UIImage.imageNamed('exercise.jpg')
+		when /creative|work/; return UIImage.imageNamed('work.jpg')
+		when /cooking/; return UIImage.imageNamed('cooking.jpg')
+		end
+	end
+
+	def self.image_from_time(t)
+		case t
+		when :bfst;   return UIImage.imageNamed('breakfast.png')
+		when :lunch;  return UIImage.imageNamed('lunch.jpg')
+		when :dinner; return UIImage.imageNamed('dinner.jpg')
+		when :night;  return UIImage.imageNamed('night.jpg')
+		end
+	end
+
+
 	def self.image(ev, &callback)
 		if e = find_by_event_identifier(ev.eventIdentifier)
 			return UIImage.alloc.initWithData(e.friend_image) if e.friend_image
@@ -109,14 +129,7 @@ class Event < Nitron::Model
 
 		possibly_fetch_background_image(ev, callback)
 
-		case ev.title
-		when /creative|work/; return UIImage.imageNamed('creative.png')
-		when 'sweet'; return UIImage.imageNamed('sweet.png')
-		when /exercise/; return UIImage.imageNamed('exercise.png')
-		when /quiet/; return UIImage.imageNamed('peace_and_quiet.jpg')
-		end
-
-		nil
+		image_from_title(ev.title) || image_from_time(ev.startDate.time_of_day_label)
 	end
 
 

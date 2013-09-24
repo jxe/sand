@@ -4,8 +4,22 @@ class MainController < UIViewController
 
 	def viewDidLoad
 		view.gestureRecognizers[0].addTarget(self, action: :dragon)
-
+		view.gestureRecognizers[0].delegate = self
+		# toolbar = 
+		# size = CGSizeMake(toolbar.frame.size.width, 80)
+		# origin = CGPointMake(toolbar.frame.origin.x, toolbar.frame.origin.y - 50)
+		# toolbar.frame = CGRect.make(origin: origin, size: size)
 		super
+	end
+
+	def viewWillLayoutSubviews
+		super
+		# view.viewWithTag(211).frame = CGRectMake(0.0, 514.0, 320.0, 54.0)
+	end
+
+	def gestureRecognizerShouldBegin(gr)
+		vel = gr.velocityInView(view)
+        return vel.x.abs < vel.y.abs
 	end
 
 	def dragon
@@ -32,17 +46,28 @@ class MainController < UIViewController
 			# puts "dragging! #{dockFrame.inspect}"
 			return unless @img
 			@img.center = gr.locationInView(view)
+			# upcoming = UpcomingController.instance
+			# point = gr.locationInView(upcoming.collectionView)
+			# upcoming.highlight_droptarget(point)
 
 		when UIGestureRecognizerStateEnded
 			puts "dropped!"
-			return unless @text
 			upcoming = UpcomingController.instance
+			# upcoming.unhighlight_droptargets
+			return unless @text
+
+			if @img
+				@img.removeFromSuperview
+				@img = nil
+			end
+
+			dock = DockController.instance.collectionView
+			dockFrame = dock.superview.superview.frame
+			pt = gr.locationInView(view)
+			return if pt.inside?(dockFrame)
+
 			point = gr.locationInView(upcoming.collectionView)
 			upcoming.dropped(@text, point)
-			return unless @img
-			@img.removeFromSuperview
-			@img = nil
-
 		end
 	end
 

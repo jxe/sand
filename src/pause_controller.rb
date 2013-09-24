@@ -9,4 +9,8 @@ class PauseController < UIViewController
 		sideMenu.showFromPanGesture(sender)
 	end
 
+	def back_to_cal sender = nil
+		sideMenu.show
+	end
+
 end
