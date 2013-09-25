@@ -8,7 +8,7 @@ Motion::Project::App.setup do |app|
   app.seed_id = 'B7P78ULCXS'
   app.identifier = 'org.nxhx.sand'
   app.icons = ['cloudy-dune-57.png', 'cloudy-dune-114.png', 'cloudy-dune-120.png']
-  app.version = '1.0.0'
+  app.version = '1.0.2'
   app.info_plist['FacebookAppID'] = '544764115578692'
   app.info_plist['URL types'] = { 'URL Schemes' => 'fb544764115578692'}
 

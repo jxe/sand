@@ -153,6 +153,9 @@
                                 <rect key="frame" x="0.0" y="504" width="320" height="64"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="0.0" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="64" id="reB-ma-5Hz"/>
+                                </constraints>
                                 <connections>
                                     <segue destination="p8B-Qs-KYj" kind="embed" id="vW8-rP-gPB"/>
                                 </connections>
@@ -166,7 +169,6 @@
                             <constraint firstItem="Xnf-oV-jbb" firstAttribute="bottom" secondItem="d7S-Kh-NDE" secondAttribute="bottom" id="6lr-Xb-Nvj"/>
                             <constraint firstItem="Xnf-oV-jbb" firstAttribute="leading" secondItem="d7S-Kh-NDE" secondAttribute="leading" id="JQq-kT-soV"/>
                             <constraint firstAttribute="trailing" secondItem="Xnf-oV-jbb" secondAttribute="trailing" id="Udz-pS-fqg"/>
-                            <constraint firstItem="Xnf-oV-jbb" firstAttribute="top" secondItem="a3B-ZR-RJC" secondAttribute="bottom" constant="484" id="XMt-pW-KPr"/>
                             <constraint firstAttribute="bottom" secondItem="Xnf-oV-jbb" secondAttribute="bottom" id="hSU-e0-gR3"/>
                             <constraint firstAttribute="bottom" secondItem="3ky-SG-NPY" secondAttribute="bottom" id="hsS-Vc-nB8"/>
                             <constraint firstAttribute="centerX" secondItem="3ky-SG-NPY" secondAttribute="centerX" id="iFY-Yt-MBd"/>
@@ -217,12 +219,6 @@
                                             <nil key="highlightedColor"/>
                                             <color key="shadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <size key="shadowOffset" width="0.0" height="1"/>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                    <integer key="value" value="4"/>
-                                                </userDefinedRuntimeAttribute>
-                                                <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
-                                            </userDefinedRuntimeAttributes>
                                         </label>
                                         <view tag="112" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rpe-4K-03S">
                                             <rect key="frame" x="0.0" y="14" width="73" height="70"/>
@@ -270,21 +266,6 @@
                                                 <constraint firstAttribute="bottom" secondItem="fkV-Nt-gzG" secondAttribute="bottom" id="zme-sc-JQ4"/>
                                             </constraints>
                                             <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                    <integer key="value" value="5"/>
-                                                </userDefinedRuntimeAttribute>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.shadowOpacity">
-                                                    <real key="value" value="0.80000000000000004"/>
-                                                </userDefinedRuntimeAttribute>
-                                                <userDefinedRuntimeAttribute type="size" keyPath="layer.shadowOffset">
-                                                    <size key="value" width="0.0" height="0.69999999999999996"/>
-                                                </userDefinedRuntimeAttribute>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.shadowRadius">
-                                                    <integer key="value" value="1"/>
-                                                </userDefinedRuntimeAttribute>
-                                                <userDefinedRuntimeAttribute type="color" keyPath="layer.shadowColor">
-                                                    <color key="value" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                </userDefinedRuntimeAttribute>
                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="NO"/>
                                             </userDefinedRuntimeAttributes>
                                         </view>
@@ -301,41 +282,6 @@
                                     <constraint firstItem="hjJ-kK-ufR" firstAttribute="top" secondItem="7er-FW-gwm" secondAttribute="top" id="Zqq-zF-zpL"/>
                                     <constraint firstAttribute="bottom" secondItem="rpe-4K-03S" secondAttribute="bottom" id="gmO-yH-pKp"/>
                                     <constraint firstItem="hjJ-kK-ufR" firstAttribute="top" secondItem="7er-FW-gwm" secondAttribute="top" id="lxl-EW-R4O"/>
-                                </constraints>
-                            </collectionViewCell>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Plus" id="Ysi-jn-9hm">
-                                <rect key="frame" x="85" y="44" width="73" height="83"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="0.0" y="0.0" width="73" height="83"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="+" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bo6-ol-nIp">
-                                            <rect key="frame" x="27" y="15" width="19" height="39"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="32"/>
-                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="110" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="73" translatesAutoresizingMaskIntoConstraints="NO" id="T4w-8B-amD">
-                                            <rect key="frame" x="0.0" y="53" width="73" height="25"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="25" id="X93-HQ-AH7"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" type="system" pointSize="11"/>
-                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </view>
-                                <constraints>
-                                    <constraint firstItem="T4w-8B-amD" firstAttribute="trailing" secondItem="Ysi-jn-9hm" secondAttribute="trailing" id="3lF-XF-HCf"/>
-                                    <constraint firstAttribute="bottom" secondItem="T4w-8B-amD" secondAttribute="bottom" constant="6" id="5DK-i6-Tcg"/>
-                                    <constraint firstItem="Bo6-ol-nIp" firstAttribute="centerX" secondItem="T4w-8B-amD" secondAttribute="centerX" id="bez-Z7-NKr"/>
-                                    <constraint firstItem="Bo6-ol-nIp" firstAttribute="top" secondItem="Ysi-jn-9hm" secondAttribute="top" constant="15" id="bmy-qo-Ahd"/>
-                                    <constraint firstItem="T4w-8B-amD" firstAttribute="leading" secondItem="Ysi-jn-9hm" secondAttribute="leading" id="dx7-7x-2yP"/>
                                 </constraints>
                             </collectionViewCell>
                         </cells>
@@ -367,14 +313,6 @@
                                 <constraint firstItem="Fnp-GL-Ebw" firstAttribute="baseline" secondItem="NKx-5n-rhd" secondAttribute="baseline" constant="-2" id="iGN-Am-BAg"/>
                                 <constraint firstAttribute="bottom" secondItem="NKx-5n-rhd" secondAttribute="bottom" id="oTY-7A-QDm"/>
                             </constraints>
-                            <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
-                                    <integer key="value" value="1"/>
-                                </userDefinedRuntimeAttribute>
-                                <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
-                                    <color key="value" red="0.81297862529754639" green="0.81295424699783325" blue="0.81296807527542114" alpha="1" colorSpace="calibratedRGB"/>
-                                </userDefinedRuntimeAttribute>
-                            </userDefinedRuntimeAttributes>
                         </collectionReusableView>
                         <connections>
                             <outlet property="dataSource" destination="jC6-0L-hTW" id="doz-4A-x3b"/>

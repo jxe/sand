@@ -414,13 +414,16 @@ class UpcomingController < UICollectionViewController
 		timelabel = cell.contentView.viewWithTag(101)
 		personlabel = cell.contentView.viewWithTag(102)
 
-		comboview = cell.contentView.viewWithTag(112)
-		comboview.layer.masksToBounds = false
-		comboview.layer.cornerRadius = 8
-		comboview.layer.shadowOffset = CGSizeMake(0, 0.6)
-		comboview.layer.shadowRadius = 0.4
-		comboview.layer.shadowOpacity = 0.7
-		comboview.layer.shadowColor = UIColor.blackColor.CGColor
+		l = cell.contentView.viewWithTag(112).layer
+		l.masksToBounds = false
+		l.cornerRadius = 8
+		l.shadowOffset = CGSizeMake(0, 0.6)
+		l.shadowRadius = 0.4
+		l.shadowOpacity = 0.7
+		l.shadowColor = UIColor.blackColor.CGColor
+		l.shadowPath = UIBezierPath.bezierPathWithRoundedRect(l.bounds, cornerRadius:8).CGPath;
+		# comboview.layer.shouldRasterize = true
+
 
 		# configure cell
 		timelabel.text   = ev.startDate.time_of_day_label.sub('_', ' ').upcase
