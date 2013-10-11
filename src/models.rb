@@ -11,9 +11,37 @@ class NSDate
 		lunch: 12...14,
 		aft: 14...16,
 		hpy_hr: 16...18,
-		dinner: 18...21,
+		eve: 18...21,
 		night: 21...24
 	}
+
+	HOUR_RANGES_REV = {
+		0 => :predawn,
+		1 => :predawn,
+		2 => :predawn,
+		3 => :predawn,
+		4 => :predawn,
+		5 => :dawn,
+		6 => :dawn,
+		7 => :dawn,
+		8 => :bfst,
+		9 => :bfst,
+		10 => :morn,
+		11 => :morn,
+		12 => :lunch,
+		13 => :lunch,
+		14 => :aft,
+		15 => :aft,
+		16 => :hpy_hr,
+		17 => :hpy_hr,
+		18 => :eve,
+		19 => :eve,
+		20 => :eve,
+		21 => :night,
+		22 => :night,
+		23 => :night
+	}
+
 	def day_of_week_label
 		return "TODAY" if today?
 		return "TOMORROW" if same_day?(NSDate.tomorrow)
@@ -21,8 +49,6 @@ class NSDate
 	end
 
 	def time_of_day_label
-			HOUR_RANGES.each do |k,v|
-			return k if v.include? hour
-		end
+		HOUR_RANGES_REV[hour]
 	end
 end

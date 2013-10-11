@@ -5,7 +5,6 @@ class Event < Nitron::Model
 	# calendar
 
 	def self.add_event start_time, friend, title = nil
-		puts "add_event: #{start_time.inspect} #{friend.inspect} #{title.inspect}"
 		@event_store ||= EKEventStore.alloc.init
 		ev = EKEvent.eventWithEventStore(@event_store)
 		ev.startDate = start_time
@@ -15,6 +14,7 @@ class Event < Nitron::Model
 		error = Pointer.new('@')
 		@event_store.saveEvent(ev, span:EKSpanThisEvent, commit:true, error:error)
 		Event.assign(ev.eventIdentifier, friend) if friend
+		ev
 	end
 
 	def self.fetch_events start_date, end_date, cb = nil
@@ -54,6 +54,7 @@ class Event < Nitron::Model
 	end
 
 	def self.assign event_id, person
+		puts "assign: eventIdentifier: #{event_id}, friend_ab_record_id: #{person.uid}"
 		post event_id,
 			friend_ab_record_id: person.uid,
 			friend_name: person.composite_name,
@@ -80,6 +81,49 @@ class Event < Nitron::Model
 		return !event || !event.friend_ab_record_id
 	end
 
+	def self.suggestions_url(ev, loc)
+		NSLog "pushing street address: #{loc}"
+		# loc = loc.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+		# loc2 = CFURLCreateStringByAddingPercentEscapes(nil, loc, nil, "!*'();:@&=+$,/?%#[]", KCFStringEncodingUTF8)
+		loc2 = loc.gsub("\n"," ").sub(" United States", "").gsub(/\u200E|\s/, '%20')
+		NSLog "%@", "converted to: #{loc2}"
+		raw = raw_suggestions_url(ev)
+		raw.sub("%%", loc2.strip)
+	end
+
+	def self.raw_suggestions_url(ev)
+		time_label = ev.startDate.time_of_day_label
+
+		case ev.title
+		when /sunshine|exercise|quiet/
+			return "http://www.yelp.com/search?find_desc=park+#{ev.title}&find_loc=%%"
+		when /work/
+			return "http://www.yelp.com/search?find_desc=cafe+working&find_loc=%%"
+		when /cooking/
+			return "http://www.pinterest.com/fooddotcom/recipe-of-the-day/"
+		end
+
+		case time_label
+		when :bfst
+			return "http://www.yelp.com/search?find_desc=breakfast&find_loc=%%"
+		when :lunch
+			return "http://www.yelp.com/search?find_desc=lunch&find_loc=%%"
+		when :eve
+			return "http://www.yelp.com/search?find_desc=dinner&find_loc=%%"
+		when :night
+			return "http://www.yelp.com/search?find_desc=bar&find_loc=%%"
+		end
+
+		return "http://www.yelp.com"
+	end
+
+	def self.friend_ab_record_id(ev)
+		puts "event_identifier: #{ev.eventIdentifier}"
+		event = find_by_event_identifier(ev.eventIdentifier)
+		puts "event: #{event.inspect}"
+		return event && event.friend_ab_record_id
+	end
+
 	def self.refresh(ev)
 		event = find_by_event_identifier(ev.eventIdentifier)
 		event and event.destroy
@@ -103,20 +147,26 @@ class Event < Nitron::Model
 
 	def self.image_from_title(title)
 		case title
-		when /friend/;   return UIImage.imageNamed('friends.jpg')
-		when /sunshine|fresh/; return UIImage.imageNamed('fresh_air.jpg')
-		when /exercise/; return UIImage.imageNamed('exercise.jpg')
-		when /creative|work/; return UIImage.imageNamed('work.jpg')
-		when /cooking/; return UIImage.imageNamed('cooking.jpg')
+		when /friend/;         return UIImage.imageNamed('friends.jpg')
+		when /appt/;          return UIImage.imageNamed('q.png')
+
+		when /cooking/;        return UIImage.imageNamed('img/activities/cooking.jpg')
+		when /exercise/;       return UIImage.imageNamed('img/activities/exercise.jpg')
+		when /sunshine|fresh/; return UIImage.imageNamed('img/activities/sunshine.jpg')
+		when /creative|work/;  return UIImage.imageNamed('img/activities/work.jpg')
+		when /quiet/;  return UIImage.imageNamed('quiet.jpg')
 		end
 	end
 
 	def self.image_from_time(t)
 		case t
-		when :bfst;   return UIImage.imageNamed('breakfast.png')
-		when :lunch;  return UIImage.imageNamed('lunch.jpg')
-		when :dinner; return UIImage.imageNamed('dinner.jpg')
-		when :night;  return UIImage.imageNamed('night.jpg')
+		when :bfst;   return UIImage.imageNamed('img/tod/breakfast.jpg')
+		when :lunch;  return UIImage.imageNamed('img/tod/lunch.jpg')
+		when :eve;    return UIImage.imageNamed('img/tod/evening.jpg')
+		when :night;  return UIImage.imageNamed('img/tod/night.jpg')
+		when :hpy_hr;  return UIImage.imageNamed('img/tod/happy_hour.jpg')
+		when :dawn;  return UIImage.imageNamed('img/tod/dawn.jpg')
+		when :aft;  return UIImage.imageNamed('img/tod/afternoon.jpg')
 		end
 	end
 
@@ -124,10 +174,9 @@ class Event < Nitron::Model
 	def self.image(ev, &callback)
 		if e = find_by_event_identifier(ev.eventIdentifier)
 			return UIImage.alloc.initWithData(e.friend_image) if e.friend_image
-			return nil if e.friend_ab_record_id
 		end
 
-		possibly_fetch_background_image(ev, callback)
+		possibly_fetch_background_image(ev, callback) unless e and e.friend_ab_record_id and !e.friend_image
 
 		image_from_title(ev.title) || image_from_time(ev.startDate.time_of_day_label)
 	end

@@ -31,7 +31,16 @@ class DockController < UICollectionViewController
 		1
 	end
 
-	DEFAULT_DOCK = ["a friend", "sunshine", "exercise", "work", "cooking"]
+	DEFAULT_DOCK = [
+		"appt",
+		"a friend", 
+
+		"quiet", 
+		"exercise", 
+		"cooking",
+		"sunshine", 
+		"work", 
+	]
 
 	def collectionView(cv, numberOfItemsInSection: section)
 		DEFAULT_DOCK.size

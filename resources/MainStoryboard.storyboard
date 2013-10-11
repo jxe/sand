@@ -8,7 +8,6 @@
         <!--Pause Controller-->
         <scene sceneID="SSW-HB-VZ7">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="8Nt-fU-jzl" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="Tutorial" id="f1K-PP-Gke" customClass="PauseController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ypu-8h-W6r"/>
@@ -63,6 +62,7 @@
                     <toolbarItems/>
                     <nil key="simulatedBottomBarMetrics"/>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8Nt-fU-jzl" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-828" y="351"/>
         </scene>
@@ -192,7 +192,7 @@
                     <collectionView key="view" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" id="xa1-yV-bGb">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="0.9498564600944519" green="0.9495854377746582" blue="0.87882000207901001" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" red="0.96237200498580933" green="0.96385872364044189" blue="0.91415989398956299" alpha="1" colorSpace="calibratedRGB"/>
                         <gestureRecognizers/>
                         <inset key="scrollIndicatorInsets" minX="0.0" minY="20" maxX="0.0" maxY="0.0"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="2" id="DHo-br-aXn">
@@ -339,6 +339,19 @@
             </objects>
             <point key="canvasLocation" x="-1312" y="351"/>
         </scene>
+        <!--Page View Controller-->
+        <scene sceneID="qrS-ay-b6P">
+            <objects>
+                <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="pageCurl" navigationOrientation="horizontal" spineLocation="min" id="Ric-IA-Kq3" sceneMemberID="viewController">
+                    <toolbarItems>
+                        <barButtonItem systemItem="compose" id="3yW-VJ-yFK"/>
+                    </toolbarItems>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                </pageViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="C4t-Xe-Dm1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2134" y="1583"/>
+        </scene>
         <!--Dock Controller-->
         <scene sceneID="12x-5U-azS">
             <objects>
@@ -351,11 +364,11 @@
                             <size key="itemSize" width="57" height="57"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="7" minY="3" maxX="7" maxY="1"/>
+                            <inset key="sectionInset" minX="7" minY="2" maxX="7" maxY="2"/>
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Appt" id="M3M-fe-6Y3">
-                                <rect key="frame" x="7" y="5" width="57" height="57"/>
+                                <rect key="frame" x="7" y="4" width="57" height="57"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="57" height="57"/>
@@ -365,7 +378,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="57" height="57"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" alpha="0.55000000000000004" tag="100" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6p8-Fp-F8C">
+                                                <imageView userInteractionEnabled="NO" alpha="0.65000000000000002" tag="100" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6p8-Fp-F8C">
                                                     <rect key="frame" x="0.0" y="0.0" width="57" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <userDefinedRuntimeAttributes>
@@ -383,7 +396,7 @@
                                                     <fontDescription key="fontDescription" name="Copperplate" family="Copperplate" pointSize="9"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
-                                                    <color key="shadowColor" white="1" alpha="0.83000000000000007" colorSpace="calibratedWhite"/>
+                                                    <color key="shadowColor" red="1" green="0.99294847249984741" blue="0.69119369983673096" alpha="0.70999999999999996" colorSpace="calibratedRGB"/>
                                                     <size key="shadowOffset" width="0.0" height="1"/>
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -462,7 +475,6 @@
         <!--Pause Controller-->
         <scene sceneID="3V4-4b-ebp">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="GvB-PC-yqC" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="Thanks" id="cMH-p1-cyT" customClass="PauseController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="36k-LU-DKA"/>
@@ -517,6 +529,7 @@
                     <toolbarItems/>
                     <nil key="simulatedBottomBarMetrics"/>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="GvB-PC-yqC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-370" y="351"/>
         </scene>

@@ -1,10 +1,86 @@
 QUICK
 
-- test in ios6 sim
+v0.3 [1h cleanup]
+* (5m) better QUIET image
+* (10m) when ekeventviewdelegate indicates a deletion, do animated delete
+* longpress on item initiates drag
+* if drag ends off section, hide/delete
+
+
+v0.4
+* longtap on dock item opens detail
+* placeholder detail screen for dock item
+
+
+v0.3.1
+* (5m) push webView even before we have location info and URL..
+* (5m) cache recent locations and reverse geocodes
+* (5m) image credits linked from credits page
+* (20m) better app store screenshots
+* (30m) CHECK: deleting event using native EKEventEditViewController interface causes fuck up
+* (15m) figure out how to get sidemenu to go right to auth page, and auth page goes to tutorial page (in AuthenticationController.button_pressed)
+
+
+
+
+
+
+v0.4.0 (1h!!)
+- move datamodel functions into CalendarDisplayModel
+- move most Event.* functions into CalendarDisplayModel
+- move shadow config for appts into AppointmentCell
+- move model.rb stuff into CalendarDisplayModel
+- move some Event.rb stuff to DockItem.rb with DockItem.from_event(ev)
+- remove nitron and sugarcube
+* (30m) design droptarget look
+* (15m) time_of_day_for_point(p)
+* (5m) switch_section_droptargets
+* (5m) switch_tod_droptargets
+* (10m) extra_droptargets_when_hovering_tod(tod)
+* @current_droptargets
+* (20m) rows open on hover
+
+
+v0.4.1
+* tap and hold to drag off an appt
+* initiate drag from upcomingview longtap
+* hide cell being dragged, leave gap
+* knows to remove from source on dropped()
+* actually edits event instead of making a new one
+
+v0.4.2
+- drop targets highlight
+- rebuild cells, removing superview, using layers more
+
+v0.5
+* done check mark and LWL+what did you do q
+* rate appts by tapping and holding
+
+v0.6
+* Fetch fb friend faces when addr book face blank and fb?
+* Friend faces and event images separate core data fields
+* Core data migration
+- refetch person photos periodically
+* check on calendar update if need for complete redraw or what
+
+v0.7
+- weather w/ forecast or whatever (1h)
+
+v0.8
+* dock icons are editable (name, photo, suggs_url)
+* Dock clicks have menu
+* Plus on doc
+* Add friends to dock 
+
+v0.9
 - needs better splash screen
+* option to show allday events
+* UIDynamics failed drops fall off screen
+* UIDynamics successful drops spring into place
 
-
-LATER
-- weather
-- my own dev acct
-- in app store
+v1.0
+* GLDB suggestions included in share (2h)
+- deploy gldb to heroku incl scratch (1h)
+- fix up gldb scratch to work on firebase and hammer.js (1h)
+* recommended activities .js window
+* longTap in suggestions webview does some kind of share
