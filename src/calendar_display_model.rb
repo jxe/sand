@@ -1,7 +1,61 @@
 class CalendarDisplayModel
 
-	##################################################################
-	# mappings between indexpaths, sections, rows, and calendar events
+	##############################################
+	# mappings between indexpaths, sections, rows,
+	# calendar events, droptarget placeholders
+
+	attr_reader :open_section
+	TIMES = %w{ bfst morn lunch aft hpy_hr eve night }
+
+	def open_up_section s
+		return if @open_section == s
+		puts "@open_section: #{@open_section}; s: #{s}"
+		closed = @open_section ? placeholder_positions : []
+		@open_section = s
+		opened = @open_section ? placeholder_positions : []
+		puts "opened: #{opened.inspect}; closed: #{closed.inspect}"
+		return opened, closed
+	end
+
+	def things_in_section n
+		events = events_on_date(sections[n])
+		n == @open_section ? TIMES + events : events
+	end
+
+	def placeholder_positions
+		return [] unless @open_section
+		p = []
+		things_in_section(@open_section).each_with_index do |t,i|
+			puts "evaluating: #{[t,i].inspect}"
+			p << i if String === t
+		end
+		puts "returning: #{p.inspect}"
+		p.map{ |p| [@open_section,p].nsindexpath }
+	end
+
+	def thing_at_index_path p
+		xs = things_in_section p.section
+		x = xs[p.row]
+		case x
+		when String
+			return :placeholder, x
+		else
+			return :event, x
+		end
+	end
+
+	def index_path_for_event(ev)
+		id = ev.eventIdentifier
+		date = ev.startDate.start_of_day
+		section = sections.index(date)
+		xs = things_in_section section
+		row = xs.index{ |e| EKEvent === e && e.eventIdentifier == id }
+		[section,row].nsindexpath
+	end
+
+	def item_count_for_section n
+		things_in_section(n).size
+	end
 
 	def timeframe
 		dates = timeframe_dates
@@ -35,18 +89,6 @@ class CalendarDisplayModel
 		@events_by_day[d] || []
 	end
 
-	def item_count_for_section n
-		date = sections[n]
-		events = @events_by_day[date] || []
-		events_on_date(date).length
-	end
-
-	def thing_at_index_path p
-		date = sections[p.section]
-		ev = events_on_date(date)[p.row]
-		return :event, ev if ev
-	end
-
 	def add_event(start_time, person, text)
 		ev = Event.add_event(start_time, person, text)
 		id = ev.eventIdentifier
@@ -67,14 +109,6 @@ class CalendarDisplayModel
   		else
   			Event.hide_matching(ev)
   		end
-	end
-
-	def index_path_for_event(ev)
-		id = ev.eventIdentifier
-		date = ev.startDate.start_of_day
-		section = sections.index(date)
-		row = events_on_date(date).index{ |e| e.eventIdentifier == id }
-		[section,row].nsindexpath
 	end
 
 end

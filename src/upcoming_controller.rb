@@ -49,7 +49,16 @@ class UpcomingController < UICollectionViewController
 	############
 	# dropped
 
+	def dragwatcher
+		@map = onscreen_section_map
+		@over_section = nil
+		self
+	end
+
 	def over(text, p)
+		y = p.y.to_i
+		s = @map[y]
+		open_up_section s
 		# over_section = section_for_point(p)
 		# over_time_of_day = time_of_day_for_point(p)
 		# return if same same
@@ -66,12 +75,48 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def dropped(text, p)
-		return unless date = date_for_point(p)
+		return dragCanceled unless date = date_for_point(p)
+		path = collectionView.indexPathForItemAtPoint(p)
+    	kind, ev = @display_model.thing_at_index_path(path)
+    	return dragCanceled unless kind == :placeholder
+    	range = NSDate::HOUR_RANGES[ev.to_sym]
+    	return dragCanceled unless range
+		start_time = date + range.begin.hours	
 		with_person_and_title_for_droptext text do |person, title|
-			ask_time_for_date date do |start_time|
-				add_event_at_time start_time, title, person
+			if title
+				ev, path = @display_model.add_event start_time, person, text
+				open_up_section nil, lambda{
+					collectionView.insertItemsAtIndexPaths([path])			
+				}
+			else
+				dragCanceled
 			end
 		end
+	end
+
+	def add_event_at_time start_time, text, person
+		ev, path = @display_model.add_event start_time, person, text
+		collectionView.insertItemsAtIndexPaths([path])
+	end
+
+	# no effect if it's open already
+	def open_up_section s, cb = nil
+		return if s == @display_model.open_section
+		return if @opening_section
+		@opening_section = true
+		collectionView.performBatchUpdates(lambda{
+			opened, closed = @display_model.open_up_section s
+			collectionView.insertItemsAtIndexPaths(opened)
+			collectionView.deleteItemsAtIndexPaths(closed)
+			cb && cb.call
+		}, completion: lambda{ |x|
+			@map = onscreen_section_map
+			@opening_section = false
+		})
+	end
+
+	def dragCanceled
+		open_up_section nil
 	end
 
 	def with_person_and_title_for_droptext text, &cb
@@ -83,21 +128,16 @@ class UpcomingController < UICollectionViewController
 			alert.show			
 		when /friend/
 			AddressBook.pick :autofocus_search => true do |person|
-				cb.call(person, person.composite_name) if person
+				if person
+					cb.call(person, person.composite_name) 
+				else
+					cb.call(nil, nil)
+				end
 			end
 		else
 			cb.call(nil, text)
 		end
 	end
-
-	def ask_time_for_date date, &cb
-		menu %w{ bfst morn lunch aft hpy_hr eve night } do |pressed|
-			next unless range = NSDate::HOUR_RANGES[pressed.to_sym]
-			start_time = date + range.begin.hours
-			cb.call(start_time)
-		end
-	end
-
 
 
 	###################
@@ -197,6 +237,24 @@ class UpcomingController < UICollectionViewController
 		section && @display_model.sections[section]
 	end
 
+	def top_of_header_for_section i
+		collectionView.layoutAttributesForSupplementaryElementOfKind(UICollectionElementKindSectionHeader, atIndexPath: [i].nsindexpath).frame.origin.y
+	end
+
+	def onscreen_section_map
+		top = collectionView.contentOffset.y.to_i
+		bottom = top + collectionView.frame.height.to_i
+		map = {}
+		next_section = 0
+
+		(top..bottom).each do |y|
+			next_section += 1 unless top_of_header_for_section(next_section) > y
+			map[y] = next_section - 1
+		end
+
+		map
+	end
+
 	def section_for_point(p)
 		prev_top = nil
 		(0..@display_model.sections.size-1).each do |i|
@@ -215,11 +273,6 @@ class UpcomingController < UICollectionViewController
 		collectionView.deleteItemsAtIndexPaths([path])
 	end
 
-	def add_event_at_time start_time, text, person
-		ev, path = @display_model.add_event start_time, person, text
-		collectionView.insertItemsAtIndexPaths([path])
-	end
-
 	def numberOfSectionsInCollectionView(cv)
 		@display_model.sections.length
 	end
@@ -228,26 +281,14 @@ class UpcomingController < UICollectionViewController
 		@display_model.item_count_for_section section
 	end
 
-	# TODO: move shadow stuff into a custom cell initializer
-	def setup_event_cell(cv, path, cell, ev)
-		imageview = cell.contentView.viewWithTag(100)
-		timelabel = cell.contentView.viewWithTag(101)
-		personlabel = cell.contentView.viewWithTag(102)
-
-		timelabel.text   = ev.startDate.time_of_day_label
-		imageview.image  = Event.image(ev){ cv.reloadItemsAtIndexPaths([path]) }
-		personlabel.text = ev.title
-		cell
-	end
-
 	def collectionView(cv, cellForItemAtIndexPath: path)
 		kind, ev = @display_model.thing_at_index_path path
+		cell = cv.dequeueReusableCellWithReuseIdentifier('Appt', forIndexPath:path)
 		case kind
-		when :event
-			return nil unless ev
-			cell = cv.dequeueReusableCellWithReuseIdentifier('Appt', forIndexPath:path)
-			return setup_event_cell(cv, path, cell, ev)
+		when :event;       cell.as_event(ev, cv, path)
+		when :placeholder; cell.as_placeholder(ev)
 		end
+		cell
 	end
 
 	def collectionView(cv, viewForSupplementaryElementOfKind:kind, atIndexPath:path)

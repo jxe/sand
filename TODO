@@ -1,5 +1,14 @@
 QUICK
 
+- in over, detect section changes and NSLog
+- cdm has a notion of a role being open or closed, and opening a new one closes the other
+- cdm knows where placeholders should be for open rows
+- over() opens and closes rows, and adds and removes placeholders
+- dropped closes any open row AND adds and removes thing, all in animation block
+- time_of_day_for_point(p) works
+- get rid of ask_time_for_date()
+
+
 v0.4
 * (10m) extra_droptargets_when_hovering_tod(tod)
 * (15m) time_of_day_for_point(p)
@@ -31,6 +40,7 @@ v0.4
 
 
 v0.4.0 (1h!!)
+- move some Event.* stuff to DeviceCalendar and CalendarDatabase
 - move most Event.* functions into CalendarDisplayModel
 - move some Event.rb stuff to DockItem.rb with DockItem.from_event(ev)
 - remove nitron and sugarcube

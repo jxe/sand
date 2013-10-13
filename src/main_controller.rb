@@ -14,6 +14,7 @@ class MainController < UIViewController
 
 	def viewWillLayoutSubviews
 		super
+		@upcoming ||= UpcomingController.instance
 		# view.viewWithTag(211).frame = CGRectMake(0.0, 514.0, 320.0, 54.0)
 	end
 
@@ -39,6 +40,7 @@ class MainController < UIViewController
 			@img = UIImageView.alloc.initWithImage(imgview.image)
 			@img.frame = CGRect.make(origin: @img.frame.origin, size: CGSizeMake(80,80))
 			@img.center = gr.locationInView(view)
+			@dragwatcher = @upcoming.dragwatcher
 			view.addSubview(@img)
 
 		when UIGestureRecognizerStateChanged
@@ -46,13 +48,14 @@ class MainController < UIViewController
 			# puts "dragging! #{dockFrame.inspect}"
 			return unless @img
 			@img.center = gr.locationInView(view)
+			point = gr.locationInView(@upcoming.collectionView)
+			@dragwatcher.over(@text, point)
 			# upcoming = UpcomingController.instance
 			# point = gr.locationInView(upcoming.collectionView)
 			# upcoming.highlight_droptarget(point)
 
 		when UIGestureRecognizerStateEnded
 			puts "dropped!"
-			upcoming = UpcomingController.instance
 			# upcoming.unhighlight_droptargets
 			return unless @text
 
@@ -64,10 +67,10 @@ class MainController < UIViewController
 			dock = DockController.instance.collectionView
 			dockFrame = dock.superview.superview.frame
 			pt = gr.locationInView(view)
-			return if pt.inside?(dockFrame)
+			return @upcoming.dragCanceled if pt.inside?(dockFrame)
 
-			point = gr.locationInView(upcoming.collectionView)
-			upcoming.dropped(@text, point)
+			point = gr.locationInView(@upcoming.collectionView)
+			@upcoming.dropped(@text, point)
 		end
 	end
 
