@@ -81,6 +81,63 @@ class Event < Nitron::Model
 		return !event || !event.friend_ab_record_id
 	end
 
+	def self.friend_ab_record_id(ev)
+		puts "event_identifier: #{ev.eventIdentifier}"
+		event = find_by_event_identifier(ev.eventIdentifier)
+		puts "event: #{event.inspect}"
+		return event && event.friend_ab_record_id
+	end
+
+	def self.refresh(ev)
+		event = find_by_event_identifier(ev.eventIdentifier)
+		event and event.destroy
+	end
+
+
+	def self.delete!(ev)
+		@event_store ||= EKEventStore.alloc.init
+		error = Pointer.new('@')
+		@event_store.removeEvent(ev, span:EKSpanThisEvent, commit:true, error:error)
+	end
+
+	def self.is_hidden? event_id
+		event = find_by_event_identifier(event_id)
+		event && event.is_hidden
+	end
+
+
+
+	##############################
+	#### MOVE TO DISPLAYMODEL ####
+
+	def self.image_from_time(t)
+		case t
+		when :bfst;   return UIImage.imageNamed('img/tod/breakfast.jpg')
+		when :lunch;  return UIImage.imageNamed('img/tod/lunch.jpg')
+		when :eve;    return UIImage.imageNamed('img/tod/evening.jpg')
+		when :night;  return UIImage.imageNamed('img/tod/night.jpg')
+		when :hpy_hr;  return UIImage.imageNamed('img/tod/happy_hour.jpg')
+		when :dawn;  return UIImage.imageNamed('img/tod/dawn.jpg')
+		when :aft;  return UIImage.imageNamed('img/tod/afternoon.jpg')
+		end
+	end
+
+
+	def self.image(ev, &callback)
+		if e = find_by_event_identifier(ev.eventIdentifier)
+			return UIImage.alloc.initWithData(e.friend_image) if e.friend_image
+		end
+
+		possibly_fetch_background_image(ev, callback) unless e and e.friend_ab_record_id and !e.friend_image
+
+		image_from_title(ev.title) || image_from_time(ev.startDate.time_of_day_label)
+	end
+
+
+
+	#############################
+	#### MOVE TO DOCKITEM.RB ####
+
 	def self.suggestions_url(ev, loc)
 		NSLog "pushing street address: #{loc}"
 		# loc = loc.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
@@ -117,32 +174,8 @@ class Event < Nitron::Model
 		return "http://www.yelp.com"
 	end
 
-	def self.friend_ab_record_id(ev)
-		puts "event_identifier: #{ev.eventIdentifier}"
-		event = find_by_event_identifier(ev.eventIdentifier)
-		puts "event: #{event.inspect}"
-		return event && event.friend_ab_record_id
-	end
-
-	def self.refresh(ev)
-		event = find_by_event_identifier(ev.eventIdentifier)
-		event and event.destroy
-	end
-
-
-	def self.delete!(ev)
-		@event_store ||= EKEventStore.alloc.init
-		error = Pointer.new('@')
-		@event_store.removeEvent(ev, span:EKSpanThisEvent, commit:true, error:error)
-	end
-
 	def self.painted?(ev)
 		return %{ creative exercise sweet }.include?(ev.title || '?')
-	end
-
-	def self.is_hidden? event_id
-		event = find_by_event_identifier(event_id)
-		event && event.is_hidden
 	end
 
 	def self.image_from_title(title)
@@ -156,29 +189,6 @@ class Event < Nitron::Model
 		when /creative|work/;  return UIImage.imageNamed('img/activities/work.jpg')
 		when /quiet/;  return UIImage.imageNamed('quiet.jpg')
 		end
-	end
-
-	def self.image_from_time(t)
-		case t
-		when :bfst;   return UIImage.imageNamed('img/tod/breakfast.jpg')
-		when :lunch;  return UIImage.imageNamed('img/tod/lunch.jpg')
-		when :eve;    return UIImage.imageNamed('img/tod/evening.jpg')
-		when :night;  return UIImage.imageNamed('img/tod/night.jpg')
-		when :hpy_hr;  return UIImage.imageNamed('img/tod/happy_hour.jpg')
-		when :dawn;  return UIImage.imageNamed('img/tod/dawn.jpg')
-		when :aft;  return UIImage.imageNamed('img/tod/afternoon.jpg')
-		end
-	end
-
-
-	def self.image(ev, &callback)
-		if e = find_by_event_identifier(ev.eventIdentifier)
-			return UIImage.alloc.initWithData(e.friend_image) if e.friend_image
-		end
-
-		possibly_fetch_background_image(ev, callback) unless e and e.friend_ab_record_id and !e.friend_image
-
-		image_from_title(ev.title) || image_from_time(ev.startDate.time_of_day_label)
 	end
 
 

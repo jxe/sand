@@ -60,13 +60,8 @@ class AppointmentViewController < EKEventViewController
 		self
 	end
 
-	def event_menu_action
-		@superdelegate.show_event_menu(event, self)
-	end
-
 	def viewWillAppear(animated = true)
 		super
-		# navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemCompose, target:self, action: :event_menu_action))
 	end
 
 	def viewDidLoad
