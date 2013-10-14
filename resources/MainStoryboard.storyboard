@@ -139,22 +139,12 @@
                                     <segue destination="jC6-0L-hTW" kind="embed" id="wkY-ak-blc"/>
                                 </connections>
                             </containerView>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" tag="211" contentMode="bottom" translatesAutoresizingMaskIntoConstraints="NO" id="3ky-SG-NPY">
-                                <rect key="frame" x="0.0" y="514" width="320" height="54"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="54" id="pKl-02-iCd"/>
-                                    <constraint firstAttribute="width" constant="320" id="zRd-5g-xz8"/>
-                                </constraints>
-                                <items/>
-                                <color key="barTintColor" red="0.41569837927818298" green="0.0" blue="0.012244252488017082" alpha="0.92000000000000004" colorSpace="calibratedRGB"/>
-                            </toolbar>
                             <containerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xnf-oV-jbb">
-                                <rect key="frame" x="0.0" y="504" width="320" height="64"/>
+                                <rect key="frame" x="0.0" y="501" width="320" height="67"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="0.0" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="64" id="reB-ma-5Hz"/>
+                                    <constraint firstAttribute="height" constant="67" id="reB-ma-5Hz"/>
                                 </constraints>
                                 <connections>
                                     <segue destination="p8B-Qs-KYj" kind="embed" id="vW8-rP-gPB"/>
@@ -170,10 +160,7 @@
                             <constraint firstItem="Xnf-oV-jbb" firstAttribute="leading" secondItem="d7S-Kh-NDE" secondAttribute="leading" id="JQq-kT-soV"/>
                             <constraint firstAttribute="trailing" secondItem="Xnf-oV-jbb" secondAttribute="trailing" id="Udz-pS-fqg"/>
                             <constraint firstAttribute="bottom" secondItem="Xnf-oV-jbb" secondAttribute="bottom" id="hSU-e0-gR3"/>
-                            <constraint firstAttribute="bottom" secondItem="3ky-SG-NPY" secondAttribute="bottom" id="hsS-Vc-nB8"/>
-                            <constraint firstAttribute="centerX" secondItem="3ky-SG-NPY" secondAttribute="centerX" id="iFY-Yt-MBd"/>
                             <constraint firstItem="Xnf-oV-jbb" firstAttribute="trailing" secondItem="d7S-Kh-NDE" secondAttribute="trailing" id="tek-k8-lW0"/>
-                            <constraint firstAttribute="bottom" secondItem="3ky-SG-NPY" secondAttribute="bottom" id="xGq-H2-NGt"/>
                         </constraints>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="ShW-lK-WCm" appends="YES" id="1yV-FR-2NB"/>
@@ -384,18 +371,18 @@
             <objects>
                 <collectionViewController autoresizesArchivedViewToFullSize="NO" id="p8B-Qs-KYj" customClass="DockController" sceneMemberID="viewController">
                     <collectionView key="view" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" id="c2u-Eu-UIs">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="67"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93777579069137573" green="0.8326680064201355" blue="0.24395006895065308" alpha="0.0" colorSpace="calibratedRGB"/>
                         <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="8" minimumInteritemSpacing="0.0" id="U2H-Uc-SeA">
                             <size key="itemSize" width="57" height="57"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="7" minY="2" maxX="7" maxY="2"/>
+                            <inset key="sectionInset" minX="7" minY="4" maxX="7" maxY="2"/>
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Appt" id="M3M-fe-6Y3">
-                                <rect key="frame" x="7" y="4" width="57" height="57"/>
+                                <rect key="frame" x="7" y="6" width="57" height="57"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="57" height="57"/>

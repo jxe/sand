@@ -17,9 +17,9 @@ class DockController < UICollectionViewController
 
 		gradient = CAGradientLayer.layer
 		gradient.frame = collectionView.bounds
-		gradient.endPoint = [0.5, 0.4]
-		startColor = UIColor.colorWithHue(0.12, saturation:0.12, brightness:0.38, alpha:0.6)
-		sandClear = UIColor.colorWithHue(0.12, saturation:0.12, brightness:1.0, alpha:0.0)
+		gradient.endPoint = [0.5, 0.3]
+		startColor = UIColor.colorWithHue(0.12, saturation:0.32, brightness:0.28, alpha:0.95)
+		sandClear = UIColor.colorWithHue(0.12, saturation:0.22, brightness:1.0, alpha:0.6)
 		# UIColor.colorWithWhite(0.9, alpha: 1.0)
 		gradient.colors = [startColor.CGColor, sandClear.CGColor]
 
@@ -58,12 +58,14 @@ class DockController < UICollectionViewController
 		imageview = cell.contentView.viewWithTag(100)
 		personlabel = cell.contentView.viewWithTag(102)
 		comboview = cell.contentView.viewWithTag(112)
-		comboview.layer.masksToBounds = false
-		comboview.layer.cornerRadius = 8
-		comboview.layer.shadowOffset = CGSizeMake(0, 2)
-		comboview.layer.shadowRadius = 3
-		comboview.layer.shadowOpacity = 0.3
-		comboview.layer.shadowColor = UIColor.blackColor.CGColor
+		l = comboview.layer
+		l.masksToBounds = false
+		l.cornerRadius = 8
+		l.shadowOffset = CGSizeMake(0, 2)
+		l.shadowRadius = 1.8
+		l.shadowOpacity = 0.7
+		l.shadowColor = UIColor.blackColor.CGColor
+		l.shadowPath = UIBezierPath.bezierPathWithRoundedRect(l.bounds, cornerRadius:8).CGPath
 		personlabel.text = DEFAULT_DOCK[path.row]
 		imageview.image = Event.image_from_title(personlabel.text)
 		cell
