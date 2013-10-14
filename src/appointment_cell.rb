@@ -19,13 +19,4 @@ class AppointmentCell < UICollectionViewCell
 		personlabel.text = ev.title
 	end
 
-	def as_placeholder(time_of_day)
-		imageview = contentView.viewWithTag(100)
-		timelabel = contentView.viewWithTag(101)
-		personlabel = contentView.viewWithTag(102)
-
-		timelabel.text   = time_of_day
-		imageview.image  =  UIImage.imageNamed('q.png')
-		personlabel.text = time_of_day
-	end
 end

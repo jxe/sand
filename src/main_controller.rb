@@ -32,6 +32,7 @@ class MainController < UIViewController
 
 		case @gr.state
 		when UIGestureRecognizerStateBegan
+			puts "UIGestureRecognizerStateBegan"
 			return @gr.reset unless pt.inside?(@dockFrame)
 			pt = @gr.locationInView(@dock)
 			path = @dock.indexPathForItemAtPoint(pt)
@@ -42,10 +43,13 @@ class MainController < UIViewController
 			@img = UIImageView.alloc.initWithImage(imgview.image)
 			@img.frame = CGRect.make(origin: @img.frame.origin, size: CGSizeMake(80,80))
 			@img.center = @gr.locationInView(view)
+			puts "calling dragStart"
 			@upcoming.dragStart
 			view.addSubview(@img)
 
 		when UIGestureRecognizerStateChanged
+			# puts "UIGestureRecognizerStateChanged"
+			return @gr.reset unless @img
 			@img.center = pt if @img
 			@upcoming.dragOver(@text, @gr.locationInView(@upcoming_cv)) unless pt.inside?(@dockFrame)
 

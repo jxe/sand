@@ -9,15 +9,23 @@ class DockController < UICollectionViewController
 		collectionView.delegate = self
 		collectionView.dataSource = self
 
-		blurLayer = CALayer.layer
-		filter = CIFilter.filterWithName("CIGaussianBlur")
-		filter.setDefaults
-		blurLayer.backgroundFilters = [filter]
-		# view.layer.addSublayer(blurLayer)
-		# [superLayer addSublayer:blurLayer];
-
-		collectionView.layer.addSublayer(blurLayer)
+		# blurLayer = CALayer.layer
+		# filter = CIFilter.filterWithName("CIGaussianBlur")
+		# filter.setDefaults
+		# blurLayer.backgroundFilters = [filter]
 		# collectionView.setWantsLayer(true)
+
+		gradient = CAGradientLayer.layer
+		gradient.frame = collectionView.bounds
+		gradient.endPoint = [0.5, 0.4]
+		startColor = UIColor.colorWithHue(0.12, saturation:0.12, brightness:0.38, alpha:0.6)
+		sandClear = UIColor.colorWithHue(0.12, saturation:0.12, brightness:1.0, alpha:0.0)
+		# UIColor.colorWithWhite(0.9, alpha: 1.0)
+		gradient.colors = [startColor.CGColor, sandClear.CGColor]
+
+		v = UIView.alloc.initWithFrame(collectionView.bounds)
+		v.layer.insertSublayer(gradient, atIndex:0)
+		collectionView.backgroundView = v
 	end
 
 	def self.instance

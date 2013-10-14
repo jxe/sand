@@ -1,35 +1,27 @@
 QUICK
 
 v0.3.1
-* discreet targets - show targets only for empty slots and the slot you're hovering over
-- time_of_day_for_point(p) works
-* (10m) extra_droptargets_when_hovering_tod(tod)
-* (15m) time_of_day_for_point(p)
+* shadow around dock
+* better font for droptargets and labels
 
 v0.3.2
-* original event location should appear ghosted
-* (10m) placeholders should have dotted outline, label in the middle not the bottom, and no red header
-* (5m) blur opacity of dragging_img when out of section
-* hide cell being dragged, leave gap
-
-v0.3.2
-* (10m) when ekeventviewdelegate indicates a deletion, do animated delete
-* BUG: quick drag ups seem to leave things open sometimes
-* (5m) better QUIET image
-* (5m) push webView even before we have location info and URL..
 * (10m) better app store screenshots
 * (5m) cache recent locations and reverse geocodes
-* drop targets highlight
+* placeholders should have dotted outline
+* draggable should show the time you're landing on
 
 v0.3.3
+* (10m) when ekeventviewdelegate indicates a deletion, do animated delete
+* (30m) CHECK: deleting event using native EKEventEditViewController interface causes fuck up
+
+v0.3.4
+* re-enable observer
 * (5m) confirm on delete unless recognized dockitem
 * (5m) image credits linked from credits page
-* (30m) CHECK: deleting event using native EKEventEditViewController interface causes fuck up
 * (15m) figure out how to get sidemenu to go right to auth page, and auth page goes to tutorial page (in AuthenticationController.button_pressed)
-
+* BUG: quick drag ups seem to leave things open sometimes
 
 ====================
-
 
 v0.4
 * longtap on dock item opens detail
@@ -41,7 +33,6 @@ v0.4.0 (1h!!)
 - move most Event.* functions into CalendarDisplayModel
 - move some Event.rb stuff to DockItem.rb with DockItem.from_event(ev)
 - remove nitron and sugarcube
-* (5m) switch_tod_droptargets
 - rebuild cells, removing superview, using layers more
 
 

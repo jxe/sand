@@ -192,7 +192,7 @@ class Event < Nitron::Model
 		when /exercise/;       return UIImage.imageNamed('img/activities/exercise.jpg')
 		when /sunshine|fresh/; return UIImage.imageNamed('img/activities/sunshine.jpg')
 		when /creative|work/;  return UIImage.imageNamed('img/activities/work.jpg')
-		when /quiet/;  return UIImage.imageNamed('quiet.jpg')
+		when /quiet/;          return UIImage.imageNamed('img/activities/quiet.jpg')
 		end
 	end
 
