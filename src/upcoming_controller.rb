@@ -49,58 +49,44 @@ class UpcomingController < UICollectionViewController
 	############
 	# dropped
 
-	def dragwatcher
+	def dragStart
+		puts "dragStart"
 		@map = onscreen_section_map
 		@over_section = nil
 		self
 	end
 
-	def over(text, p)
+	def dragOver(text, p)
+		puts "dragOver"
 		y = p.y.to_i
-		s = @map[y]
-		open_up_section s
-		# over_section = section_for_point(p)
-		# over_time_of_day = time_of_day_for_point(p)
-		# return if same same
-		# batch_updates {
-		#       if section changed
-		#		  removed, added = switch_section_droptargets(over_section, over_time_of_day)
-		#       else
-		# 		  removed, added = switch_tod_droptargets(over_time_of_day)
-		#       end
-		# 		deleteItemsAtIndexPaths if removed 
-		# 		insertItemsAtIndexPaths if added
-		# 		highlight!!
-		# }
-	end
+		return unless s = @map[y]
+		if @over_section != s
+			open_up_section nil if @over_section
+			@over_section = s
+			@hover_timer.invalidate if @hover_timer
 
-	def dropped(text, p)
-		return dragCanceled unless date = date_for_point(p)
-		path = collectionView.indexPathForItemAtPoint(p)
-    	kind, ev = @display_model.thing_at_index_path(path)
-    	return dragCanceled unless kind == :placeholder
-    	range = NSDate::HOUR_RANGES[ev.to_sym]
-    	return dragCanceled unless range
-		start_time = date + range.begin.hours	
-		with_person_and_title_for_droptext text do |person, title|
-			if title
-				ev, path = @display_model.add_event start_time, person, text
-				open_up_section nil, lambda{
-					collectionView.insertItemsAtIndexPaths([path])			
-				}
-			else
-				dragCanceled
-			end
+			# set a timer... if we're still over the same
+			# section, open it and scroll to reveal it
+			@hover_timer = NSTimer.scheduledTimerWithTimeInterval(0.3,
+			        :target   => self,
+			        :selector => :section_hovered,
+			        :userInfo => nil,
+			        :repeats  => false)
 		end
 	end
 
-	def add_event_at_time start_time, text, person
-		ev, path = @display_model.add_event start_time, person, text
-		collectionView.insertItemsAtIndexPaths([path])
+	def section_hovered
+		open_up_section @over_section, :on_complete => lambda{ reveal_section @over_section }
 	end
 
+		
+		# over_time_of_day = time_of_day_for_point(p)
+		# return if same same
+		# 		  removed, added = switch_tod_droptargets(over_time_of_day)
+
+
 	# no effect if it's open already
-	def open_up_section s, cb = nil
+	def open_up_section s, options = {}
 		return if s == @display_model.open_section
 		return if @opening_section
 		@opening_section = true
@@ -108,14 +94,62 @@ class UpcomingController < UICollectionViewController
 			opened, closed = @display_model.open_up_section s
 			collectionView.insertItemsAtIndexPaths(opened)
 			collectionView.deleteItemsAtIndexPaths(closed)
-			cb && cb.call
+			options[:also_animate] && options[:also_animate].call
 		}, completion: lambda{ |x|
 			@map = onscreen_section_map
 			@opening_section = false
+			options[:on_complete] && options[:on_complete].call
 		})
 	end
 
+	def scrollViewDidEndScrollingAnimation(cv)
+		puts "remap!"
+		@map = onscreen_section_map
+	end
+
+	def reveal_section s
+		screen_top = collectionView.contentOffset.y.to_i + 40  # for the status bar
+		screen_height = collectionView.frame.height.to_i  # for the dock
+		screen_bottom = screen_top + screen_height - 50
+		section_top = top_of_header_for_section(s)
+		section_bottom = top_of_header_for_section(s+1)
+		return unless section_top and section_bottom
+
+		if screen_bottom < section_bottom
+			# scroll down
+			pos = CGPointMake(0, section_bottom - screen_height + 50)
+			collectionView.setContentOffset(pos, animated: true)
+		elsif screen_top > section_top
+			# scroll up
+			pos = CGPointMake(0, section_top - 40)
+			collectionView.setContentOffset(pos, animated: true)
+		end
+	end
+
+
+
+
+
+
+
+	def dropped(text, p)
+		return dragCanceled unless placeholder = thing_at_point(p)
+		return dragCanceled unless Placeholder === placeholder
+		with_person_and_title_for_droptext text do |person, title|
+			if title
+				open_up_section nil, :also_animate => lambda{
+					ev = @display_model.add_event placeholder.startDate, person, text
+					path = @display_model.index_path_for_event(ev)
+					collectionView.insertItemsAtIndexPaths([path])
+				}
+			else
+				dragCanceled
+			end
+		end
+	end
+
 	def dragCanceled
+		@hover_timer.invalidate if @hover_timer
 		open_up_section nil
 	end
 
@@ -197,31 +231,80 @@ class UpcomingController < UICollectionViewController
 	# wiring
 
 	def collectionView(cv, didSelectItemAtIndexPath:path)
-		kind, thing = @display_model.thing_at_index_path path
-		view_event(thing) if kind == :event
+		thing = @display_model.thing_at_index_path path
+		view_event(thing) if EKEvent === thing
 	end
 
 	def longPress
 		gr = collectionView.gestureRecognizers[2]
-		return unless gr.state == UIGestureRecognizerStateBegan
 		p = gr.locationInView(collectionView)
-		path = p && collectionView.indexPathForItemAtPoint(p)
-		cell = path && collectionView.cellForItemAtIndexPath(path)
-    	kind, ev = @display_model.thing_at_index_path(path)
-		return unless cell
+		case gr.state
+		when UIGestureRecognizerStateBegan
+			@press_thing = thing = thing_at_point(p)
+			return gr.reset unless thing and EKEvent === thing
 
-		# okay we were on a thing!
+			@press_path = path = collectionView.indexPathForItemAtPoint(p)
+			cell = path && collectionView.cellForItemAtIndexPath(path)
+			# okay we were on a thing!
+			# make popping sound
+			@longpress_section = path.section
+			@hover_timer = NSTimer.scheduledTimerWithTimeInterval(0.6,
+						        :target   => self,
+						        :selector => :hover_after_longPress,
+						        :userInfo => nil,
+						        :repeats  => false)
 
-		# make popping sound
-		gr.enabled = false
-		collectionView.startDragging(p, cell) do |endpt|
-			if section_for_point(endpt) != path.section
-				delete_or_hide_event(ev, path)
-				gr.enabled = true
+			imgview = cell.contentView.viewWithTag(100)
+			@dragging_img = UIImageView.alloc.initWithImage(imgview.image)
+			@dragging_img.frame = CGRect.make(origin: @dragging_img.frame.origin, size: CGSizeMake(80,80))
+			@dragging_img.center = p
+			collectionView.scrollEnabled = false
+			collectionView.addSubview @dragging_img
+
+		when UIGestureRecognizerStateChanged
+			@dragging_img.center = p
+
+		when UIGestureRecognizerStateEnded
+			@dragging_img.removeFromSuperview
+			@dragging_img = nil
+			collectionView.scrollEnabled = true
+			endpt = p
+			if section_for_point(endpt) != @press_path.section
+				unless @display_model.open_section
+					delete_or_hide_event(@press_thing, @press_path)
+				else
+					path = @display_model.index_path_for_event(ev)
+					open_up_section nil, :also_animate => lambda{
+						@display_model.remove_event(ev)
+						collectionView.deleteItemsAtIndexPaths([path])
+					}
+				end
+			else
+				placeholder = thing_at_point(endpt)
+				if placeholder && Placeholder === placeholder
+					open_up_section nil, :also_animate => lambda{
+						# mod the event
+						old_path = @display_model.index_path_for_event(@press_thing)
+						@press_thing.startDate = placeholder.startDate
+						Event.save(@press_thing)
+						collectionView.deleteItemsAtIndexPaths([old_path])
+						@display_model.moved(@press_thing)
+						new_path = @display_model.index_path_for_event(@press_thing)
+						collectionView.insertItemsAtIndexPaths([new_path])
+					}
+				else
+					open_up_section nil
+				end
 			end
 		end
 	end
 
+	def hover_after_longPress
+		return unless @dragging_img and @press_path and @longpress_section
+		if section_for_point(@dragging_img.center) == @press_path.section
+			open_up_section @longpress_section
+		end
+	end
 
 
 	##############
@@ -231,6 +314,11 @@ class UpcomingController < UICollectionViewController
 	# cv.insertItemsAtIndexPaths(plus_indexes.map(&:nsindexpath))
 	# cv.deleteItemsAtIndexPaths(plus_indexes.map(&:nsindexpath))
 	# cv.deleteSections(extra_sections.nsindexset)
+
+	def thing_at_point(p)
+		path = collectionView.indexPathForItemAtPoint(p)		
+    	path && @display_model.thing_at_index_path(path)
+	end
 
 	def date_for_point p
 		section = section_for_point(p)
@@ -282,11 +370,11 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def collectionView(cv, cellForItemAtIndexPath: path)
-		kind, ev = @display_model.thing_at_index_path path
+		ev = @display_model.thing_at_index_path path
 		cell = cv.dequeueReusableCellWithReuseIdentifier('Appt', forIndexPath:path)
-		case kind
-		when :event;       cell.as_event(ev, cv, path)
-		when :placeholder; cell.as_placeholder(ev)
+		case ev
+		when EKEvent;     cell.as_event(ev, cv, path)
+		when Placeholder; cell.as_placeholder(ev.label)
 		end
 		cell
 	end

@@ -1,35 +1,34 @@
 QUICK
 
-- in over, detect section changes and NSLog
-- cdm has a notion of a role being open or closed, and opening a new one closes the other
-- cdm knows where placeholders should be for open rows
-- over() opens and closes rows, and adds and removes placeholders
-- dropped closes any open row AND adds and removes thing, all in animation block
+v0.3.1
+* discreet targets - show targets only for empty slots and the slot you're hovering over
 - time_of_day_for_point(p) works
-- get rid of ask_time_for_date()
-
-
-v0.4
 * (10m) extra_droptargets_when_hovering_tod(tod)
 * (15m) time_of_day_for_point(p)
-* (20m) rows open on hover
 
-
-v0.3 [1h cleanup]
-* (5m) better QUIET image
-* (10m) when ekeventviewdelegate indicates a deletion, do animated delete
+v0.3.2
+* original event location should appear ghosted
+* (10m) placeholders should have dotted outline, label in the middle not the bottom, and no red header
 * (5m) blur opacity of dragging_img when out of section
-* (5m) confirm on delete unless recognized dockitem
+* hide cell being dragged, leave gap
+
+v0.3.2
+* (10m) when ekeventviewdelegate indicates a deletion, do animated delete
+* BUG: quick drag ups seem to leave things open sometimes
+* (5m) better QUIET image
 * (5m) push webView even before we have location info and URL..
 * (10m) better app store screenshots
 * (5m) cache recent locations and reverse geocodes
+* drop targets highlight
 
-
-v0.3.1
+v0.3.3
+* (5m) confirm on delete unless recognized dockitem
 * (5m) image credits linked from credits page
 * (30m) CHECK: deleting event using native EKEventEditViewController interface causes fuck up
 * (15m) figure out how to get sidemenu to go right to auth page, and auth page goes to tutorial page (in AuthenticationController.button_pressed)
 
+
+====================
 
 
 v0.4
@@ -37,29 +36,14 @@ v0.4
 * placeholder detail screen for dock item
 
 
-
-
 v0.4.0 (1h!!)
 - move some Event.* stuff to DeviceCalendar and CalendarDatabase
 - move most Event.* functions into CalendarDisplayModel
 - move some Event.rb stuff to DockItem.rb with DockItem.from_event(ev)
 - remove nitron and sugarcube
-* (30m) design droptarget look
-* (5m) switch_section_droptargets
 * (5m) switch_tod_droptargets
-* @current_droptargets
-
-
-v0.4.1
-* tap and hold to drag off an appt
-* initiate drag from upcomingview longtap
-* hide cell being dragged, leave gap
-* knows to remove from source on dropped()
-* actually edits event instead of making a new one
-
-v0.4.2
-- drop targets highlight
 - rebuild cells, removing superview, using layers more
+
 
 v0.5
 * done check mark and LWL+what did you do q

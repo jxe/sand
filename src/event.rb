@@ -17,6 +17,11 @@ class Event < Nitron::Model
 		ev
 	end
 
+	def self.save ev
+		error = Pointer.new('@')
+		@event_store.saveEvent(ev, span:EKSpanThisEvent, commit:true, error:error)
+	end
+
 	def self.fetch_events start_date, end_date, cb = nil
 		@event_store ||= EKEventStore.alloc.init
 	 	p = @event_store.predicateForEventsWithStartDate(start_date, endDate: end_date, calendars: nil)

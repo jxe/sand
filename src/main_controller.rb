@@ -15,6 +15,10 @@ class MainController < UIViewController
 	def viewWillLayoutSubviews
 		super
 		@upcoming ||= UpcomingController.instance
+		@gr = view.gestureRecognizers[0]
+		@dock = DockController.instance.collectionView
+		@dockFrame = @dock.superview.superview.frame
+		@upcoming_cv = @upcoming.collectionView
 		# view.viewWithTag(211).frame = CGRectMake(0.0, 514.0, 320.0, 54.0)
 	end
 
@@ -24,52 +28,34 @@ class MainController < UIViewController
 	end
 
 	def dragon
-		gr = view.gestureRecognizers[0]
-		pt = gr.locationInView(view)
-		case gr.state
+		pt = @gr.locationInView(view)
+
+		case @gr.state
 		when UIGestureRecognizerStateBegan
-			dock = DockController.instance.collectionView
-			dockFrame = dock.superview.superview.frame
-			return gr.reset unless pt.inside?(dockFrame)
-			pt = gr.locationInView(dock)
-			path = dock.indexPathForItemAtPoint(pt)
-			cell = dock.cellForItemAtIndexPath(path)
-			return gr.reset unless cell
+			return @gr.reset unless pt.inside?(@dockFrame)
+			pt = @gr.locationInView(@dock)
+			path = @dock.indexPathForItemAtPoint(pt)
+			cell = @dock.cellForItemAtIndexPath(path)
+			return @gr.reset unless cell
 			imgview = cell.contentView.viewWithTag(100)
 			@text = cell.contentView.viewWithTag(102).text
 			@img = UIImageView.alloc.initWithImage(imgview.image)
 			@img.frame = CGRect.make(origin: @img.frame.origin, size: CGSizeMake(80,80))
-			@img.center = gr.locationInView(view)
-			@dragwatcher = @upcoming.dragwatcher
+			@img.center = @gr.locationInView(view)
+			@upcoming.dragStart
 			view.addSubview(@img)
 
 		when UIGestureRecognizerStateChanged
-			# LATER: detect hovers and ask for hit targets...
-			# puts "dragging! #{dockFrame.inspect}"
-			return unless @img
-			@img.center = gr.locationInView(view)
-			point = gr.locationInView(@upcoming.collectionView)
-			@dragwatcher.over(@text, point)
-			# upcoming = UpcomingController.instance
-			# point = gr.locationInView(upcoming.collectionView)
-			# upcoming.highlight_droptarget(point)
+			@img.center = pt if @img
+			@upcoming.dragOver(@text, @gr.locationInView(@upcoming_cv)) unless pt.inside?(@dockFrame)
 
 		when UIGestureRecognizerStateEnded
-			puts "dropped!"
 			# upcoming.unhighlight_droptargets
 			return unless @text
-
-			if @img
-				@img.removeFromSuperview
-				@img = nil
-			end
-
-			dock = DockController.instance.collectionView
-			dockFrame = dock.superview.superview.frame
-			pt = gr.locationInView(view)
-			return @upcoming.dragCanceled if pt.inside?(dockFrame)
-
-			point = gr.locationInView(@upcoming.collectionView)
+			@img.removeFromSuperview if @img
+			@img = nil
+			return @upcoming.dragCanceled if pt.inside?(@dockFrame)
+			point = @gr.locationInView(@upcoming.collectionView)
 			@upcoming.dropped(@text, point)
 		end
 	end

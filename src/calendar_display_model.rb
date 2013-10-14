@@ -1,3 +1,5 @@
+Placeholder = Struct.new(:label, :startDate)
+
 class CalendarDisplayModel
 
 	##############################################
@@ -7,41 +9,46 @@ class CalendarDisplayModel
 	attr_reader :open_section
 	TIMES = %w{ bfst morn lunch aft hpy_hr eve night }
 
-	def open_up_section s
-		return if @open_section == s
-		puts "@open_section: #{@open_section}; s: #{s}"
-		closed = @open_section ? placeholder_positions : []
-		@open_section = s
-		opened = @open_section ? placeholder_positions : []
-		puts "opened: #{opened.inspect}; closed: #{closed.inspect}"
-		return opened, closed
-	end
 
 	def things_in_section n
 		events = events_on_date(sections[n])
-		n == @open_section ? TIMES + events : events
+		return events unless n == @open_section
+
+		# generate placeholders
+		date = sections[n]
+		placeholders = []
+		TIMES.each do |label|
+			t = date + NSDate::HOUR_RANGES[label.to_sym].begin.hours
+			next unless Time.now - t < 1.hour
+			next if events.any?{ |e| e.startDate == t }
+			placeholders << Placeholder.new(label, t)
+		end
+
+		(placeholders + events).sort_by{ |x| x.startDate}
+	end
+
+
+
+
+	def open_up_section s
+		return if @open_section == s
+		closed = @open_section ? placeholder_positions : []
+		@open_section = s
+		opened = @open_section ? placeholder_positions : []
+		return opened, closed
 	end
 
 	def placeholder_positions
 		return [] unless @open_section
 		p = []
 		things_in_section(@open_section).each_with_index do |t,i|
-			puts "evaluating: #{[t,i].inspect}"
-			p << i if String === t
+			p << i if Placeholder === t
 		end
-		puts "returning: #{p.inspect}"
 		p.map{ |p| [@open_section,p].nsindexpath }
 	end
 
 	def thing_at_index_path p
-		xs = things_in_section p.section
-		x = xs[p.row]
-		case x
-		when String
-			return :placeholder, x
-		else
-			return :event, x
-		end
+		return things_in_section(p.section)[p.row]
 	end
 
 	def index_path_for_event(ev)
@@ -89,17 +96,22 @@ class CalendarDisplayModel
 		@events_by_day[d] || []
 	end
 
+	def moved(ev)
+		date = ev.startDate.start_of_day
+		@events_by_day[date] = @events_by_day[date].sort_by{ |e| e.startDate }
+	end
+
 	def add_event(start_time, person, text)
 		ev = Event.add_event(start_time, person, text)
 		id = ev.eventIdentifier
 		date = ev.startDate.start_of_day
-		section = sections.index(date)
+		# section = sections.index(date)
 		@events_by_day[date] ||= []
 		@events_by_day[date] << ev
 		@events_by_day[date] = @events_by_day[date].sort_by{ |e| e.startDate }
-		row = events_on_date(date).index{ |e| e.eventIdentifier == id }
-		path = [section,row].nsindexpath
-		return ev, path
+		# row = things_in_section(section).index{ |e| e.eventIdentifier == id }
+		# path = [section,row].nsindexpath
+		return ev
 	end
 
 	def remove_event(ev)
