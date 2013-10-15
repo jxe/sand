@@ -46,7 +46,7 @@ class MainController < UIViewController
 		when UIGestureRecognizerStateChanged
 			return @gr.reset unless @img
 			@img.center = pt if @img
-			@upcoming.dragOver(@text, @gr.locationInView(@upcoming_cv)) unless pt.inside?(@dockFrame)
+			@upcoming.dragOver(@text, pt.inside?(@dockFrame) ? nil : @gr.locationInView(@upcoming_cv))
 
 		when UIGestureRecognizerStateEnded
 			return unless @text

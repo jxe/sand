@@ -1,18 +1,18 @@
 QUICK
 
 v0.3.1
-* (10m) when ekeventviewdelegate indicates a deletion, do animated delete
-* (30m) CHECK: deleting event using native EKEventEditViewController interface causes fuck up
 * BUG: something seems to leave things open sometimes
-* (10m) better app store screenshots
-
-v0.3.4
 * (5m) re-enable observer - redraw if we haven't added anything recently
 * (5m) confirm on delete unless recognized dockitem
 * (5m) image credits linked from credits page
 * (15m) figure out how to get sidemenu to go right to auth page, and auth page goes to tutorial page (in AuthenticationController.button_pressed)
 * placeholders should have dotted outline
 * draggable should show the time you're landing on
+- move some Event.* stuff to DeviceCalendar and CalendarDatabase
+- move most Event.* functions into CalendarDisplayModel
+- move some Event.rb stuff to DockItem.rb with DockItem.from_event(ev)
+- remove nitron and sugarcube
+- rebuild cells, removing superview, using layers more
 
 ====================
 
@@ -21,14 +21,6 @@ v0.3.4
 v0.4
 * longtap on dock item opens detail
 * placeholder detail screen for dock item
-
-
-v0.4.0 (1h!!)
-- move some Event.* stuff to DeviceCalendar and CalendarDatabase
-- move most Event.* functions into CalendarDisplayModel
-- move some Event.rb stuff to DockItem.rb with DockItem.from_event(ev)
-- remove nitron and sugarcube
-- rebuild cells, removing superview, using layers more
 
 
 v0.5

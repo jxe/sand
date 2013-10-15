@@ -4,6 +4,10 @@ class Event < Nitron::Model
 	##########
 	# calendar
 
+	def self.event_store
+		@event_store ||= EKEventStore.alloc.init
+	end
+
 	def self.add_event start_time, friend, title = nil
 		@event_store ||= EKEventStore.alloc.init
 		ev = EKEvent.eventWithEventStore(@event_store)

@@ -92,43 +92,54 @@ class UpcomingController < UICollectionViewController
     end
 
 
-
+    # p == nil means outside all sections and things
     def consider_revealing_at(p, special_thing = nil, limit_to_section = nil)
     	@was_over_section = @over_section
-		@over_section = @map[p.y.to_i]
-		return unless @over_section
-    	if @was_over_section != @over_section
-    		delay = limit_to_section ? 0.6 : 0.3
-    		if !limit_to_section or limit_to_section == @over_section
-	    		@dragging_img && @dragging_img.layer.opacity = 1.0
+		@over_section = p && @map[p.y.to_i]
+		section_changed = @was_over_section != @over_section
+
+		if section_changed
+			left_section = @was_over_section && section_changed
+			new_interesting_section = @over_section && section_changed
+
+			if limit_to_section
+				new_interesting_section = nil if limit_to_section != @over_section
+				if left_section and limit_to_section != @over_section
+		    		@dragging_img && @dragging_img.layer.opacity = 0.5
+		    	elsif new_interesting_section
+		    		@dragging_img && @dragging_img.layer.opacity = 0.5
+		    	end
+		    end
+
+		    if new_interesting_section
+	    		delay = limit_to_section ? 0.6 : 0.3
 	    		open_section_if_still_over(@over_section, :in => delay)
-	    	elsif limit_to_section
-	    		@dragging_img && @dragging_img.layer.opacity = 0.5
 	    	end
 
-			push_animation{ animate_section_closed } if @was_over_section
+	    	if left_section
+				push_animation{ animate_section_closed } if @was_over_section
+			end
 
     	else
     		@old_thing = @over_thing
-    		@over_thing = thing_at_point(p)
-    		return if @over_thing == special_thing
-    		if @over_thing and @old_thing != @over_thing
-	    		return if @animations_running
-    			if @display_model.date_open and @over_thing.startDate.start_of_day == @display_model.date_open
-					puts "date of thing is open"
-    				push_animation{
-    					old_location = @display_model.special_placeholder_position
-    					puts "calling hover..: #{@over_thing.inspect}"
-						@display_model.hover(@over_section, @over_thing)
- 						new_location = @display_model.special_placeholder_position
-    					old_location && collectionView.deleteItemsAtIndexPaths([old_location])
-    					new_location && collectionView.insertItemsAtIndexPaths([new_location])
-    				}
-    				push_animation{
-    					@old_thing = @over_thing = thing_at_point(p)
-    				}
-    			end
-    		end
+    		@over_thing = p && thing_at_point(p)
+
+    		return if !@over_thing or @over_thing == special_thing
+    		return if @old_thing == @over_thing
+    		return if @animations_running
+			return unless @display_model.date_open and @over_thing.startDate.start_of_day == @display_model.date_open
+
+			push_animation{
+				# wiggle
+				old_location = @display_model.special_placeholder_position
+				@display_model.hover(@over_section, @over_thing)
+				new_location = @display_model.special_placeholder_position
+				old_location && collectionView.deleteItemsAtIndexPaths([old_location])
+				new_location && collectionView.insertItemsAtIndexPaths([new_location])
+			}
+			push_animation{
+				@old_thing = @over_thing = thing_at_point(p)
+			}
     	end
     end
 
@@ -427,6 +438,7 @@ class UpcomingController < UICollectionViewController
 
 	def delete_or_hide_event ev, path = nil
 		path ||= @display_model.index_path_for_event(ev)
+		return unless path
 		@display_model.remove_event(ev)
 		collectionView.deleteItemsAtIndexPaths([path])
 	end
@@ -468,7 +480,7 @@ class UpcomingController < UICollectionViewController
 
 	def view_event ev
 		return false unless ev
-		@eventViewController = AppointmentViewController.alloc.initWithEventAndParent(ev, self)
+		@eventViewController = AppointmentViewController.alloc.initWithEventAndParent(ev, Event.event_store, self)
 		display_controller_in_navcontroller( @eventViewController )
 	end
 
@@ -512,6 +524,14 @@ class UpcomingController < UICollectionViewController
 			c.navigationItem.backBarButtonItem = UIBarButtonItem.alloc.initWithTitle("Done", style:UIBarButtonItemStylePlain, target:self, action: :dismissViewController)
 			c.navigationItem.send("setLeftBarButtonItem", UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemDone, target:self, action: :dismissViewController))
 		})
+	end
+
+	def was_deleted(ev)
+		delete_or_hide_event(ev)
+	end
+
+	def was_modified(ev)
+		reload
 	end
 
 	def dismissViewController

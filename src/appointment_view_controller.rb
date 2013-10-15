@@ -57,10 +57,11 @@ class AppointmentViewController < EKEventViewController
 		@superdelegate.display_suggestions event, navigationController
 	end
 
-	def initWithEventAndParent(ev, superdelegate)
+	def initWithEventAndParent(ev, eventStore, superdelegate)
 		self.event = ev
 		self.allowsEditing = true
 		self.delegate = self
+		@eventStore = eventStore
 		@superdelegate = superdelegate
 		self
 	end
@@ -75,13 +76,41 @@ class AppointmentViewController < EKEventViewController
 	 #    l.text = "Check this out"
 		tv = view.subviews.objectAtIndex(0)
 		tv.tableHeaderView = makeHeaderView(tv)
+
+	    editItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemEdit, target:self, action: :editCalEvent)
+	    navigationItem.rightBarButtonItem = editItem
+	end
+
+	def editCalEvent
+	    editController = EKEventEditViewController.alloc.init
+    	editController.event = event
+    	editController.eventStore = @eventStore
+    	editController.editViewDelegate = self
+    	presentModalViewController(editController, animated:true)
 	end
 
 	def eventViewController(c, didCompleteWithAction: action)
+		case action
+		when EKEventViewActionDeleted
+			@superdelegate.was_deleted(event)
+		else
+			@superdelegate.was_modified(event) if @event_was_modified
+		end
 		dismissViewControllerAnimated true, completion:nil
 	end
 
 	def eventEditViewController(c, didCompleteWithAction: action)
-		dismissViewControllerAnimated true, completion:nil
+		case action
+		when EKEventEditViewActionSaved
+			@event_was_modified = true
+			dismissViewControllerAnimated true, completion:nil
+		when EKEventEditViewActionDeleted
+			dismissViewControllerAnimated false, completion:lambda{
+				dismissViewControllerAnimated true, completion:nil
+				@superdelegate.was_deleted(event)		
+			}
+		else
+			dismissViewControllerAnimated true, completion:nil
+		end
 	end
 end
