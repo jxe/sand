@@ -197,12 +197,12 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="101" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Time" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hjJ-kK-ufR">
-                                            <rect key="frame" x="0.0" y="0.0" width="73" height="11"/>
+                                            <rect key="frame" x="0.0" y="2" width="73" height="11"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="backgroundColor" red="0.17082785069942474" green="0.13393329083919525" blue="0.41220682859420776" alpha="0.0" colorSpace="calibratedRGB"/>
                                             <rect key="contentStretch" x="1" y="1" width="1" height="1"/>
-                                            <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="10"/>
-                                            <color key="textColor" red="0.59090006351470947" green="0.21149419248104095" blue="0.035181693732738495" alpha="1" colorSpace="calibratedRGB"/>
+                                            <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="7"/>
+                                            <color key="textColor" red="0.59544497728347778" green="0.17179761826992035" blue="0.064152315258979797" alpha="0.5" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                             <color key="shadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <size key="shadowOffset" width="0.0" height="1"/>
@@ -230,8 +230,8 @@
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" red="0.29720321297645569" green="0.1649051308631897" blue="0.024263059720396996" alpha="0.20999999999999999" colorSpace="calibratedRGB"/>
                                                     <color key="tintColor" red="0.45893897139338008" green="0.58527695921102196" blue="0.83124575407608692" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
-                                                    <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="10"/>
-                                                    <color key="textColor" red="1" green="0.99997437000274658" blue="0.99999129772186279" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="9"/>
+                                                    <color key="textColor" red="1" green="0.99997437000274658" blue="0.99999129772186279" alpha="0.89000000000000001" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                     <color key="shadowColor" red="0.0" green="0.0" blue="0.0" alpha="0.37" colorSpace="calibratedRGB"/>
                                                     <userDefinedRuntimeAttributes>
@@ -261,12 +261,12 @@
                                 </view>
                                 <gestureRecognizers/>
                                 <constraints>
-                                    <constraint firstItem="rpe-4K-03S" firstAttribute="top" secondItem="hjJ-kK-ufR" secondAttribute="bottom" constant="2" id="0pc-G1-Jdz"/>
+                                    <constraint firstItem="rpe-4K-03S" firstAttribute="top" secondItem="hjJ-kK-ufR" secondAttribute="bottom" id="0pc-G1-Jdz"/>
                                     <constraint firstItem="rpe-4K-03S" firstAttribute="leading" secondItem="7er-FW-gwm" secondAttribute="leading" id="5QE-wP-Qgk"/>
                                     <constraint firstAttribute="trailing" secondItem="rpe-4K-03S" secondAttribute="trailing" id="E9i-YI-m7I"/>
                                     <constraint firstAttribute="trailing" secondItem="hjJ-kK-ufR" secondAttribute="trailing" id="HuV-8X-jb1"/>
                                     <constraint firstItem="hjJ-kK-ufR" firstAttribute="leading" secondItem="7er-FW-gwm" secondAttribute="leading" id="J3i-SD-9KL"/>
-                                    <constraint firstItem="hjJ-kK-ufR" firstAttribute="top" secondItem="7er-FW-gwm" secondAttribute="top" id="Zqq-zF-zpL"/>
+                                    <constraint firstItem="hjJ-kK-ufR" firstAttribute="top" secondItem="7er-FW-gwm" secondAttribute="top" constant="3" id="Zqq-zF-zpL"/>
                                     <constraint firstAttribute="bottom" secondItem="rpe-4K-03S" secondAttribute="bottom" id="gmO-yH-pKp"/>
                                     <constraint firstItem="hjJ-kK-ufR" firstAttribute="top" secondItem="7er-FW-gwm" secondAttribute="top" id="lxl-EW-R4O"/>
                                 </constraints>
@@ -283,9 +283,8 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="tintColor" red="0.45893897140000001" green="0.5852769592" blue="0.83124575410000001" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
                                             <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="10"/>
-                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
-                                            <color key="shadowColor" red="0.0" green="0.0" blue="0.0" alpha="0.37" colorSpace="calibratedRGB"/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
                                                     <integer key="value" value="5"/>
@@ -314,9 +313,9 @@
                                     <size key="shadowOffset" width="0.0" height="1"/>
                                 </label>
                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="301" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fnp-GL-Ebw">
-                                    <rect key="frame" x="281" y="17" width="33" height="12"/>
+                                    <rect key="frame" x="281" y="18" width="33" height="12"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <fontDescription key="fontDescription" name="AmericanTypewriter" family="American Typewriter" pointSize="11"/>
+                                    <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="9"/>
                                     <color key="textColor" red="0.71399897336959839" green="0.68815666437149048" blue="0.59646803140640259" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
@@ -324,7 +323,7 @@
                             <constraints>
                                 <constraint firstAttribute="trailing" secondItem="Fnp-GL-Ebw" secondAttribute="trailing" constant="6" id="BaY-Cb-5PZ"/>
                                 <constraint firstAttribute="centerX" secondItem="NKx-5n-rhd" secondAttribute="centerX" id="Xff-Tv-iQJ"/>
-                                <constraint firstItem="Fnp-GL-Ebw" firstAttribute="baseline" secondItem="NKx-5n-rhd" secondAttribute="baseline" constant="-2" id="iGN-Am-BAg"/>
+                                <constraint firstItem="Fnp-GL-Ebw" firstAttribute="baseline" secondItem="NKx-5n-rhd" secondAttribute="baseline" constant="-3" id="iGN-Am-BAg"/>
                                 <constraint firstAttribute="bottom" secondItem="NKx-5n-rhd" secondAttribute="bottom" id="oTY-7A-QDm"/>
                             </constraints>
                         </collectionReusableView>
@@ -392,7 +391,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="57" height="57"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" alpha="0.65000000000000002" tag="100" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6p8-Fp-F8C">
+                                                <imageView userInteractionEnabled="NO" alpha="0.80000000000000004" tag="100" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6p8-Fp-F8C">
                                                     <rect key="frame" x="0.0" y="0.0" width="57" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <userDefinedRuntimeAttributes>
@@ -402,16 +401,16 @@
                                                         <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="102" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bIy-Wb-09w">
-                                                    <rect key="frame" x="0.0" y="47" width="60" height="10"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="102" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Title" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="60" translatesAutoresizingMaskIntoConstraints="NO" id="bIy-Wb-09w">
+                                                    <rect key="frame" x="0.0" y="37" width="60" height="20"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" red="0.11877520380000001" green="0.069701358680000006" blue="0.0040703238919999997" alpha="0.0" colorSpace="calibratedRGB"/>
+                                                    <color key="backgroundColor" red="0.11877520380000001" green="0.069701358680000006" blue="0.0040703238919999997" alpha="0.22" colorSpace="calibratedRGB"/>
                                                     <color key="tintColor" red="0.45893897140000001" green="0.5852769592" blue="0.83124575410000001" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
-                                                    <fontDescription key="fontDescription" name="Copperplate" family="Copperplate" pointSize="9"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="9"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
-                                                    <color key="shadowColor" red="1" green="0.99294847249984741" blue="0.69119369983673096" alpha="0.70999999999999996" colorSpace="calibratedRGB"/>
-                                                    <size key="shadowOffset" width="0.0" height="1"/>
+                                                    <color key="shadowColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <size key="shadowOffset" width="0.0" height="0.0"/>
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
                                                             <integer key="value" value="5"/>
@@ -420,7 +419,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </label>
                                             </subviews>
-                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstItem="6p8-Fp-F8C" firstAttribute="leading" secondItem="Mzn-kb-AAK" secondAttribute="leading" id="LYI-bm-zDu"/>
                                                 <constraint firstItem="6p8-Fp-F8C" firstAttribute="bottom" secondItem="bIy-Wb-09w" secondAttribute="bottom" id="ZLi-or-vZJ"/>

@@ -153,6 +153,8 @@ class Event < Nitron::Model
 		raw.sub("%%", loc2.strip)
 	end
 
+
+
 	def self.raw_suggestions_url(ev)
 		time_label = ev.startDate.time_of_day_label
 
@@ -178,6 +180,38 @@ class Event < Nitron::Model
 
 		return "http://www.yelp.com"
 	end
+
+
+
+	def self.suggestion_descriptor(ev)
+		time_label = ev.startDate.time_of_day_label
+
+		case ev.title
+		when /sunshine|exercise|quiet/
+			return "for " + ev.title
+		when /work/
+			return "for working cafes"
+		when /cooking/
+			return "for recipes"
+		end
+
+		case time_label
+		when :bfst
+			return "for breakfast"
+		when :lunch
+			return "for lunch"
+		when :eve
+			return "for dinner"
+		when :night
+			return "for bars"
+		end
+
+		return "from yelp"
+	end
+
+
+
+
 
 	def self.painted?(ev)
 		return %{ creative exercise sweet }.include?(ev.title || '?')

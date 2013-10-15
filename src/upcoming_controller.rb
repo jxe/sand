@@ -19,6 +19,7 @@ class UpcomingController < UICollectionViewController
 		collectionView.dataSource = self
 		collectionView.contentInset = UIEdgeInsetsMake(20,0,0,0)
 		collectionView.gestureRecognizers[2].addTarget(self, action: :longPress)
+		collectionView.gestureRecognizers[2].delegate = self
 		view.addGestureRecognizer(UIPanGestureRecognizer.alloc.initWithTarget(self, action: :swipeHandler))
 	end
 
@@ -84,6 +85,8 @@ class UpcomingController < UICollectionViewController
     # open_section -- is a section open?
 
     def animate_section_opened s
+    	return if @display_model.date_open
+    	NSLog "animating opened: #{s}"
 		@display_model.hover(s)
 		collectionView.insertItemsAtIndexPaths(@display_model.placeholder_positions)    		
     end
@@ -93,6 +96,7 @@ class UpcomingController < UICollectionViewController
     def consider_revealing_at(p, special_thing = nil, limit_to_section = nil)
     	@was_over_section = @over_section
 		@over_section = @map[p.y.to_i]
+		return unless @over_section
     	if @was_over_section != @over_section
     		delay = limit_to_section ? 0.6 : 0.3
     		if !limit_to_section or limit_to_section == @over_section
@@ -175,7 +179,13 @@ class UpcomingController < UICollectionViewController
     # 	}
     # end
 
-
+    # this is for longPress
+    def gestureRecognizerShouldBegin(gr)
+    	p = gr.locationInView(collectionView)
+		thing = thing_at_point(p)
+		return true if thing and EKEvent === thing
+		return false
+    end
 
 	def longPress
 		gr = collectionView.gestureRecognizers[2]
@@ -183,8 +193,6 @@ class UpcomingController < UICollectionViewController
 		case gr.state
 		when UIGestureRecognizerStateBegan
 			@press_thing = thing = thing_at_point(p)
-			return gr.reset unless thing and EKEvent === thing
-
 			@press_path = path = collectionView.indexPathForItemAtPoint(p)
 			@press_cell = cell = path && collectionView.cellForItemAtIndexPath(path)
 			# okay we were on a thing!
@@ -310,27 +318,40 @@ class UpcomingController < UICollectionViewController
 		abrecord = friend_id && ABAddressBookGetPersonWithRecordID(AddressBook.address_book, friend_id)
 		if abrecord
 			person = abrecord && AddressBook::Person.new(AddressBook.address_book, abrecord)
-			fname = abrecord && person.first_name
+			fname = abrecord && person.composite_name
 			return fname, abrecord
 		end
 		return nil
 	end
 
-	def with_street_address &blk
-		BW::Location.get_once do |result|
+	def reverse_geocode loc, &blk
+		@cached_geocodes ||= {}
+		close = @cached_geocodes.keys.select{ |l| l.distanceFromLocation(loc) < 1000 }
+		if not close.empty?
+			blk.call(@cached_geocodes[close.first])
+		else
 			@coder ||= CLGeocoder.alloc.init
-			@coder.reverseGeocodeLocation(result, completionHandler:lambda{
+			@coder.reverseGeocodeLocation(loc, completionHandler:lambda{
 				|placemarks, error|
 				if !error && placemarks[0]
-					loc = ABCreateStringWithAddressDictionary(placemarks[0].addressDictionary, false)
-					Dispatch::Queue.main.async do
-						blk.call(loc)
-					end
+					addr = ABCreateStringWithAddressDictionary(placemarks[0].addressDictionary, false)
+					@cached_geocodes[loc] = addr
+					blk.call(addr)
 				end
 			})
 		end
 	end
 
+	def with_location &blk
+		blk.call(@cached_location) if @cached_location
+		BW::Location.get_once(significant: true) do |result|
+			blk.call(@cached_location = result)
+		end
+	end
+
+	def with_street_address &blk
+		with_location{ |loc| reverse_geocode(loc){ |addr| blk.call(addr) } }
+	end
 
 	def friend_name ev
 		return unless friend_id = Event.friend_ab_record_id(ev)
@@ -436,7 +457,7 @@ class UpcomingController < UICollectionViewController
 		view = cv.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier:'Section', forIndexPath:path)
 		section_date = @display_model.sections[path.section]
 		view.subviews[0].text = section_date.day_of_week_label
-		view.subviews[1].text = section_date.strftime("%b %d")
+		view.subviews[1].text = section_date.strftime("%b %d").upcase
 		view
 	end
 

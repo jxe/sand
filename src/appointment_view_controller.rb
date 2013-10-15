@@ -1,16 +1,19 @@
 class AppointmentViewController < EKEventViewController
 
 	def makeHeaderView(tv)
-		v = UIView.alloc.initWithFrame(CGRectMake(0,0,tv.frame.width, 80))
+		v = UIView.alloc.initWithFrame(CGRectMake(0,0,tv.frame.width, 110))
 		friend_name = @superdelegate.friend_name(event)
 
+		blueColor = UIColor.colorWithRed(0.0, green: 0.48, blue: 1.0, alpha:0.8)
+
 		suggs_button = UIButton.buttonWithType(UIButtonTypeCustom)
-		suggs_button.backgroundColor = UIColor.lightGrayColor
-		suggs_button.setTitle("Suggestions for #{event.title}", forState: UIControlStateNormal)
+		suggs_button.backgroundColor = blueColor
+		for_what = Event.suggestion_descriptor(event)
+		suggs_button.setTitle("Suggestions #{for_what}", forState: UIControlStateNormal)
 		suggs_button.addTarget(self, action: :suggestions, forControlEvents: UIControlEventTouchUpInside)
 
 		if !friend_name
-			v.frame = CGRectMake(0,0,tv.frame.width, 40)
+			v.frame = CGRectMake(0,0,tv.frame.width, 60)
 
 			Motion::Layout.new do |layout|
 			  layout.view v
@@ -22,8 +25,8 @@ class AppointmentViewController < EKEventViewController
 			return v
 		end
 
-		friend_button = UIButton.buttonWithType(UIButtonTypeSystem)
-		friend_button.backgroundColor = UIColor.lightGrayColor
+		friend_button = UIButton.buttonWithType(UIButtonTypeCustom)
+		friend_button.backgroundColor = blueColor
 		if friend_name
 			friend_button.setTitle(friend_name, forState: UIControlStateNormal)
 			friend_button.addTarget(self, action: :friend_record, forControlEvents: UIControlEventTouchUpInside)
@@ -35,7 +38,7 @@ class AppointmentViewController < EKEventViewController
 		Motion::Layout.new do |layout|
 		  layout.view v
 		  layout.subviews "friend" => friend_button, "suggs" => suggs_button
-		  layout.vertical "|-5-[friend]-10-[suggs(==friend)]-5-|"
+		  layout.vertical "|-5-[friend]-5-[suggs(==friend)]-5-|"
 		  layout.horizontal "|-10-[friend]-10-|"
 		  layout.horizontal "|-10-[suggs]-10-|"
 		end

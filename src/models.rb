@@ -15,6 +15,18 @@ class NSDate
 		night: 21...24
 	}
 
+	LONGER = {
+		predawn: 'predawn',
+		dawn: 'dawn',
+		bfst: 'breakfast',
+		morn: 'morning',
+		lunch: 'lunch',
+		aft: 'afternoon',
+		hpy_hr: 'happy hour',
+		eve: 'evening',
+		night: 'night'
+	}
+
 	HOUR_RANGES_REV = {
 		0 => :predawn,
 		1 => :predawn,
@@ -50,5 +62,9 @@ class NSDate
 
 	def time_of_day_label
 		HOUR_RANGES_REV[hour]
+	end
+
+	def longer_time_of_day_label
+		LONGER[HOUR_RANGES_REV[hour]]
 	end
 end

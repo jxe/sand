@@ -16,12 +16,13 @@ class DockController < UICollectionViewController
 		# collectionView.setWantsLayer(true)
 
 		gradient = CAGradientLayer.layer
-		gradient.frame = collectionView.bounds
-		gradient.endPoint = [0.5, 0.3]
+		gradient.frame = collectionView.frame
+		gradient.endPoint = [0.5, 0.07]
 		startColor = UIColor.colorWithHue(0.12, saturation:0.32, brightness:0.28, alpha:0.95)
 		sandClear = UIColor.colorWithHue(0.12, saturation:0.22, brightness:1.0, alpha:0.6)
 		# UIColor.colorWithWhite(0.9, alpha: 1.0)
-		gradient.colors = [startColor.CGColor, sandClear.CGColor]
+		# gradient.colors = [startColor.CGColor, sandClear.CGColor]
+		gradient.colors = [sandClear.CGColor, startColor.CGColor]
 
 		v = UIView.alloc.initWithFrame(collectionView.bounds)
 		v.layer.insertSublayer(gradient, atIndex:0)
@@ -56,7 +57,7 @@ class DockController < UICollectionViewController
 
 	def setup_event_cell(cv, path, cell)
 		imageview = cell.contentView.viewWithTag(100)
-		personlabel = cell.contentView.viewWithTag(102)
+		label = cell.contentView.viewWithTag(102)
 		comboview = cell.contentView.viewWithTag(112)
 		l = comboview.layer
 		l.masksToBounds = false
@@ -66,8 +67,22 @@ class DockController < UICollectionViewController
 		l.shadowOpacity = 0.7
 		l.shadowColor = UIColor.blackColor.CGColor
 		l.shadowPath = UIBezierPath.bezierPathWithRoundedRect(l.bounds, cornerRadius:8).CGPath
-		personlabel.text = DEFAULT_DOCK[path.row]
-		imageview.image = Event.image_from_title(personlabel.text)
+		label.text = DEFAULT_DOCK[path.row]
+		imageview.image = Event.image_from_title(DEFAULT_DOCK[path.row])
+
+		case DEFAULT_DOCK[path.row]
+		when /appt|friend/
+			label.color = UIColor.blackColor
+			label.shadowColor = UIColor.whiteColor
+			comboview.backgroundColor = UIColor.whiteColor
+			label.backgroundColor = UIColor.colorWithHue(34, saturation:0.0, brightness:1.0, alpha:0.22)
+		else
+			label.color = UIColor.whiteColor
+			label.shadowColor = UIColor.blackColor
+			comboview.backgroundColor = UIColor.blackColor
+			label.backgroundColor = UIColor.colorWithHue(34, saturation:0.97, brightness:0.12, alpha:0.22)
+		end
+
 		cell
 	end
 

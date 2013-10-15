@@ -14,7 +14,8 @@ class AppointmentCell < UICollectionViewCell
 		timelabel = contentView.viewWithTag(101)
 		personlabel = contentView.viewWithTag(102)
 
-		timelabel.text   = ev.startDate.time_of_day_label
+		# timelabel.text   = ev.startDate.time_of_day_label.to_s.upcase.sub('_', ' ')
+		timelabel.text   = ev.startDate.longer_time_of_day_label.to_s.upcase.sub('_', ' ')
 		imageview.image  = Event.image(ev){ cv.reloadItemsAtIndexPaths([path]) }
 		personlabel.text = ev.title
 	end
