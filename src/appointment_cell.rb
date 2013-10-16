@@ -9,8 +9,15 @@ class AppointmentCell < UICollectionViewCell
 		self
 	end
 
-	def as_event(ev, cv, path)
-		imageview = contentView.viewWithTag(100)
+	def imageview
+		contentView.viewWithTag(100)
+	end
+
+	def comboview
+		contentView.viewWithTag(112)
+	end
+
+	def as_event(ev, cv, path, ghosted)
 		timelabel = contentView.viewWithTag(101)
 		personlabel = contentView.viewWithTag(102)
 
@@ -18,6 +25,16 @@ class AppointmentCell < UICollectionViewCell
 		timelabel.text   = ev.startDate.longer_time_of_day_label.to_s.upcase.sub('_', ' ')
 		imageview.image  = Event.image(ev){ cv.reloadItemsAtIndexPaths([path]) }
 		personlabel.text = ev.title
+
+		ghosted ? ghost : unghost
+	end
+
+	def ghost
+		comboview.alpha = 0.3
+	end
+
+	def unghost
+		comboview.alpha = 1.0
 	end
 
 end

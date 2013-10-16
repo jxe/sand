@@ -21,19 +21,14 @@ class CalendarDisplayModel
 		thing_to_cover = nil if Placeholder === thing_to_cover
 		date = section && sections[section]
 		if @date_open == date
-			puts "@covering_thing: #{@covering_thing.inspect}; thing_to_cover: #{thing_to_cover.inspect}"
 			if @covering_thing && @covering_thing == thing_to_cover && @special_placeholder
 				# flip them!
-				puts "flipping"
 				idx1 = objs(@date_open).index(thing_to_cover)
 				idx2 = objs(@date_open).index(@special_placeholder)
 				objs(@date_open)[idx1] = @special_placeholder
 				objs(@date_open)[idx2] = thing_to_cover
-				puts "inserted1: #{objs(@date_open)[idx1].inspect}"
-				puts "inserted2: #{objs(@date_open)[idx2].inspect}"
 
 			else
-				puts "changing"
 				maybe_remove_special_placeholder if @special_placeholder
 				maybe_add_special_placeholder(thing_to_cover)
 
@@ -161,7 +156,6 @@ class CalendarDisplayModel
 	end
 
 	def thing_at_index_path p
-		# puts "thing: #{p.row}: #{section(p.section).inspect}"
 		return section(p.section)[p.row]
 	end
 

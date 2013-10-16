@@ -268,7 +268,6 @@
                                     <constraint firstItem="hjJ-kK-ufR" firstAttribute="leading" secondItem="7er-FW-gwm" secondAttribute="leading" id="J3i-SD-9KL"/>
                                     <constraint firstItem="hjJ-kK-ufR" firstAttribute="top" secondItem="7er-FW-gwm" secondAttribute="top" constant="3" id="Zqq-zF-zpL"/>
                                     <constraint firstAttribute="bottom" secondItem="rpe-4K-03S" secondAttribute="bottom" id="gmO-yH-pKp"/>
-                                    <constraint firstItem="hjJ-kK-ufR" firstAttribute="top" secondItem="7er-FW-gwm" secondAttribute="top" id="lxl-EW-R4O"/>
                                 </constraints>
                             </collectionViewCell>
                             <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Placeholder" id="VHf-BF-vyb" customClass="PlaceholderCell">

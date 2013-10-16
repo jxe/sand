@@ -13,7 +13,6 @@ class UpcomingController < UICollectionViewController
 		super
 		@display_model = CalendarDisplayModel.new
 		@@instance = self
-		puts "viewDidLoad"
 		@display_model.load_events
 		collectionView.delegate = self
 		collectionView.dataSource = self
@@ -88,7 +87,17 @@ class UpcomingController < UICollectionViewController
     	return if @display_model.date_open
     	NSLog "animating opened: #{s}"
 		@display_model.hover(s)
-		collectionView.insertItemsAtIndexPaths(@display_model.placeholder_positions)    		
+		insertItemsAtIndexPaths(@display_model.placeholder_positions)    		
+    end
+
+    def insertItemsAtIndexPaths(paths)
+    	NSLog "%@", "> #{paths.map{|p| [p.section, p.row]}.inspect}  #{@animations_running.inspect} #{Time.now}"
+    	collectionView.insertItemsAtIndexPaths(paths)
+    end
+
+    def deleteItemsAtIndexPaths(paths)
+    	NSLog "%@", "< #{paths.map{|p| [p.section, p.row]}.inspect} #{@animations_running.inspect} #{Time.now}"
+    	collectionView.deleteItemsAtIndexPaths(paths)
     end
 
 
@@ -107,7 +116,7 @@ class UpcomingController < UICollectionViewController
 				if left_section and limit_to_section != @over_section
 		    		@dragging_img && @dragging_img.layer.opacity = 0.5
 		    	elsif new_interesting_section
-		    		@dragging_img && @dragging_img.layer.opacity = 0.5
+		    		@dragging_img && @dragging_img.layer.opacity = 1.0
 		    	end
 		    end
 
@@ -134,8 +143,8 @@ class UpcomingController < UICollectionViewController
 				old_location = @display_model.special_placeholder_position
 				@display_model.hover(@over_section, @over_thing)
 				new_location = @display_model.special_placeholder_position
-				old_location && collectionView.deleteItemsAtIndexPaths([old_location])
-				new_location && collectionView.insertItemsAtIndexPaths([new_location])
+				old_location && deleteItemsAtIndexPaths([old_location])
+				new_location && insertItemsAtIndexPaths([new_location])
 			}
 			push_animation{
 				@old_thing = @over_thing = thing_at_point(p)
@@ -161,7 +170,6 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def check_if_still_over_section_after_time
-		puts "@was_over_section: #{@was_over_section}; @over_section: #{@over_section}"
 		return unless @requested_section == @over_section
 		push_animation{ animate_section_opened(@over_section) }
 		push_animation{ reveal_section @over_section }
@@ -176,7 +184,7 @@ class UpcomingController < UICollectionViewController
     	return unless @display_model.date_open
     	positions = @display_model.placeholder_positions
     	@display_model.hover nil
-		collectionView.deleteItemsAtIndexPaths(positions)
+		deleteItemsAtIndexPaths(positions)
     end
 
     # TODO: unused
@@ -209,7 +217,7 @@ class UpcomingController < UICollectionViewController
 			# okay we were on a thing!
 			# make popping sound
 
-			@press_cell.layer.opacity = 0.2
+			@press_cell.ghost
 			@map = onscreen_section_map
 			@over_section = nil
 			consider_revealing_at(p, @press_thing, @press_path.section)
@@ -228,14 +236,17 @@ class UpcomingController < UICollectionViewController
 		when UIGestureRecognizerStateEnded
 			@dragging_img.removeFromSuperview
 			@dragging_img = nil
-			@press_cell.layer.opacity = 1.0
+			@press_cell.unghost
+			thing_was = @press_thing
+			@press_thing = nil
+
 			collectionView.scrollEnabled = true
 			endpt = p
 			if section_for_point(endpt) != @press_path.section
 				unless @display_model.date_open
-					delete_or_hide_event(@press_thing, @press_path)
+					delete_or_hide_event(thing_was, @press_path)
 				else
-					push_animation{ speed(1.5); delete_or_hide_event(@press_thing, @press_path) }
+					push_animation{ speed(1.5); delete_or_hide_event(thing_was, @press_path) }
 					push_animation{ speed(3.0); animate_section_closed }
 				end
 			else
@@ -243,16 +254,18 @@ class UpcomingController < UICollectionViewController
 				end_path = collectionView.indexPathForItemAtPoint(endpt)
 				if placeholder && Placeholder === placeholder
 					# they dropped on a placeholder
+					@hover_timer.invalidate if @hover_timer
 					push_animation{
 						speed(1.5)
 						# delete from old location and replace placeholder
-						old_path = @display_model.index_path_for_event(@press_thing)
-						collectionView.deleteItemsAtIndexPaths([old_path])
-						@display_model.move_to_placeholder(@press_thing, placeholder)
+						old_path = @display_model.index_path_for_event(thing_was)
+						deleteItemsAtIndexPaths([old_path])
+						@display_model.move_to_placeholder(thing_was, placeholder)
 						collectionView.reloadItemsAtIndexPaths([end_path])
 					}
 					push_animation { speed(3.0); animate_section_closed }
-			else
+				else
+					@hover_timer.invalidate if @hover_timer
 					push_animation { animate_section_closed }
 				end
 			end
@@ -261,7 +274,6 @@ class UpcomingController < UICollectionViewController
 
 	def dragCanceled
 		@hover_timer.invalidate if @hover_timer
-		puts "dragCanceled"
 		push_animation{ animate_section_closed }
 	end
 
@@ -273,13 +285,11 @@ class UpcomingController < UICollectionViewController
 			if title
 				path = collectionView.indexPathForItemAtPoint(p)
 				push_animation{
-					puts "reloading event"
 					speed(1.5);
 					@display_model.add_event_at_placeholder(placeholder, person, title)
 					collectionView.reloadItemsAtIndexPaths([path])					
 				}
 				push_animation{ 
-					puts "closing section"
 					speed(3.0);
 					animate_section_closed
 				}
@@ -397,7 +407,6 @@ class UpcomingController < UICollectionViewController
 
 	def thing_at_point(p)
 		path = collectionView.indexPathForItemAtPoint(p)
-		# puts "got path: #{path.inspect}"
     	path && @display_model.thing_at_index_path(path)
 	end
 
@@ -440,7 +449,7 @@ class UpcomingController < UICollectionViewController
 		path ||= @display_model.index_path_for_event(ev)
 		return unless path
 		@display_model.remove_event(ev)
-		collectionView.deleteItemsAtIndexPaths([path])
+		deleteItemsAtIndexPaths([path])
 	end
 
 	def numberOfSectionsInCollectionView(cv)
@@ -452,11 +461,12 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def collectionView(cv, cellForItemAtIndexPath: path)
+		puts "redrawing at #{path.inspect}"
 		ev = @display_model.thing_at_index_path path
 		case ev
 		when EKEvent;
 			cell = cv.dequeueReusableCellWithReuseIdentifier('Appt', forIndexPath:path)
-			cell.as_event(ev, cv, path)
+			cell.as_event(ev, cv, path, @press_thing && @press_thing.eventIdentifier == ev.eventIdentifier)
 		when Placeholder;
 			cell = cv.dequeueReusableCellWithReuseIdentifier('Placeholder', forIndexPath:path)
 			cell.as_placeholder(ev.label)
@@ -539,7 +549,6 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def menu options, canceled = nil, &cb
-		puts "menu called"
 		UIActionSheet.alert nil, buttons: ['Cancel', nil, *options], success: proc{ |thing|
 			cb.call(thing) unless thing == 'Cancel' or thing == :Cancel
 		}, cancel: proc{
@@ -554,7 +563,7 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def speed s
-		collectionView.viewForBaselineLayout.layer.setSpeed(s)
+		# collectionView.viewForBaselineLayout.layer.setSpeed(s)
 	end
 
 	def run_animations

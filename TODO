@@ -1,47 +1,89 @@
-QUICK
+TIME TILL v1.0:
+9h ~ 2d
 
-v0.3.1
-* BUG: something seems to leave things open sometimes
+v.0.3.1
+* EKEvent > Appointment
+* Appointment.ghosted?
+
+* ghosted photos don't stay ghosted when they slide
+
+====================
+
+v.0.4.1
+* (10m) friend photo on event page
+
+v.0.4.2 (3h)
+* (20m) @display_model.current_foviation => array[ fovations ]
+* (1h) AppointmentCell knows how to draw .foveation=
+	:past, :end_of_past, :beginning_of_present, :present, :end_of_present, :beginning_of_future, :future
+* (10m) UpcomingController.refresh_foviation
+* (1h) various wiggles, adds, removes, moved, etc, update foviation boundaries
+* (30m) dim past appts in TODAY, slightly
+
+v.0.4.3 (2h)
+* (20m) opening TODAY hides the past except for...
+* (30m) special droptarget in TODAY called [DONE], with a checkmark and is :most_recent_past
+* (30m) @display_model.mark_done() - moves to most_recent_past loc, extends foveation
+* (30m) drags from Dock to [DONE] add things to a guessed time of day
+
+v0.5 (1h)
+* (1h) recent friends in ABPicker
+
+v0.6 (3h)
+* (3h) sounds
+* (10m) settings pane to toggle sounds
+
+====================
+
+v1.0 (2h)
+* (1h) BUG: something seems to leave things open sometimes
 * (5m) re-enable observer - redraw if we haven't added anything recently
-* (5m) confirm on delete unless recognized dockitem
 * (5m) image credits linked from credits page
 * (15m) figure out how to get sidemenu to go right to auth page, and auth page goes to tutorial page (in AuthenticationController.button_pressed)
-* placeholders should have dotted outline
-* draggable should show the time you're landing on
+* (1h) draggable should show the time you're landing on
+
+====================
+
+v1.1 (11h)
+* (1h) weather w/ forecast or whatever
+* (5h) longTap in suggestions webview does some kind of share
+* (5h) Add friends to dock
+
+====================
+
+v1.2 (9h)
+* (10m) longtap on dock item opens detail
+* (2h) detail screen for dock item (name, photo, suggs_url)
+* (3h) detail screen has photo picker from Instagram like Well.app or something
+* (1h) hold plus on doc to add new dock item
+* (1h) URL scheme for installing/sharing dock items (sand://install?url=http://example.com/foo.dockitem)
+* (1h) little webstore of dock items
+* (1h) option to browse webstore of dock items
+
+====================
+
+v1.3
+* rate appts by tapping/holding/sliding, after they're done
+* calls out to LWLDB
+
+====================
+
 - move some Event.* stuff to DeviceCalendar and CalendarDatabase
 - move most Event.* functions into CalendarDisplayModel
 - move some Event.rb stuff to DockItem.rb with DockItem.from_event(ev)
 - remove nitron and sugarcube
 - rebuild cells, removing superview, using layers more
 
-====================
+v0.6.1
+* (5m) confirm on delete unless recognized dockitem
+* placeholders should have dotted outline
 
-* sounds?
-
-v0.4
-* longtap on dock item opens detail
-* placeholder detail screen for dock item
-
-
-v0.5
-* done check mark and LWL+what did you do q
-* rate appts by tapping and holding
-
-v0.6
+v0.7
 * Fetch fb friend faces when addr book face blank and fb?
 * Friend faces and event images separate core data fields
 * Core data migration
-- refetch person photos periodically
-* check on calendar update if need for complete redraw or what
-
-v0.7
-- weather w/ forecast or whatever (1h)
-
-v0.8
-* dock icons are editable (name, photo, suggs_url)
-* Dock clicks have menu
-* Plus on doc
-* Add friends to dock 
+* refetch person photos periodically
+* prefer friend photos to fb images on fb events
 
 v0.9
 - needs better splash screen
@@ -54,4 +96,3 @@ v1.0
 - deploy gldb to heroku incl scratch (1h)
 - fix up gldb scratch to work on firebase and hammer.js (1h)
 * recommended activities .js window
-* longTap in suggestions webview does some kind of share

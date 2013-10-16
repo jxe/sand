@@ -91,9 +91,7 @@ class Event < Nitron::Model
 	end
 
 	def self.friend_ab_record_id(ev)
-		puts "event_identifier: #{ev.eventIdentifier}"
 		event = find_by_event_identifier(ev.eventIdentifier)
-		puts "event: #{event.inspect}"
 		return event && event.friend_ab_record_id
 	end
 
@@ -121,13 +119,16 @@ class Event < Nitron::Model
 
 	def self.image_from_time(t)
 		case t
+		when :dawn;  return UIImage.imageNamed('img/tod/dawn.jpg')
 		when :bfst;   return UIImage.imageNamed('img/tod/breakfast.jpg')
+		when :morn;  return UIImage.imageNamed('img/tod/breakfast.jpg')
 		when :lunch;  return UIImage.imageNamed('img/tod/lunch.jpg')
+		when :aft;  return UIImage.imageNamed('img/tod/afternoon.jpg')
+		when :hpy_hr;  return UIImage.imageNamed('img/tod/happy_hour.jpg')
 		when :eve;    return UIImage.imageNamed('img/tod/evening.jpg')
 		when :night;  return UIImage.imageNamed('img/tod/night.jpg')
-		when :hpy_hr;  return UIImage.imageNamed('img/tod/happy_hour.jpg')
-		when :dawn;  return UIImage.imageNamed('img/tod/dawn.jpg')
-		when :aft;  return UIImage.imageNamed('img/tod/afternoon.jpg')
+		else
+			return UIImage.imageNamed('img/tod/night.jpg')
 		end
 	end
 
@@ -253,7 +254,6 @@ class Event < Nitron::Model
 
 	def self.possibly_fetch_background_image(ev, callback)
 		url = ev.URL && ev.URL.absoluteString
-		NSLog "ev.URL: #{url.inspect}"
 		if url =~ /facebook\.com\/events\/(\d+)\/$/
 			fbId = $1
 			token = FBSession.activeSession.accessTokenData.accessToken
