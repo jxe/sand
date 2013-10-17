@@ -182,7 +182,7 @@
                         <color key="backgroundColor" red="0.96237200498580933" green="0.96385872364044189" blue="0.91415989398956299" alpha="1" colorSpace="calibratedRGB"/>
                         <gestureRecognizers/>
                         <inset key="scrollIndicatorInsets" minX="0.0" minY="20" maxX="0.0" maxY="0.0"/>
-                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="2" id="DHo-br-aXn">
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="2" id="DHo-br-aXn" customClass="SandFlowLayout">
                             <size key="itemSize" width="73" height="83"/>
                             <size key="headerReferenceSize" width="50" height="34"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
@@ -297,7 +297,7 @@
                                 <gestureRecognizers/>
                             </collectionViewCell>
                         </cells>
-                        <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Section" id="UB1-3M-ga0">
+                        <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Section" id="UB1-3M-ga0" customClass="DayHeaderReusableView">
                             <rect key="frame" x="0.0" y="0.0" width="320" height="34"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>

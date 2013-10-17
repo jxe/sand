@@ -108,12 +108,11 @@ class UpcomingController < UICollectionViewController
 		section_changed = @was_over_section != @over_section
 
 		if section_changed
-			left_section = @was_over_section && section_changed
-			new_interesting_section = @over_section && section_changed
+			new_interesting_section = @over_section
 
 			if limit_to_section
 				new_interesting_section = nil if limit_to_section != @over_section
-				if left_section and limit_to_section != @over_section
+				if @was_over_section and limit_to_section != @over_section
 		    		@dragging_img && @dragging_img.layer.opacity = 0.5
 		    	elsif new_interesting_section
 		    		@dragging_img && @dragging_img.layer.opacity = 1.0
@@ -125,7 +124,7 @@ class UpcomingController < UICollectionViewController
 	    		open_section_if_still_over(@over_section, :in => delay)
 	    	end
 
-	    	if left_section
+	    	if @was_over_section
 				push_animation{ animate_section_closed } if @was_over_section
 			end
 
@@ -159,6 +158,7 @@ class UpcomingController < UICollectionViewController
 
 
 	def open_section_if_still_over(s, options = {})
+		return unless s
 		@requested_section = s
 		@hover_timer.invalidate if @hover_timer
 		options[:in] ||= 0.3
@@ -171,8 +171,9 @@ class UpcomingController < UICollectionViewController
 
 	def check_if_still_over_section_after_time
 		return unless @requested_section == @over_section
-		push_animation{ animate_section_opened(@over_section) }
-		push_animation{ reveal_section @over_section }
+		opening_section = @over_section
+		push_animation{ animate_section_opened(opening_section) if @over_section == opening_section }
+		push_animation{ reveal_section opening_section if @over_section == opening_section }
 	end
 
 
@@ -244,8 +245,12 @@ class UpcomingController < UICollectionViewController
 			endpt = p
 			if section_for_point(endpt) != @press_path.section
 				unless @display_model.date_open
-					delete_or_hide_event(thing_was, @press_path)
+					# NSLog "%@", "l3: #{[thing_was, @press_path].inspect}"
+					push_animation{
+						delete_or_hide_event(thing_was, @press_path)
+					}
 				else
+					NSLog "l4"
 					push_animation{ speed(1.5); delete_or_hide_event(thing_was, @press_path) }
 					push_animation{ speed(3.0); animate_section_closed }
 				end
@@ -415,6 +420,18 @@ class UpcomingController < UICollectionViewController
 		section && @display_model.sections[section]
 	end
 
+	def uicollectionview_bugfix(first, last)
+		@section_cells ||= {}
+		# (first..last).each do |section|
+		# 	collectionView.layoutAttributesForSupplementaryElementOfKind(UICollectionElementKindSectionHeader, atIndexPath: [section].nsindexpath)
+		# end
+		collectionView.subviews.each do |v|
+			if DayHeaderReusableView === v
+				v.removeFromSuperview unless v == @section_cells[v.section]
+			end
+		end
+	end
+
 	def top_of_header_for_section i
 		collectionView.layoutAttributesForSupplementaryElementOfKind(UICollectionElementKindSectionHeader, atIndexPath: [i].nsindexpath).frame.origin.y
 	end
@@ -429,6 +446,8 @@ class UpcomingController < UICollectionViewController
 			next_section += 1 unless top_of_header_for_section(next_section) > y
 			map[y] = next_section - 1
 		end
+
+		uicollectionview_bugfix(map[top], map[bottom])
 
 		map
 	end
@@ -476,10 +495,13 @@ class UpcomingController < UICollectionViewController
 
 	def collectionView(cv, viewForSupplementaryElementOfKind:kind, atIndexPath:path)
 		return unless kind == UICollectionElementKindSectionHeader
+		@section_cells ||= {}
 		view = cv.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier:'Section', forIndexPath:path)
+		view.section = path.section
 		section_date = @display_model.sections[path.section]
 		view.subviews[0].text = section_date.day_of_week_label
 		view.subviews[1].text = section_date.strftime("%b %d").upcase
+		@section_cells[path.section] = view
 		view
 	end
 

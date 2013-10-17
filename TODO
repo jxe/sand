@@ -1,30 +1,44 @@
 TIME TILL v1.0:
-9h ~ 2d
-
-v.0.3.1
-* EKEvent > Appointment
-* Appointment.ghosted?
-
-* ghosted photos don't stay ghosted when they slide
+12.5h ~ 2d
 
 ====================
 
-v.0.4.1
-* (10m) friend photo on event page
+v0.3.1 (1h)
+* (10m) @draggable_img is a whole AppointmentCell, not an image
+* (20m) @draggable_img's time title changes as you hover
+* (10m) ask for confirm on delete when cal is editable, but its not a recognized dock item thing
+* (10m) placeholders should have gray dotted outline (draw a 63px dotted box in omnigraffle)
+* (15m) friend photo on event page (use autolayout macros)
 
-v.0.4.2 (3h)
-* (20m) @display_model.current_foviation => array[ fovations ]
-* (1h) AppointmentCell knows how to draw .foveation=
-	:past, :end_of_past, :beginning_of_present, :present, :end_of_present, :beginning_of_future, :future
-* (10m) UpcomingController.refresh_foviation
+====================
+
+v0.4a1 (30m)
+* CalViewModel.foviations() => { indexpath => foviation }
+* CalController.refresh_foviations() does :past, :present, :future
+* AppointmentCell.foviation="past_present_or_future" (dims past and future slightly)
+* CalController.refresh_foviations() called after animations and scrolls
+
+v.0.4a2 (2h)
+* AppointmentCell[foviation=present] gets a red underline image
+* CalViewModel.foviations() learns:
+	:end_of_past, :beginning_of_present, :end_of_present, :beginning_of_future
+* AppointmentCell[foviation=end_of_past] gets a right side uptick
+* AppointmentCell[foviation=beginning_of_present] gets a left uptick and underline
+* AppointmentCell[foviation=end_of_present] gets a right uptick and underline
+* AppointmentCell[foviation=beginning_of_future] gets a left uptick
+
+v.0.4a3 (1h)
 * (1h) various wiggles, adds, removes, moved, etc, update foviation boundaries
-* (30m) dim past appts in TODAY, slightly
 
-v.0.4.3 (2h)
+====================
+
+v.0.4b1 (2h)
 * (20m) opening TODAY hides the past except for...
 * (30m) special droptarget in TODAY called [DONE], with a checkmark and is :most_recent_past
 * (30m) @display_model.mark_done() - moves to most_recent_past loc, extends foveation
 * (30m) drags from Dock to [DONE] add things to a guessed time of day
+
+====================
 
 v0.5 (1h)
 * (1h) recent friends in ABPicker
@@ -36,11 +50,9 @@ v0.6 (3h)
 ====================
 
 v1.0 (2h)
-* (1h) BUG: something seems to leave things open sometimes
 * (5m) re-enable observer - redraw if we haven't added anything recently
 * (5m) image credits linked from credits page
 * (15m) figure out how to get sidemenu to go right to auth page, and auth page goes to tutorial page (in AuthenticationController.button_pressed)
-* (1h) draggable should show the time you're landing on
 
 ====================
 
@@ -48,6 +60,8 @@ v1.1 (11h)
 * (1h) weather w/ forecast or whatever
 * (5h) longTap in suggestions webview does some kind of share
 * (5h) Add friends to dock
+
+* edit title and notes in place on event page, using https://github.com/jverdi/JVFloatLabeledTextField
 
 ====================
 
@@ -73,10 +87,6 @@ v1.3
 - move some Event.rb stuff to DockItem.rb with DockItem.from_event(ev)
 - remove nitron and sugarcube
 - rebuild cells, removing superview, using layers more
-
-v0.6.1
-* (5m) confirm on delete unless recognized dockitem
-* placeholders should have dotted outline
 
 v0.7
 * Fetch fb friend faces when addr book face blank and fb?
