@@ -3,8 +3,6 @@ TIME TILL v1.0:
 
 ====================
 
-* trick out cells, so they have a placeholder beneath and then they can slide their image right to hint at the placeholder, and the placeholder highlights
-
 * TRY: use velocity, not hover, to decide when to open
 
 * highlight regions immediately as you drag up

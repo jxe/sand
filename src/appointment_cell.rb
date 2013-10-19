@@ -10,12 +10,18 @@ class AppointmentCell < UICollectionViewCell
 	end
 
 	def becomes_placeholder
-		@prev_image = imageview.image
-		imageview.image = UIImage.imageNamed('q.png')
+		bgimageview.hidden = false
+		UIView.animateWithDuration(0.1, animations:lambda {
+			imageview.center = CGPointMake(imageview.center.x+40, imageview.center.y)
+		})
 	end
 
 	def recover_from_being_placeholder
-		imageview.image = @prev_image
+		UIView.animateWithDuration(0.3, animations:lambda {
+			imageview.center = CGPointMake(imageview.center.x-40, imageview.center.y)
+		}, completion:lambda{ |x|
+			bgimageview.hidden = true
+		})
 	end
 
 	def bgimageview

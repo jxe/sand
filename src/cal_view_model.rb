@@ -131,7 +131,7 @@ class CalViewModel
 	######
 	# basic access
 
-	def objs d; @objs[d] || []; end
+	def objs d; @objs[d] ||= []; end
 
 	def special_placeholder_position
 		@special_placeholder && index_path_for_thing(@special_placeholder)

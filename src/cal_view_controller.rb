@@ -153,7 +153,7 @@ class CalViewController < UICollectionViewController
     end
 
 
-	def dragOver(text, p)
+	def dragOver(text, y_vel, p)
 		consider_revealing_at(p)
 	end
 

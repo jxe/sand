@@ -27,6 +27,7 @@ class MainController < UIViewController
 
 	def dragon
 		pt = @gr.locationInView(view)
+		vel = @gr.velocityInView(view)
 
 		case @gr.state
 		when UIGestureRecognizerStateBegan
@@ -44,7 +45,7 @@ class MainController < UIViewController
 		when UIGestureRecognizerStateChanged
 			return @gr.reset unless @img
 			@img.center = pt if @img
-			@upcoming.dragOver(@text, pt.inside?(@dockFrame) ? nil : @gr.locationInView(@upcoming_cv))
+			@upcoming.dragOver(@text, vel.y.abs, pt.inside?(@dockFrame) ? nil : @gr.locationInView(@upcoming_cv))
 
 		when UIGestureRecognizerStateEnded
 			return unless @text
