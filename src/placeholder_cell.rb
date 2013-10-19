@@ -4,6 +4,12 @@ class PlaceholderCell < UICollectionViewCell
 		self
 	end
 
+	def becomes_placeholder
+	end
+
+	def recover_from_being_placeholder
+	end
+
 	def as_placeholder(time_of_day)
 		# imageview = contentView.viewWithTag(100)
 		personlabel = contentView.viewWithTag(102)

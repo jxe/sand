@@ -1,3 +1,5 @@
+class Contact < Nitron::Model; end
+
 class Event < Nitron::Model
 
 
@@ -149,23 +151,24 @@ class Event < Nitron::Model
 	#### MOVE TO DOCKITEM.RB ####
 
 	def self.suggestions_url(ev, loc)
-		NSLog "pushing street address: #{loc}"
 		# loc = loc.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
 		# loc2 = CFURLCreateStringByAddingPercentEscapes(nil, loc, nil, "!*'();:@&=+$,/?%#[]", KCFStringEncodingUTF8)
 		loc2 = loc.gsub("\n"," ").sub(" United States", "").gsub(/\u200E|\s/, '%20')
-		NSLog "%@", "converted to: #{loc2}"
 		raw = raw_suggestions_url(ev)
-		raw.sub("%%", loc2.strip)
+		url = raw.sub("%%", loc2.strip)
+		NSLog "%@", "URL: #{url}"
+		url
 	end
 
 
 
 	def self.raw_suggestions_url(ev)
 		time_label = ev.startDate.time_of_day_label
+		title = ev.title.sub(' ', '%20')
 
 		case ev.title
 		when /sunshine|exercise|quiet/
-			return "http://www.yelp.com/search?find_desc=park+#{ev.title}&find_loc=%%"
+			return "http://www.yelp.com/search?find_desc=park+#{title}&find_loc=%%"
 		when /work/
 			return "http://www.yelp.com/search?find_desc=cafe+working&find_loc=%%"
 		when /cooking/
@@ -183,7 +186,7 @@ class Event < Nitron::Model
 			return "http://www.yelp.com/search?find_desc=bar&find_loc=%%"
 		end
 
-		return "http://www.yelp.com"
+		return "http://www.yelp.com/search?find_desc=#{title}&find_loc=%%"
 	end
 
 
@@ -211,7 +214,7 @@ class Event < Nitron::Model
 			return "for bars"
 		end
 
-		return "from yelp"
+		return "from yelp for #{ev.title}"
 	end
 
 

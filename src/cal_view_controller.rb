@@ -1,6 +1,8 @@
-LIVE = []
+class UpcomingCollectionView < UICollectionView; end
+class DayHeaderReusableView < UICollectionReusableView; attr_accessor :section; end
+class SandFlowLayout < UICollectionViewFlowLayout; end
 
-class UpcomingController < UICollectionViewController
+class CalViewController < UICollectionViewController
 
 	############
 	# lifecycle
@@ -11,12 +13,12 @@ class UpcomingController < UICollectionViewController
 
 	def viewDidLoad
 		super
-		@display_model = CalendarDisplayModel.new
+		@cvm = CalViewModel.new
 		@@instance = self
-		@display_model.load_events
+		@cvm.load_events
 		collectionView.delegate = self
 		collectionView.dataSource = self
-		collectionView.contentInset = UIEdgeInsetsMake(20,0,0,0)
+		collectionView.contentInset = UIEdgeInsetsMake(26,0,0,0)
 		collectionView.gestureRecognizers[2].addTarget(self, action: :longPress)
 		collectionView.gestureRecognizers[2].delegate = self
 		view.addGestureRecognizer(UIPanGestureRecognizer.alloc.initWithTarget(self, action: :swipeHandler))
@@ -29,7 +31,6 @@ class UpcomingController < UICollectionViewController
 
 	def viewWillAppear(animated)
 		super
-		LIVE[0] = self
 		# @ekobserver = App.notification_center.observe(EKEventStoreChangedNotification){ |x| reload }
 		# navigationController.setToolbarHidden(true,animated:true)
 	end
@@ -40,7 +41,7 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def reload
-  		@display_model.load_events
+  		@cvm.load_events
   		collectionView.reloadData
 	end
 
@@ -84,10 +85,9 @@ class UpcomingController < UICollectionViewController
     # open_section -- is a section open?
 
     def animate_section_opened s
-    	return if @display_model.date_open
-    	NSLog "animating opened: #{s}"
-		@display_model.hover(s)
-		insertItemsAtIndexPaths(@display_model.placeholder_positions)    		
+    	return if @cvm.date_open
+		@cvm.hover(s)
+		insertItemsAtIndexPaths(@cvm.placeholder_positions)    		
     end
 
     def insertItemsAtIndexPaths(paths)
@@ -119,36 +119,37 @@ class UpcomingController < UICollectionViewController
 		    	end
 		    end
 
-		    if new_interesting_section
-	    		delay = limit_to_section ? 0.6 : 0.3
-	    		open_section_if_still_over(@over_section, :in => delay)
+		    if new_interesting_section && !@cvm.date_open
+	    		open_section_if_still_over(@over_section, :in => limit_to_section ? 0.6 : 0.3)
 	    	end
 
-	    	if @was_over_section
+	    	if @was_over_section && @cvm.date_open
 				push_animation{ animate_section_closed } if @was_over_section
 			end
-
-    	else
-    		@old_thing = @over_thing
-    		@over_thing = p && thing_at_point(p)
-
-    		return if !@over_thing or @over_thing == special_thing
-    		return if @old_thing == @over_thing
-    		return if @animations_running
-			return unless @display_model.date_open and @over_thing.startDate.start_of_day == @display_model.date_open
-
-			push_animation{
-				# wiggle
-				old_location = @display_model.special_placeholder_position
-				@display_model.hover(@over_section, @over_thing)
-				new_location = @display_model.special_placeholder_position
-				old_location && deleteItemsAtIndexPaths([old_location])
-				new_location && insertItemsAtIndexPaths([new_location])
-			}
-			push_animation{
-				@old_thing = @over_thing = thing_at_point(p)
-			}
     	end
+
+		@old_thing = @over_thing
+		@over_thing = p && thing_at_point(p)
+		
+		return if @old_thing == @over_thing
+
+		if @flipped_cell
+			@flipped_cell.recover_from_being_placeholder
+			@flipped_cell = nil
+		end
+
+		return if !@over_thing or @over_thing == special_thing
+		return if @animations_running
+
+		path = collectionView.indexPathForItemAtPoint(p)
+		return if limit_to_section and path.section != limit_to_section
+
+		if !@flipped_cell
+			@flipped_cell = collectionView.cellForItemAtIndexPath(path)
+			@flipped_cell.becomes_placeholder
+		end
+
+		@old_thing = @over_thing
     end
 
 
@@ -182,20 +183,20 @@ class UpcomingController < UICollectionViewController
 
 
     def animate_section_closed
-    	return unless @display_model.date_open
-    	positions = @display_model.placeholder_positions
-    	@display_model.hover nil
+    	return unless @cvm.date_open
+    	positions = @cvm.placeholder_positions
+    	@cvm.hover nil
 		deleteItemsAtIndexPaths(positions)
     end
 
     # TODO: unused
     # def animate_section_switch new_section
     # 	perform_animation_pausing_hover_detection{
-	#     	positions = @display_model.placeholder_positions
-	#     	@display_model.hover nil
+	#     	positions = @cvm.placeholder_positions
+	#     	@cvm.hover nil
 	# 		collectionView.deleteItemsAtIndexPaths(positions)
-	# 		@display_model.hover(new_section)
-	# 		collectionView.insertItemsAtIndexPaths(@display_model.placeholder_positions)
+	# 		@cvm.hover(new_section)
+	# 		collectionView.insertItemsAtIndexPaths(@cvm.placeholder_positions)
     # 	}
     # end
 
@@ -205,6 +206,25 @@ class UpcomingController < UICollectionViewController
 		thing = thing_at_point(p)
 		return true if thing and EKEvent === thing
 		return false
+    end
+
+    def copy_view view
+    	archived = NSKeyedArchiver.archivedDataWithRootObject(view)
+    	return NSKeyedUnarchiver.unarchiveObjectWithData(archived)
+    end
+
+    def create_dragging_uiview from_cell
+    	# obj = copy_view(from_cell.contentView)
+
+		imgview = from_cell.contentView.viewWithTag(100)
+		obj = UIImageView.alloc.initWithImage(imgview.image)
+		obj.frame = CGRect.make(origin: obj.frame.origin, size: CGSizeMake(60,60))
+		obj
+
+		# # obj = AppointmentCell.alloc.initWithCoder(nil)
+		# # obj.imageview.image = imgview.image
+		# obj.timelabel.text = "Dragging"
+		obj
     end
 
 	def longPress
@@ -220,12 +240,14 @@ class UpcomingController < UICollectionViewController
 
 			@press_cell.ghost
 			@map = onscreen_section_map
-			@over_section = nil
-			consider_revealing_at(p, @press_thing, @press_path.section)
 
-			imgview = cell.contentView.viewWithTag(100)
-			@dragging_img = UIImageView.alloc.initWithImage(imgview.image)
-			@dragging_img.frame = CGRect.make(origin: @dragging_img.frame.origin, size: CGSizeMake(80,80))
+			@over_section = opening_section = @press_path.section
+			push_animation{ animate_section_opened(opening_section) if @over_section == opening_section }
+			push_animation{ reveal_section opening_section if @over_section == opening_section }
+
+			# consider_revealing_at(p, @press_thing, @press_path.section)
+
+			@dragging_img = create_dragging_uiview(cell)
 			@dragging_img.center = p
 			collectionView.scrollEnabled = false
 			collectionView.addSubview @dragging_img
@@ -244,7 +266,7 @@ class UpcomingController < UICollectionViewController
 			collectionView.scrollEnabled = true
 			endpt = p
 			if section_for_point(endpt) != @press_path.section
-				unless @display_model.date_open
+				unless @cvm.date_open
 					# NSLog "%@", "l3: #{[thing_was, @press_path].inspect}"
 					push_animation{
 						delete_or_hide_event(thing_was, @press_path)
@@ -255,29 +277,46 @@ class UpcomingController < UICollectionViewController
 					push_animation{ speed(3.0); animate_section_closed }
 				end
 			else
+				@hover_timer.invalidate if @hover_timer
 				placeholder = thing_at_point(endpt)
 				end_path = collectionView.indexPathForItemAtPoint(endpt)
 				if placeholder && Placeholder === placeholder
 					# they dropped on a placeholder
-					@hover_timer.invalidate if @hover_timer
 					push_animation{
-						speed(1.5)
 						# delete from old location and replace placeholder
-						old_path = @display_model.index_path_for_event(thing_was)
+						old_path = @cvm.index_path_for_event(thing_was)
 						deleteItemsAtIndexPaths([old_path])
-						@display_model.move_to_placeholder(thing_was, placeholder)
+						@cvm.move_to_placeholder(thing_was, placeholder)
 						collectionView.reloadItemsAtIndexPaths([end_path])
 					}
 					push_animation { speed(3.0); animate_section_closed }
-				else
-					@hover_timer.invalidate if @hover_timer
+				elsif placeholder
+					return if @press_thing == placeholder
+					recover_flip
+					push_animation{
+						# delete from old location and replace placeholder
+						old_path = @cvm.index_path_for_event(thing_was)
+						new_loc = @cvm.move_before_event(thing_was, placeholder)
+						new_path = [end_path.section, new_loc].nsindexpath
+						deleteItemsAtIndexPaths([old_path])
+						insertItemsAtIndexPaths([new_path])
+
+						# collectionView.moveItemAtIndexPath(old_path, toIndexPath: end_path)
+					}
 					push_animation { animate_section_closed }
 				end
 			end
 		end
 	end
 
+	def recover_flip
+		return unless @flipped_cell
+		@flipped_cell.recover_from_being_placeholder
+		@flipped_cell = nil
+	end
+
 	def dragCanceled
+		recover_flip
 		@hover_timer.invalidate if @hover_timer
 		push_animation{ animate_section_closed }
 	end
@@ -285,21 +324,30 @@ class UpcomingController < UICollectionViewController
 
 	def dropped(text, p)
 		return dragCanceled unless placeholder = thing_at_point(p)
-		return dragCanceled unless Placeholder === placeholder
-		with_person_and_title_for_droptext text do |person, title|
-			if title
-				path = collectionView.indexPathForItemAtPoint(p)
+		recover_flip
+		path = collectionView.indexPathForItemAtPoint(p)
+		case placeholder
+		when Placeholder
+
+			with_person_and_title_for_droptext text do |person, title|
+				next dragCanceled unless title
 				push_animation{
-					speed(1.5);
-					@display_model.add_event_at_placeholder(placeholder, person, title)
+					@cvm.add_event_at_placeholder(placeholder, person, title)
 					collectionView.reloadItemsAtIndexPaths([path])					
 				}
-				push_animation{ 
-					speed(3.0);
-					animate_section_closed
+				push_animation{ animate_section_closed }
+			end
+
+		when EKEvent
+			return if placeholder.eventIdentifier == @press_thing
+
+			with_person_and_title_for_droptext text do |person, title|
+				next dragCanceled unless title
+				push_animation{
+					@cvm.add_event_before_event(placeholder, person, title)
+					collectionView.insertItemsAtIndexPaths([path])
 				}
-			else
-				dragCanceled
+				push_animation{ animate_section_closed }
 			end
 		end
 	end
@@ -396,7 +444,7 @@ class UpcomingController < UICollectionViewController
 	# wiring
 
 	def collectionView(cv, didSelectItemAtIndexPath:path)
-		thing = @display_model.thing_at_index_path path
+		thing = @cvm.thing_at_index_path path
 		view_event(thing) if EKEvent === thing
 	end
 
@@ -412,12 +460,12 @@ class UpcomingController < UICollectionViewController
 
 	def thing_at_point(p)
 		path = collectionView.indexPathForItemAtPoint(p)
-    	path && @display_model.thing_at_index_path(path)
+    	path && @cvm.thing_at_index_path(path)
 	end
 
 	def date_for_point p
 		section = section_for_point(p)
-		section && @display_model.sections[section]
+		section && @cvm.sections[section]
 	end
 
 	def uicollectionview_bugfix(first, last)
@@ -454,7 +502,7 @@ class UpcomingController < UICollectionViewController
 
 	def section_for_point(p)
 		prev_top = nil
-		(0..@display_model.sections.size-1).each do |i|
+		(0..@cvm.sections.size-1).each do |i|
 			path = [i].nsindexpath
 			attrs = collectionView.layoutAttributesForSupplementaryElementOfKind(UICollectionElementKindSectionHeader, atIndexPath: path)
 			top = attrs.frame.origin.y
@@ -465,23 +513,23 @@ class UpcomingController < UICollectionViewController
 	end
 
 	def delete_or_hide_event ev, path = nil
-		path ||= @display_model.index_path_for_event(ev)
+		path ||= @cvm.index_path_for_event(ev)
 		return unless path
-		@display_model.remove_event(ev)
+		@cvm.remove_event(ev)
 		deleteItemsAtIndexPaths([path])
 	end
 
 	def numberOfSectionsInCollectionView(cv)
-		@display_model.sections.length
+		@cvm.sections.length
 	end
 
 	def collectionView(cv, numberOfItemsInSection: section)
-		@display_model.item_count_for_section section
+		@cvm.item_count_for_section section
 	end
 
 	def collectionView(cv, cellForItemAtIndexPath: path)
 		puts "redrawing at #{path.inspect}"
-		ev = @display_model.thing_at_index_path path
+		ev = @cvm.thing_at_index_path path
 		case ev
 		when EKEvent;
 			cell = cv.dequeueReusableCellWithReuseIdentifier('Appt', forIndexPath:path)
@@ -498,7 +546,7 @@ class UpcomingController < UICollectionViewController
 		@section_cells ||= {}
 		view = cv.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier:'Section', forIndexPath:path)
 		view.section = path.section
-		section_date = @display_model.sections[path.section]
+		section_date = @cvm.sections[path.section]
 		view.subviews[0].text = section_date.day_of_week_label
 		view.subviews[1].text = section_date.strftime("%b %d").upcase
 		@section_cells[path.section] = view

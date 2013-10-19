@@ -1,5 +1,3 @@
-LIVE2 = []
-
 class MainController < UIViewController
 
 	def viewDidLoad
@@ -10,7 +8,7 @@ class MainController < UIViewController
 
 	def viewWillLayoutSubviews
 		super
-		@upcoming ||= UpcomingController.instance
+		@upcoming ||= CalViewController.instance
 		@gr = view.gestureRecognizers[0]
 		@dock = DockController.instance.collectionView
 		@dockFrame = @dock.superview.superview.frame

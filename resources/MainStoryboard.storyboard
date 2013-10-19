@@ -172,10 +172,10 @@
             </objects>
             <point key="canvasLocation" x="-1817" y="351"/>
         </scene>
-        <!--Upcoming Controller - Hourglass-->
+        <!--Cal View Controller - Hourglass-->
         <scene sceneID="rna-Ai-2GJ">
             <objects>
-                <collectionViewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="jC6-0L-hTW" customClass="UpcomingController" sceneMemberID="viewController">
+                <collectionViewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="jC6-0L-hTW" customClass="CalViewController" sceneMemberID="viewController">
                     <collectionView key="view" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" id="xa1-yV-bGb" customClass="UpcomingCollectionView">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -211,6 +211,13 @@
                                             <rect key="frame" x="0.0" y="14" width="73" height="70"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <subviews>
+                                                <imageView hidden="YES" userInteractionEnabled="NO" tag="99" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" image="cloudy-dune-57.png" translatesAutoresizingMaskIntoConstraints="NO" id="i0U-2N-JxE">
+                                                    <rect key="frame" x="0.0" y="-1" width="73" height="73"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="73" id="sqs-bh-oz9"/>
+                                                    </constraints>
+                                                </imageView>
                                                 <imageView userInteractionEnabled="NO" alpha="0.80000000000000004" tag="100" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3zb-Gd-etP">
                                                     <rect key="frame" x="0.0" y="0.0" width="73" height="73"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -347,7 +354,7 @@
                     </navigationItem>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qQ9-n1-gbN" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="lXx-qj-euO"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.29999999999999999" id="lXx-qj-euO"/>
             </objects>
             <point key="canvasLocation" x="-1312" y="351"/>
         </scene>
@@ -546,6 +553,9 @@
             <point key="canvasLocation" x="-370" y="351"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="cloudy-dune-57.png" width="57" height="57"/>
+    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

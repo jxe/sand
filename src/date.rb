@@ -1,7 +1,3 @@
-class Contact < Nitron::Model
-end
-
-
 class NSDate
 	HOUR_RANGES = {
 		predawn: 0...5,

@@ -3,6 +3,30 @@ TIME TILL v1.0:
 
 ====================
 
+* trick out cells, so they have a placeholder beneath and then they can slide their image right to hint at the placeholder, and the placeholder highlights
+
+* TRY: use velocity, not hover, to decide when to open
+
+* highlight regions immediately as you drag up
+
+* BUG: forgets to open rows sometimes
+
+
+new cell:
+	contentview
+		timelabel
+		layer
+			placeholderimg
+		layer
+			shadowimg
+			liveimg
+			titlelabel
+
+
+
+====================
+
+
 v0.3.1 (1h)
 * (10m) @draggable_img is a whole AppointmentCell, not an image
 * (20m) @draggable_img's time title changes as you hover

@@ -9,6 +9,19 @@ class AppointmentCell < UICollectionViewCell
 		self
 	end
 
+	def becomes_placeholder
+		@prev_image = imageview.image
+		imageview.image = UIImage.imageNamed('q.png')
+	end
+
+	def recover_from_being_placeholder
+		imageview.image = @prev_image
+	end
+
+	def bgimageview
+		contentView.viewWithTag(99)
+	end
+
 	def imageview
 		contentView.viewWithTag(100)
 	end
@@ -17,8 +30,15 @@ class AppointmentCell < UICollectionViewCell
 		contentView.viewWithTag(112)
 	end
 
+	def timelabel
+		contentView.viewWithTag(101)
+	end
+
+	def timelabeltext=(text)
+		timelabel.text = text
+	end
+
 	def as_event(ev, cv, path, ghosted)
-		timelabel = contentView.viewWithTag(101)
 		personlabel = contentView.viewWithTag(102)
 
 		# timelabel.text   = ev.startDate.time_of_day_label.to_s.upcase.sub('_', ' ')

@@ -1,6 +1,6 @@
 Placeholder = Struct.new(:label, :startDate)
 
-class CalendarDisplayModel
+class CalViewModel
 
 	##############################################
 	# mappings between indexpaths, sections, rows,
@@ -17,82 +17,45 @@ class CalendarDisplayModel
 	######
 	# managing placeholder appearance/disappearance
 
-	def hover section, thing_to_cover = nil
-		thing_to_cover = nil if Placeholder === thing_to_cover
+	def hover section
 		date = section && sections[section]
 		if @date_open == date
-			if @covering_thing && @covering_thing == thing_to_cover && @special_placeholder
-				# flip them!
-				idx1 = objs(@date_open).index(thing_to_cover)
-				idx2 = objs(@date_open).index(@special_placeholder)
-				objs(@date_open)[idx1] = @special_placeholder
-				objs(@date_open)[idx2] = thing_to_cover
-
-			else
-				maybe_remove_special_placeholder if @special_placeholder
-				maybe_add_special_placeholder(thing_to_cover)
-
-			end
+			# no-op
 
 		elsif !@date_open
 			@date_open = date
+			puts "before_open: #{inspect_row(date)}"
 			add_basic_placeholders
-			maybe_add_special_placeholder(thing_to_cover)
+			puts "after_open: #{inspect_row(date)}"
 
 		elsif !section
+			puts "before close: #{inspect_row(date)}"
 			remove_all_placeholders
-			@date_open = date
+			puts "after close: #{inspect_row(date)}"
+			@date_open = nil
 
 		else
 			remove_all_placeholders
 			@date_open = date
 			add_basic_placeholders
-			maybe_add_special_placeholder(thing_to_cover)
 
 		end
 	end
 
-	def maybe_add_special_placeholder(thing_to_cover)
-		if not thing_to_cover
-			@covering_thing = nil
-			@special_placeholder = nil
-			return
-		end
-
-		# return if @covering_thing == thing_to_cover
-
-		@covering_thing = thing_to_cover
-		idx = objs(@date_open).index(thing_to_cover)
-		date = thing_to_cover.startDate
-		@special_placeholder = Placeholder.new(date.time_of_day_label, thing_to_cover.startDate)
-		objs(@date_open).insert(idx, @special_placeholder)
-		# matches = objs(@date_open).select{ |x| x.startDate == @time_of_day_open }
-		# existing_placeholders = matches.detect{ |x| Placeholder === x }
-		# if existing_placeholders
-		# else
-		# 	idx = objs(@date_open).index(matches.first)
-		# end
-	end
-
-
-
-
-
-	def maybe_remove_special_placeholder
-		return unless @special_placeholder
-		objs(@date_open).delete(@special_placeholder)
-		@special_placeholder = nil
-	end
 
 	def add_basic_placeholders
 		TIMES.each do |label|
 			t = @date_open + NSDate::HOUR_RANGES[label.to_sym].begin.hours
 			next unless Time.now - t < 1.hour
 			next if objs(@date_open).any?{ |e| e.startDate == t }
-			objs(@date_open) << Placeholder.new(label, t)
+
+			place = objs(@date_open).index{ |x| x.startDate > t }
+			place ||= objs(@date_open).size
+			objs(@date_open).insert(place, Placeholder.new(label, t))
 		end
-		@objs[@date_open] = objs(@date_open).sort_by{ |x| x.startDate }
 	end
+
+
 
 	def remove_all_placeholders
 		objs(@date_open).reject!{ |p| Placeholder === p }
@@ -109,6 +72,39 @@ class CalendarDisplayModel
 		date = start_time.start_of_day
 		ev = Event.add_event(start_time, person, text)
 		@objs[date][@objs[date].index(pl)] = ev
+	end
+
+	def add_event_before_event(ev0, person, text)
+		start_time = ev0.startDate
+		date = start_time.start_of_day
+		ev = Event.add_event(start_time, person, text)
+		@objs[date].insert(@objs[date].index(ev0), ev)
+	end
+
+	def inspect_row date
+		objs(date).map do |obj|
+			case obj
+			when EKEvent;
+				"EV(#{obj.title}, #{obj.startDate.time_of_day_label})"
+			when Placeholder; 
+				":#{obj.startDate.time_of_day_label}"
+			end
+		end.join("\n")
+	end
+
+	def move_before_event(ev, ev0)
+		date = ev.startDate.start_of_day
+		old_loc = objs(date).index(ev)
+		new_loc = objs(date).index(ev0)
+		ev.startDate = ev0.startDate
+		Event.save(ev)
+		puts "\n\npreviously:\n\n#{inspect_row(date)}"
+		objs(date).insert(new_loc, :tmp)
+		objs(date).delete(ev)
+		new_loc = objs(date).index(:tmp)
+		objs(date)[new_loc] = ev
+		puts "\n\nnow:\n\n#{inspect_row(date)}"
+		return new_loc
 	end
 
 	def move_to_placeholder(ev, placeholder)
