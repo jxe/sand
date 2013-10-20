@@ -12,7 +12,8 @@ gem 'sugarcube', :require => [
 	'sugarcube-factories', 
 	'sugarcube-localized', 
 	'sugarcube-nsuserdefaults',
-	'sugarcube-foundation'
+	'sugarcube-foundation',
+	'sugarcube-animations'
 ]
 gem 'geomotion'
 gem 'motion-addressbook', :git => 'git://github.com/jxe/motion-addressbook.git'

@@ -13,7 +13,8 @@ Motion::Project::App.setup do |app|
   app.info_plist['URL types'] = { 'URL Schemes' => 'fb544764115578692'}
 
   app.sdk_version = "7.0"
-  app.deployment_target = "6.1"
+  # app.deployment_target = "6.1"
+  app.deployment_target = "7.0"
 
   app.interface_orientations = [:portrait]
   app.device_family = [:iphone]
@@ -37,6 +38,7 @@ Motion::Project::App.setup do |app|
   end
 
   app.files += Dir.glob("./src/*.rb")
+  app.files_dependencies 'src/cal_drag_manager.rb' => 'src/drag_manager.rb'
   app.build_dir = '/tmp/build-sand/'
 
 end

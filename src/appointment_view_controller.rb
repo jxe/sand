@@ -92,7 +92,7 @@ class AppointmentViewController < EKEventViewController
 	def eventViewController(c, didCompleteWithAction: action)
 		case action
 		when EKEventViewActionDeleted
-			@superdelegate.was_deleted(event)
+			@superdelegate.animate_rm(event)
 		else
 			@superdelegate.was_modified(event) if @event_was_modified
 		end
@@ -107,7 +107,7 @@ class AppointmentViewController < EKEventViewController
 		when EKEventEditViewActionDeleted
 			dismissViewControllerAnimated false, completion:lambda{
 				dismissViewControllerAnimated true, completion:nil
-				@superdelegate.was_deleted(event)		
+				@superdelegate.animate_rm(event)
 			}
 		else
 			dismissViewControllerAnimated true, completion:nil

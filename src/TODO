@@ -3,23 +3,17 @@ TIME TILL v1.0:
 
 ====================
 
-* TRY: use velocity, not hover, to decide when to open
+* place dock at bottom of the screen, whatever the screen size is
+* use UIDynamics for tumble and spring
+* implement animate___fade
+
+* an X should appear on the thing when we are about to delete it, or it should disappear completely
+
+* one step animation for move on top of other thing (...)
+
+* dim and drag off even within section
 
 * highlight regions immediately as you drag up
-
-* BUG: forgets to open rows sometimes
-
-
-new cell:
-	contentview
-		timelabel
-		layer
-			placeholderimg
-		layer
-			shadowimg
-			liveimg
-			titlelabel
-
 
 
 ====================
@@ -29,7 +23,6 @@ v0.3.1 (1h)
 * (10m) @draggable_img is a whole AppointmentCell, not an image
 * (20m) @draggable_img's time title changes as you hover
 * (10m) ask for confirm on delete when cal is editable, but its not a recognized dock item thing
-* (10m) placeholders should have gray dotted outline (draw a 63px dotted box in omnigraffle)
 * (15m) friend photo on event page (use autolayout macros)
 
 ====================
