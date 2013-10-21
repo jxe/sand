@@ -1,4 +1,4 @@
-class DockAddDragManager < CalDragManager
+class DragUpToAdd < CalDragManager
 
 	def gestureRecognizerShouldBegin(gr)
 		vel = @gr.velocityInView(@dock)

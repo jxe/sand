@@ -3,6 +3,10 @@ class DockController < UICollectionViewController
 	############
 	# lifecycle
 
+	def willMoveToParentViewController(cal)
+		
+	end
+
 	def viewDidLoad
 		super
 		@@instance = self

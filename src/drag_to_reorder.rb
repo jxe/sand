@@ -1,8 +1,8 @@
-class ReorderingDragManager < CalDragManager
+class DragToReorder < CalDragManager
 
 	def on_drag_over_cell
     	over_special_section = (@limit_to_section == @over_section)
-    	over_target = @over_cell and over_special_section
+    	over_target = @over_cell && over_special_section
    		@dragging.layer.opacity = over_target ? 1.0 : 0.5
    		@drag_cell.hidden = !over_target
 
@@ -45,10 +45,10 @@ class ReorderingDragManager < CalDragManager
 		flip_cell nil
 		end_thing = @vc.thing_at_point(@p)
 
-		puts "ENDED: over_section: #{@over_section}; drag_path: #{@drag_path.inspect}"
+		puts "ENDED: over_section: #{@over_section}; @limit_to_section: #{@limit_to_section};	drag_path: #{@drag_path.inspect}"
 
     	over_special_section = (@limit_to_section == @over_section)
-    	over_target = @over_cell and over_special_section
+    	over_target = @over_cell && over_special_section
 
 		if !over_target
 			animate_drag_img_tumble

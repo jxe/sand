@@ -38,7 +38,12 @@ Motion::Project::App.setup do |app|
   end
 
   app.files += Dir.glob("./src/*.rb")
-  app.files_dependencies 'src/cal_drag_manager.rb' => 'src/drag_manager.rb'
+  app.files_dependencies \
+    'src/cal_drag_manager.rb' => 'src/drag_manager.rb',
+    'src/cal_view_controller.rb' => [
+      'src/collection_view_controller_improvements.rb',
+      'src/view_controller_improvements.rb'
+    ]
   app.build_dir = '/tmp/build-sand/'
 
 end
