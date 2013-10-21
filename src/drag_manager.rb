@@ -46,24 +46,24 @@ class DragManager
 
 		@over_path = p && @cv.indexPathForItemAtPoint(p)
 		@over_cell = @over_path && @cv.cellForItemAtIndexPath(@over_path)
-		@over_section = p && @map[p.y.to_i]
+		@over_section = p && @vc.section_map[p.y.to_i]
 	end
 
 	def handleGesture(gr = nil)
 		@p = @gr.locationInView(@cv)
 		@pv = @gr.locationInView(@v)
-		@pw = @gr.locationInView(@v.window)
+		# @pw = @gr.locationInView(@v.window)
 		case @gr.state
 		when UIGestureRecognizerStateBegan
 			@cv.scrollEnabled = false
-			@map = onscreen_section_map
+			@vc.update_map
 			set_path_cell_and_section @p
 			@dragging = on_drag_started
-			@dragging.center = @pw
-			@v.window.addSubview @dragging
+			@dragging.center = @pv
+			@v.addSubview @dragging
 
 		when UIGestureRecognizerStateChanged
-	    	@dragging.center = @pw
+	    	@dragging.center = @pv
 	    	@was_over_section, @was_over_path, @was_over_cell = @over_section, @over_path, @over_cell
 	    	set_path_cell_and_section @p
 			slow_enough = if @gr.respond_to?(:velocityInView)
@@ -76,61 +76,36 @@ class DragManager
 			on_drag_over_cell if @was_over_cell != @over_cell
 
 		when UIGestureRecognizerStateEnded
-			set_path_cell_and_section @pw
+			set_path_cell_and_section @p
 			on_drag_ended
 			@cv.scrollEnabled = true
 		end
 	end
 
-
 	def animate_drag_img_tumble
-		@dragging.tumble completion: lambda{
+		@vc.apply_gravity @dragging
+
+		# @dragging.tumble completion: lambda{
+		# 	@dragging.removeFromSuperview
+		# 	@dragging = nil
+		# }
+	end
+
+	def animate_drag_img_spring_to(cell)
+		pt = cell.respond_to?(:center) ? cell.center : cell
+		@vc.snap_to @dragging, pt
+		Thread.new{
+			sleep 1
 			@dragging.removeFromSuperview
 			@dragging = nil
 		}
 	end
 
-	def animate_drag_img_spring_to(cell)
-		@dragging.removeFromSuperview
-		@dragging = nil
-	end
-
 	def animate_drag_img_fade
-		@dragging.removeFromSuperview
-		@dragging = nil
-	end
-
-	def update_map
-		@map = onscreen_section_map
-	end
-
-
-	def onscreen_section_map
-		top = @cv.contentOffset.y.to_i
-		bottom = top + @cv.frame.height.to_i
-		map = {}
-		next_section = 0
-
-		(top..bottom).each do |y|
-			next_section += 1 unless @vc.top_of_header_for_section(next_section) > y
-			map[y] = next_section - 1
-		end
-
-		# uicollectionview_bugfix(map[top], map[bottom])
-
-		map
-	end
-
-	def uicollectionview_bugfix(first, last)
-		@section_cells ||= {}
-		# (first..last).each do |section|
-		# 	collectionView.layoutAttributesForSupplementaryElementOfKind(UICollectionElementKindSectionHeader, atIndexPath: [section].nsindexpath)
-		# end
-		collectionView.subviews.each do |v|
-			if DayHeaderReusableView === v
-				v.removeFromSuperview unless v == @section_cells[v.section]
-			end
-		end
+		@dragging.fade_out duration: 0.1, completion:lambda{
+			@dragging.removeFromSuperview
+			@dragging = nil
+		}
 	end
 
 end

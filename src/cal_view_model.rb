@@ -6,11 +6,7 @@ class CalViewModel
 	# mappings between indexpaths, sections, rows,
 	# calendar events, droptarget placeholders
 
-	# things[date] = [placeholders_and_events...]
-	attr_reader :things
 	attr_reader :date_open
-	attr_reader :special_placeholder
-
 	TIMES = %w{ bfst morn lunch aft hpy_hr eve night }
 
 
@@ -24,14 +20,14 @@ class CalViewModel
 
 		elsif !@date_open
 			@date_open = date
-			puts "before_open: #{inspect_row(date)}"
+			puts "before_open:\n   #{inspect_row(date)}"
 			add_basic_placeholders
-			puts "after_open: #{inspect_row(date)}"
+			puts "after_open:\n   #{inspect_row(date)}"
 
 		elsif !section
-			puts "before close: #{inspect_row(date)}"
+			puts "before close:\n   #{inspect_row(@date_open)}"
 			remove_all_placeholders
-			puts "after close: #{inspect_row(date)}"
+			puts "after close:\n   #{inspect_row(@date_open)}"
 			@date_open = nil
 
 		else
@@ -59,7 +55,6 @@ class CalViewModel
 
 	def remove_all_placeholders
 		objs(@date_open).reject!{ |p| Placeholder === p }
-		@special_placeholder = nil
 	end
 
 
@@ -79,6 +74,7 @@ class CalViewModel
 		date = start_time.start_of_day
 		ev = Event.add_event(start_time, person, text)
 		@objs[date].insert(@objs[date].index(ev0), ev)
+		ev
 	end
 
 	def inspect_row date
@@ -88,8 +84,10 @@ class CalViewModel
 				"EV(#{obj.title}, #{obj.startDate.time_of_day_label})"
 			when Placeholder; 
 				":#{obj.startDate.time_of_day_label}"
+			else
+				obj.inspect
 			end
-		end.join("\n")
+		end.join("\n    ")
 	end
 
 	def move_before_event(ev, ev0)
@@ -132,10 +130,6 @@ class CalViewModel
 	# basic access
 
 	def objs d; @objs[d] ||= []; end
-
-	def special_placeholder_position
-		@special_placeholder && index_path_for_thing(@special_placeholder)
-	end
 
 	def placeholder_positions
 		return [] unless @date_open

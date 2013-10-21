@@ -3,7 +3,10 @@ class DockAddDragManager < CalDragManager
 	def gestureRecognizerShouldBegin(gr)
 		vel = @gr.velocityInView(@dock)
         return false unless vel.x.abs < vel.y.abs and inside_dock?
-		@dock_path = @dock.indexPathForItemAtPoint(gr.locationInView(@dock))
+        position = gr.locationInView(@dock)
+		translation = @gr.translationInView(@dock)
+		origin = CGPointMake(position.x - translation.x, position.y - translation.y)
+		@dock_path = @dock.indexPathForItemAtPoint(origin)
 		puts "got path: #{@dock_path.inspect}"
 		@dock_path ? true : false
 	end
@@ -36,13 +39,13 @@ class DockAddDragManager < CalDragManager
 					case placeholder
 					when Placeholder
 						puts ">animate_add_and_close"
-						animate_drag_img_spring_to @over_cell
-						@vc.animate_add_and_close placeholder, person, title
+						@vc.animate_add_and_close placeholder, person, title, @dragging
+						# animate_drag_img_spring_to @over_cell.layer.modelLayer.position
 						puts "<animate_add_and_close"
 					when EKEvent
 						puts ">animate_insert_and_close"
-						animate_drag_img_spring_to @over_cell
-						@vc.animate_insert_and_close(placeholder, person, title)
+						# animate_drag_img_spring_to @over_cell
+						@vc.animate_insert_and_close placeholder, person, title, @dragging
 						puts "<animate_insert_and_close"
 					end
 				else

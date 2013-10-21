@@ -6,12 +6,7 @@ class CalViewController < UICollectionViewController
 	############
 	# lifecycle
 
-	attr_reader :animations_running
-
-	def addDragManager(mgr, *grArgs)
-		(@dragManagers ||= []) << mgr
-		view.addGestureRecognizer(mgr.newGestureRecognizer(*grArgs))
-	end
+	attr_reader :animations_running, :section_map
 
 	def viewDidLoad
 		super
@@ -20,7 +15,9 @@ class CalViewController < UICollectionViewController
 		collectionView.contentInset = UIEdgeInsetsMake(26,0,0,0)
 		@dock_controller = self.storyboard.instantiateViewControllerWithIdentifier('Dock')
 		addChildViewController(@dock_controller)
-		@dock_controller.collectionView.frame = CGRectMake(0, 490, 320, 60)
+		dock_height = 53
+		dock_y = view.frame.size.height - dock_height
+		@dock_controller.collectionView.frame = CGRectMake(0, dock_y, view.frame.size.width, dock_height)
 		view.addSubview(@dock_controller.collectionView)
 
 		# populate myself
@@ -43,6 +40,34 @@ class CalViewController < UICollectionViewController
 
 
 
+	def apply_gravity view, g = 0.3
+		@animated_view = view
+		g = UIGravityBehavior.alloc.initWithItems [view]
+		g.magnitude = 1.0
+		p = UIPushBehavior.alloc.initWithItems([view], mode: UIPushBehaviorModeInstantaneous)
+		p.setAngle(1.7, magnitude: 2.0)
+		p.active = true
+		p.setTargetOffsetFromCenter(UIOffsetMake(20,20), forItem: view)
+		@animator.addBehavior g
+		@animator.addBehavior p
+	end
+
+	def snap_to view, point
+		pt = collectionView.convertPoint(point, toView: view.window)
+		@animated_view = view
+		@animator.addBehavior UISnapBehavior.alloc.initWithItem(view, snapToPoint: pt)
+		view.fade_out delay: 0.3
+	end
+
+	def dynamicAnimatorDidPause(animator = nil)
+		@animated_view && @animated_view.removeFromSuperview()
+		@animator.removeAllBehaviors
+	end
+
+	def dynamicAnimatorDidResume(animator = nil)
+		# @animated_view && @animated_view.removeFromSuperview()
+	end
+
 
 	def swipeHandler sender = nil
 		sideMenu.showFromPanGesture(sender)
@@ -51,6 +76,8 @@ class CalViewController < UICollectionViewController
 
 	def viewWillAppear(animated)
 		super
+		@animator = UIDynamicAnimator.alloc.initWithReferenceView(view.window)
+		@animator.delegate = self
 		# @ekobserver = App.notification_center.observe(EKEventStoreChangedNotification){ |x| reload }
 		# navigationController.setToolbarHidden(true,animated:true)
 	end
@@ -133,22 +160,44 @@ class CalViewController < UICollectionViewController
 		}
     end
 
-	def animate_add_and_close placeholder, person, title
+	def animate_add_and_close placeholder, person, title, img = nil
 		push_animation{
 			path = @cvm.index_path_for_thing(placeholder)
-			@cvm.add_event_at_placeholder(placeholder, person, title)
+			@last_ev = @cvm.add_event_at_placeholder(placeholder, person, title)
 			path && collectionView.reloadItemsAtIndexPaths([path])
+	    	if @cvm.date_open
+		    	positions = @cvm.placeholder_positions
+		    	@cvm.hover nil
+				collectionView.deleteItemsAtIndexPaths(positions)
+			end
+			if img
+				loc = @cvm.index_path_for_thing(@last_ev)
+				cell = collectionView.cellForItemAtIndexPath(loc)
+				snap_to img, cell.center
+			end
 		}
-		animate_close
 	end
 
-	def animate_insert_and_close ev, person, title
+	def animate_insert_and_close ev, person, title, img = nil
 		push_animation{
-			path = @cvm.index_path_for_thing(ev)
-			@cvm.add_event_before_event(ev, person, title)
-			collectionView.insertItemsAtIndexPaths([path])
+	    	if @cvm.date_open
+		    	positions = @cvm.placeholder_positions
+				@last_ev = @cvm.add_event_before_event(ev, person, title)
+		    	@cvm.hover nil
+				collectionView.deleteItemsAtIndexPaths(positions)
+				path = @cvm.index_path_for_thing(@last_ev)
+				collectionView.insertItemsAtIndexPaths([path])
+			else
+				path = @cvm.index_path_for_thing(ev)
+				@last_ev = @cvm.add_event_before_event(ev, person, title)
+				collectionView.insertItemsAtIndexPaths([path])
+			end
+			if img
+				loc = @cvm.index_path_for_thing(@last_ev)
+				cell = collectionView.cellForItemAtIndexPath(loc)
+				snap_to img, cell.center
+			end
 		}
-		animate_close
 	end
 
 	def animate_mv_and_close thing_was, placeholder
@@ -208,7 +257,7 @@ class CalViewController < UICollectionViewController
 		collectionView.performBatchUpdates(@animation_stack.shift, completion: lambda{ |x|
 			if @animation_stack.empty?
 				@animations_running = false
-				@dragManagers.each(&:update_map)
+				update_map
 				layer.setSpeed @baseline_animation_speed
 			else
 				run_animations
@@ -356,7 +405,7 @@ class CalViewController < UICollectionViewController
 	end
 
 	def collectionView(cv, cellForItemAtIndexPath: path)
-		puts "redrawing at #{path.inspect}"
+		# puts "redrawing at #{path.inspect}"
 		ev = @cvm.thing_at_index_path path
 		case ev
 		when EKEvent;
@@ -435,5 +484,40 @@ class CalViewController < UICollectionViewController
 			canceled.call() if canceled
 		}
 	end
+
+	def onscreen_section_map
+		top = collectionView.contentOffset.y.to_i
+		bottom = top + collectionView.frame.height.to_i
+		map = {}
+		next_section = 0
+
+		(top..bottom).each do |y|
+			next_section += 1 unless top_of_header_for_section(next_section) > y
+			map[y] = next_section - 1
+		end
+
+		uicollectionview_bugfix(map[top], map[bottom])
+
+		map
+	end
+
+	def uicollectionview_bugfix(first, last)
+		@section_cells ||= {}
+		collectionView.subviews.each do |v|
+			if DayHeaderReusableView === v
+				v.removeFromSuperview unless v == @section_cells[v.section]
+			end
+		end
+	end
+
+	def update_map
+		@section_map = onscreen_section_map
+	end
+
+	def addDragManager(mgr, *grArgs)
+		(@dragManagers ||= []) << mgr
+		view.addGestureRecognizer(mgr.newGestureRecognizer(*grArgs))
+	end
+
 
 end

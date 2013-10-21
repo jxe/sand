@@ -3,16 +3,13 @@ TIME TILL v1.0:
 
 ====================
 
-* place dock at bottom of the screen, whatever the screen size is
-* use UIDynamics for tumble and spring
-* implement animate___fade
+* one step animation for...
+	* move to new loc (Reorder)
+		animate_drag_img_spring_to @over_cell
+		@vc.animate_mv_and_close(@press_thing, end_thing)
 
+LATER
 * an X should appear on the thing when we are about to delete it, or it should disappear completely
-
-* one step animation for move on top of other thing (...)
-
-* dim and drag off even within section
-
 * highlight regions immediately as you drag up
 
 

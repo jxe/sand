@@ -3,6 +3,7 @@ class AppDelegate
 
   def configure_menus(vcs)
     items = []
+    @vcs = vcs
     vcs.each do |title, vc|
       items.push RESideMenuItem.alloc.initWithTitle(title, action: proc{ |menu, item|
         menu.hide
@@ -44,6 +45,10 @@ class AppDelegate
   def applicationWillTerminate(application)
     # Kill the Facebook session when the application terminates
     FBSession.activeSession.close
+  end
+
+  def applicationSignificantTimeChange(application)
+    @vcs && @vcs[0][1].reload
   end
 
 end
