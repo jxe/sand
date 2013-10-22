@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 $:.unshift("/Library/RubyMotion/lib")
-%w{ motion/project/template/ios rubygems bundler bubble-wrap nitron motion-cocoapods }.each{ |x| require x }
+%w{ motion/project/template/ios rubygems bundler bubble-wrap motion-cocoapods }.each{ |x| require x }
 Bundler.require
 Motion::Project::App.setup do |app|
 
@@ -22,6 +22,7 @@ Motion::Project::App.setup do |app|
   app.frameworks += %w{ AdSupport Accounts Social EventKit EventKitUI AddressBook AddressBookUI QuartzCore }
   app.weak_frameworks += %w{ AdSupport Accounts Social }
   app.pods{
+    pod 'RequestUtils'
     pod 'Facebook-iOS-SDK', '~> 3.7'
     pod 'RESideMenu'
   }
@@ -37,12 +38,12 @@ Motion::Project::App.setup do |app|
     app.provisioning_profile = "/Users/joe/Library/MobileDevice/Provisioning Profiles/7D1BDC63-D277-445D-A677-E877285CE20D.mobileprovision"
   end
 
-  app.files += Dir.glob("./src/*.rb")
+  app.files += Dir.glob("./src/**/*.rb")
   app.files_dependencies \
-    'src/cal_drag_manager.rb' => 'src/drag_manager.rb',
+    'src/drag/cal_drag_manager.rb' => 'src/drag/drag_manager.rb',
     'src/cal_view_controller.rb' => [
-      'src/collection_view_controller_improvements.rb',
-      'src/view_controller_improvements.rb'
+      'src/patch/collection_view_controller_improvements.rb',
+      'src/patch/view_controller_improvements.rb'
     ]
   app.build_dir = '/tmp/build-sand/'
 

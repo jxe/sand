@@ -1,10 +1,14 @@
 class DockController < UICollectionViewController
+	include ViewControllerImprovements
 
 	############
 	# lifecycle
 
 	def willMoveToParentViewController(cal)
-		
+		dock_height = 53
+		dock_y = cal.view.frame.size.height - dock_height
+		collectionView.frame = CGRectMake(0, dock_y, cal.view.frame.size.width, dock_height)
+		cal.view.addSubview(collectionView)
 	end
 
 	def viewDidLoad
@@ -31,6 +35,57 @@ class DockController < UICollectionViewController
 		v = UIView.alloc.initWithFrame(collectionView.bounds)
 		v.layer.insertSublayer(gradient, atIndex:0)
 		collectionView.backgroundView = v
+
+		collectionView.addGestureRecognizer(@lpgr = UILongPressGestureRecognizer.alloc.initWithTarget(self, action: :longPress))
+	end
+
+	def longPress
+		case @lpgr.state
+		when UIGestureRecognizerStateBegan
+			pt = @lpgr.locationInView(collectionView)
+			puts "pt: #{pt.inspect}"
+			path = collectionView.indexPathForItemAtPoint(pt)
+			puts "path: #{path.inspect}"
+			cell = path && collectionView.cellForItemAtIndexPath(path)
+			options = ["Add all", "Store"]
+			options << "Hide" << "Delete" if cell
+			menu options do |chose|
+				case chose
+				when /Add/
+					DockItem.load_defaults
+					collectionView.reloadData
+				when /Store/
+					go_to_url nil, "http://nxhx.org/hourglass/"
+				when /Hide/
+					cell.dock_item.hide!
+					collectionView.reloadData
+				when /Delete/
+					cell.dock_item.destroy
+					collectionView.reloadData
+				end
+			end
+		end
+	end
+
+	def webView(wv, shouldStartLoadWithRequest: req, navigationType: type)
+		# puts "called!: #{req.inspect} #{req.URL.scheme.inspect}"
+		case req.URL.scheme
+		when /sandapp/
+			case spec = req.URL.resourceSpecifier
+			when /^dockitem\?(.*)$/
+				begin
+					DockItem.install($1.URLQueryParameters)
+				rescue Exception => e
+					BW::UIAlertView.default(:title => e.message)
+				end
+				dismissViewController
+				collectionView.reloadData
+			else
+				BW::UIAlertView.default(:title => "Unrecognized sandapp: URL")
+			end
+		else
+			true
+		end
 	end
 
 	def self.instance
@@ -44,55 +99,23 @@ class DockController < UICollectionViewController
 		1
 	end
 
-	DEFAULT_DOCK = [
-		"appt",
-		"a friend", 
-
-		"quiet", 
-		"exercise", 
-		"cooking",
-		"sunshine", 
-		"work", 
-	]
-
 	def collectionView(cv, numberOfItemsInSection: section)
-		DEFAULT_DOCK.size
-	end
-
-	def setup_event_cell(cv, path, cell)
-		imageview = cell.contentView.viewWithTag(100)
-		label = cell.contentView.viewWithTag(102)
-		comboview = cell.contentView.viewWithTag(112)
-		l = comboview.layer
-		l.masksToBounds = false
-		l.cornerRadius = 8
-		l.shadowOffset = CGSizeMake(0, 2)
-		l.shadowRadius = 1.8
-		l.shadowOpacity = 0.7
-		l.shadowColor = UIColor.blackColor.CGColor
-		l.shadowPath = UIBezierPath.bezierPathWithRoundedRect(l.bounds, cornerRadius:8).CGPath
-		label.text = DEFAULT_DOCK[path.row]
-		imageview.image = Event.image_from_title(DEFAULT_DOCK[path.row])
-
-		case DEFAULT_DOCK[path.row]
-		when /appt|friend/
-			label.color = UIColor.blackColor
-			label.shadowColor = UIColor.whiteColor
-			comboview.backgroundColor = UIColor.whiteColor
-			label.backgroundColor = UIColor.colorWithHue(34, saturation:0.0, brightness:1.0, alpha:0.22)
-		else
-			label.color = UIColor.whiteColor
-			label.shadowColor = UIColor.blackColor
-			comboview.backgroundColor = UIColor.blackColor
-			label.backgroundColor = UIColor.colorWithHue(34, saturation:0.97, brightness:0.12, alpha:0.22)
-		end
-
-		cell
+		DockItem.visible.size + 2
 	end
 
 	def collectionView(cv, cellForItemAtIndexPath: path)
-		cell = cv.dequeueReusableCellWithReuseIdentifier('Appt', forIndexPath:path)
-		return setup_event_cell(cv, path, cell)
+		cell = cv.dequeueReusableCellWithReuseIdentifier('DockItem', forIndexPath:path)
+
+		case path.row
+		when 0
+			cell.system_item = "appt"
+		when 1
+			cell.system_item = "friend"
+		else
+			cell.dock_item = DockItem.visible[path.row - 2]
+		end
+
+		cell
 	end
 
 end

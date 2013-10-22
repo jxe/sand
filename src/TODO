@@ -1,17 +1,18 @@
 TIME TILL v1.0:
 12.5h ~ 2d
 
+* tmp store on github pages
+	* "sorrow"
+
 ====================
 
 * one step animation for...
 	* move to new loc (Reorder)
 		animate_drag_img_spring_to @over_cell
 		@vc.animate_mv_and_close(@press_thing, end_thing)
-
-LATER
-* an X should appear on the thing when we are about to delete it, or it should disappear completely
+* trash can floaty view
+* an X should appear on the thing when we are about to delete it
 * highlight regions immediately as you drag up
-
 
 ====================
 
@@ -19,7 +20,6 @@ LATER
 v0.3.1 (1h)
 * (10m) @draggable_img is a whole AppointmentCell, not an image
 * (20m) @draggable_img's time title changes as you hover
-* (10m) ask for confirm on delete when cal is editable, but its not a recognized dock item thing
 * (15m) friend photo on event page (use autolayout macros)
 
 ====================

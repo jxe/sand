@@ -117,6 +117,7 @@ module ViewControllerImprovements
 		rect = CGRectMake(0, 0, bounds.width, bounds.height);
 
     	uiWebView = UIWebView.alloc.initWithFrame(rect)
+    	uiWebView.delegate = self
     	
 		vc = UIViewController.alloc.init
     	vc.view.addSubview(uiWebView)
@@ -125,6 +126,10 @@ module ViewControllerImprovements
 	end
 
 	def go_to_url nc = nil, url
+		uiWebView = push_webview(nc)
+		nsurl = NSURL.URLWithString(url)
+		nsreq = NSURLRequest.requestWithURL(nsurl)
+		uiWebView.loadRequest(nsreq)
 	end
 
 	def display_person nc = nil, ab_person

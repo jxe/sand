@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="v0.4.1b" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3396" systemVersion="12E55" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Contact">
+        <attribute name="ab_record_id" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="added" optional="YES" attributeType="Date">
+            <userInfo/>
+        </attribute>
+        <attribute name="image" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="quality" optional="YES" attributeType="String" syncable="YES"/>
+        <userInfo/>
+    </entity>
+    <entity name="DockItem" syncable="YES">
+        <attribute name="dock_position" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="image" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="image_url" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="regex" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="suggestions_desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="suggestions_url" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Event" syncable="YES">
+        <attribute name="event_identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="friend_ab_record_id" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="friend_image" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="friend_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="friend_url" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="is_exact_time" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="is_hidden" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="start_date" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="suggested_idea" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Contact" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="DockItem" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Event" positionX="0" positionY="0" width="0" height="0"/>
+    </elements>
+</model>

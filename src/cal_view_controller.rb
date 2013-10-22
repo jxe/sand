@@ -15,12 +15,8 @@ class CalViewController < UICollectionViewController
 
 		# set up the screen
 		collectionView.contentInset = UIEdgeInsetsMake(26,0,0,0)
-		@dock_controller = self.storyboard.instantiateViewControllerWithIdentifier('Dock')
+		@dock_controller = storyboard.instantiateViewControllerWithIdentifier('Dock')
 		addChildViewController(@dock_controller)
-		dock_height = 53
-		dock_y = view.frame.size.height - dock_height
-		@dock_controller.collectionView.frame = CGRectMake(0, dock_y, view.frame.size.width, dock_height)
-		view.addSubview(@dock_controller.collectionView)
 
 		# populate myself
 		@cvm = CalViewModel.new
@@ -298,7 +294,7 @@ class CalViewController < UICollectionViewController
 	def display_suggestions event, navigationController = nil
 		uiWebView = push_webview(navigationController)
 		with_street_address do |loc|
-			url = Event.suggestions_url(event, loc)
+			url = DockItem.suggestions_url(event, loc)
 			nsurl = NSURL.URLWithString(url)
 			nsreq = NSURLRequest.requestWithURL(nsurl)
 			uiWebView.loadRequest(nsreq)

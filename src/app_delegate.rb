@@ -1,4 +1,5 @@
 class AppDelegate
+  include MotionDataWrapper::Delegate
   attr_accessor :window
 
   def configure_menus(vcs)

@@ -1,6 +1,6 @@
-class Contact < Nitron::Model; end
+class Contact < MotionDataWrapper::Model; end
 
-class Event < Nitron::Model
+class Event < MotionDataWrapper::Model
 
 
 	##########
@@ -142,102 +142,13 @@ class Event < Nitron::Model
 
 		possibly_fetch_background_image(ev, callback) unless e and e.friend_ab_record_id and !e.friend_image
 
-		image_from_title(ev.title) || image_from_time(ev.startDate.time_of_day_label)
+		DockItem.image(ev) || image_from_time(ev.startDate.time_of_day_label)
 	end
-
-
-
-	#############################
-	#### MOVE TO DOCKITEM.RB ####
-
-	def self.suggestions_url(ev, loc)
-		# loc = loc.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
-		# loc2 = CFURLCreateStringByAddingPercentEscapes(nil, loc, nil, "!*'();:@&=+$,/?%#[]", KCFStringEncodingUTF8)
-		loc2 = loc.gsub("\n"," ").sub(" United States", "").gsub(/\u200E|\s/, '%20')
-		raw = raw_suggestions_url(ev)
-		url = raw.sub("%%", loc2.strip)
-		NSLog "%@", "URL: #{url}"
-		url
-	end
-
-
-
-	def self.raw_suggestions_url(ev)
-		time_label = ev.startDate.time_of_day_label
-		title = ev.title.sub(' ', '%20')
-
-		case ev.title
-		when /sunshine|exercise|quiet/
-			return "http://www.yelp.com/search?find_desc=park+#{title}&find_loc=%%"
-		when /work/
-			return "http://www.yelp.com/search?find_desc=cafe+working&find_loc=%%"
-		when /cooking/
-			return "http://www.pinterest.com/fooddotcom/recipe-of-the-day/"
-		end
-
-		case time_label
-		when :bfst
-			return "http://www.yelp.com/search?find_desc=breakfast&find_loc=%%"
-		when :lunch
-			return "http://www.yelp.com/search?find_desc=lunch&find_loc=%%"
-		when :eve
-			return "http://www.yelp.com/search?find_desc=dinner&find_loc=%%"
-		when :night
-			return "http://www.yelp.com/search?find_desc=bar&find_loc=%%"
-		end
-
-		return "http://www.yelp.com/search?find_desc=#{title}&find_loc=%%"
-	end
-
-
-
-	def self.suggestion_descriptor(ev)
-		time_label = ev.startDate.time_of_day_label
-
-		case ev.title
-		when /sunshine|exercise|quiet/
-			return "for " + ev.title
-		when /work/
-			return "for working cafes"
-		when /cooking/
-			return "for recipes"
-		end
-
-		case time_label
-		when :bfst
-			return "for breakfast"
-		when :lunch
-			return "for lunch"
-		when :eve
-			return "for dinner"
-		when :night
-			return "for bars"
-		end
-
-		return "from yelp for #{ev.title}"
-	end
-
-
-
 
 
 	def self.painted?(ev)
 		return %{ creative exercise sweet }.include?(ev.title || '?')
 	end
-
-	def self.image_from_title(title)
-		case title
-		when /friend/;         return UIImage.imageNamed('friends.jpg')
-		when /appt/;          return UIImage.imageNamed('q.png')
-
-		when /cooking/;        return UIImage.imageNamed('img/activities/cooking.jpg')
-		when /exercise/;       return UIImage.imageNamed('img/activities/exercise.jpg')
-		when /sunshine|fresh/; return UIImage.imageNamed('img/activities/sunshine.jpg')
-		when /creative|work/;  return UIImage.imageNamed('img/activities/work.jpg')
-		when /quiet/;          return UIImage.imageNamed('img/activities/quiet.jpg')
-		end
-	end
-
 
 
 	##########
