@@ -66,6 +66,7 @@ class DockItem < MotionDataWrapper::Model
 	end
 
 	def self.load_defaults
+		all.each(&:destroy)
 		DEFAULT_DOCK_ITEMS.each{ |item| create(item) }
 	end
 

@@ -95,6 +95,7 @@ class CalViewModel
 		old_loc = objs(date).index(ev)
 		new_loc = objs(date).index(ev0)
 		ev.startDate = ev0.startDate
+		ev.endDate = ev0.endDate
 		Event.save(ev)
 		puts "\n\npreviously:\n\n#{inspect_row(date)}"
 		objs(date).insert(new_loc, :tmp)
@@ -110,6 +111,7 @@ class CalViewModel
 		old_loc = objs(date).index(ev)
 		new_loc = objs(date).index(placeholder)
 		ev.startDate = placeholder.startDate
+		ev.endDate = placeholder.startDate + 2.hours
 		Event.save(ev)
 		objs(date)[new_loc] = ev
 		objs(date).delete_at(old_loc)

@@ -47,45 +47,52 @@ class DockController < UICollectionViewController
 			path = collectionView.indexPathForItemAtPoint(pt)
 			puts "path: #{path.inspect}"
 			cell = path && collectionView.cellForItemAtIndexPath(path)
-			options = ["Add all", "Store"]
-			options << "Hide" << "Delete" if cell
+			options = ["Get More DockItems"]
+			options << "Hide #{cell.dock_item.title}" if cell and cell.dock_item
 			menu options do |chose|
 				case chose
-				when /Add/
-					DockItem.load_defaults
-					collectionView.reloadData
-				when /Store/
+				when /More/
 					go_to_url nil, "http://nxhx.org/hourglass/"
 				when /Hide/
 					cell.dock_item.hide!
-					collectionView.reloadData
-				when /Delete/
-					cell.dock_item.destroy
 					collectionView.reloadData
 				end
 			end
 		end
 	end
 
-	def webView(wv, shouldStartLoadWithRequest: req, navigationType: type)
-		# puts "called!: #{req.inspect} #{req.URL.scheme.inspect}"
-		case req.URL.scheme
-		when /sandapp/
-			case spec = req.URL.resourceSpecifier
-			when /^dockitem\?(.*)$/
-				begin
-					DockItem.install($1.URLQueryParameters)
-				rescue Exception => e
-					BW::UIAlertView.default(:title => e.message)
-				end
-				dismissViewController
+	def process_sand_url url
+		case spec = url.resourceSpecifier
+		when /^reset-dock$/
+			dismissViewController
+			BW::UIAlertView.default({
+			  :title               => "Reset Dock",
+			  :message             => "Reset Dock to Factory Defaults?",
+			  :buttons             => ["Cancel", "Engage"],
+			  :cancel_button_index => 0
+			}) do |alert|
+			  unless alert.clicked_button.cancel?
+				DockItem.load_defaults
 				collectionView.reloadData
-			else
-				BW::UIAlertView.default(:title => "Unrecognized sandapp: URL")
+			  end
+			end.show
+
+
+		when /^dockitem\?(.*)$/
+			begin
+				DockItem.install($1.URLQueryParameters)
+			rescue Exception => e
+				BW::UIAlertView.default(:title => e.message)
 			end
+			dismissViewController
+			collectionView.reloadData
 		else
-			true
+			BW::UIAlertView.default(:title => "Unrecognized sandapp: URL")
 		end
+	end
+
+	def webView(wv, shouldStartLoadWithRequest: req, navigationType: type)
+		req.URL.scheme =~ /sandapp/ ? process_sand_url(req.URL) : true
 	end
 
 	def self.instance

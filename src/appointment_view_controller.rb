@@ -9,7 +9,7 @@ class AppointmentViewController < EKEventViewController
 		suggs_button = UIButton.buttonWithType(UIButtonTypeCustom)
 		suggs_button.backgroundColor = blueColor
 		for_what = DockItem.suggestion_descriptor(event)
-		suggs_button.setTitle("Suggestions #{for_what}", forState: UIControlStateNormal)
+		suggs_button.setTitle("#{for_what}", forState: UIControlStateNormal)
 		suggs_button.addTarget(self, action: :suggestions, forControlEvents: UIControlEventTouchUpInside)
 
 		if !friend_name

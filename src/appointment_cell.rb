@@ -38,6 +38,7 @@ class AppointmentCell < UICollectionViewCell
 	end
 
 	def as_event(ev, cv, path, ghosted = nil)
+		@event = ev
 		self.hidden = false
 		@is_placeholder = false
 		comboview.hidden = false
@@ -51,6 +52,23 @@ class AppointmentCell < UICollectionViewCell
 		personlabel.text = ev.title
 
 		ghosted ? ghost : unghost
+		update_time_of_day
+	end
+
+	def update_time_of_day
+		ev = @event
+		if Time.now < ev.startDate
+			# future
+			timelabel.color = UIColor.colorWithHue(0.0333, saturation:0.89, brightness:0.60, alpha:0.50)
+		elsif Time.now > ev.endDate
+			# past
+			timelabel.color = UIColor.colorWithHue(0.0333, saturation:0.89, brightness:0.30, alpha:0.40)
+		else
+			timelabel.color = UIColor.colorWithHue(0.0333, saturation:0.89, brightness:0.60, alpha:0.90)
+		end
+
+		# a little dim if past
+		# a red underline if present
 	end
 
 	def droptargetlabel

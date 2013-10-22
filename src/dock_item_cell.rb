@@ -30,6 +30,7 @@ class DockItemCell < UICollectionViewCell
 	end
 
 	def system_item=(labeltext)
+		@dock_item = nil
 		label.text = labeltext
 		imageview.image = case labeltext
 		when /friend/; UIImage.imageNamed('friends.jpg')
