@@ -1,5 +1,6 @@
 class DockController < UICollectionViewController
 	include ViewControllerImprovements
+	attr_accessor :drag_up_to_add
 
 	############
 	# lifecycle
@@ -36,13 +37,15 @@ class DockController < UICollectionViewController
 		v.layer.insertSublayer(gradient, atIndex:0)
 		collectionView.backgroundView = v
 
-		collectionView.addGestureRecognizer(@lpgr = UILongPressGestureRecognizer.alloc.initWithTarget(self, action: :longPress))
+		@dtgr = UITapGestureRecognizer.alloc.initWithTarget(self, action: :doubleTap)
+		@dtgr.numberOfTapsRequired = 2
+		collectionView.addGestureRecognizer(@dtgr)
 	end
 
-	def longPress
-		case @lpgr.state
-		when UIGestureRecognizerStateBegan
-			pt = @lpgr.locationInView(collectionView)
+	def doubleTap
+		case @dtgr.state
+		when UIGestureRecognizerStateEnded
+			pt = @dtgr.locationInView(collectionView)
 			puts "pt: #{pt.inspect}"
 			path = collectionView.indexPathForItemAtPoint(pt)
 			puts "path: #{path.inspect}"

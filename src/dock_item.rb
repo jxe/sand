@@ -25,9 +25,13 @@ class DockItem < MotionDataWrapper::Model
 
 	# TODO: match by time of day, match default
 	def self.matching(ev)
-		all.detect{ |x| ev.title =~ /#{x.regex}/ } || find_by_regex('DEFAULT')
+		match_by_regex = all.detect{ |x| ev.title =~ /#{x.regex}/ }
+		return match_by_regex if match_by_regex
+		time_of_day = ev.startDate.longer_time_of_day_label
+		match_by_time = all.detect{ |x| time_of_day == x.regex[1..-1] }
+		return match_by_time if match_by_time
+		return find_by_regex('DEFAULT')
 	end
-
 
 	def hide!
 		self.is_hidden = true
@@ -51,6 +55,14 @@ class DockItem < MotionDataWrapper::Model
 
 	def self.image(ev)
 		(m = matching(ev)) && m.uiimage
+	end
+
+	def matcher_type
+		case regex
+		when "DEFAULT"; :default
+		when /^@/; :timing
+		else :regex
+		end
 	end
 
 	def uiimage

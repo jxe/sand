@@ -52,6 +52,10 @@ module ViewControllerImprovements
 		# collectionView.viewForBaselineLayout.layer.setSpeed(s)
 	end
 
+	def after_animations
+		update_map
+	end
+
 	def run_animations
 		@animations_running = true
 		layer = collectionView.viewForBaselineLayout.layer
@@ -59,7 +63,7 @@ module ViewControllerImprovements
 		collectionView.performBatchUpdates(@animation_stack.shift, completion: lambda{ |x|
 			if @animation_stack.empty?
 				@animations_running = false
-				update_map
+				after_animations
 				layer.setSpeed @baseline_animation_speed
 			else
 				run_animations

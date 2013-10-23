@@ -22,7 +22,7 @@ module CollectionViewControllerImprovements
 	end
 
 	def scrollViewDidEndScrollingAnimation(cv)
-		@dragManager && @dragManager.update_map
+		after_animations
 	end
 
 	def top_of_header_for_section i

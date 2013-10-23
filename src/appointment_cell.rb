@@ -11,26 +11,29 @@ class AppointmentCell < UICollectionViewCell
 
 	def becomes_placeholder
 		return if @is_placeholder
-		bgimageview.hidden = false
+		bgimageview.hidden = droptargetlabel.hidden = false
 		imageview.alpha = 1.0
 		comboview.slide :right, 60, damping: 0.6, duration: 0.3
 	end
 
 	def recover_from_being_placeholder
 		return if @is_placeholder
-		comboview.slide :left, 60, damping: 0.6, duration: 0.3, completion:lambda{
-			bgimageview.hidden = true
+		comboview.slide :left, 60, damping: 0.6, duration: 0.3 do
+			bgimageview.hidden = droptargetlabel.hidden = true
 			imageview.alpha = 0.8
-		}
+		end
 	end
 
 
-	def as_placeholder(t)
+	def as_placeholder(placeholder)
+		@event = nil
+		@placeholder = placeholder
 		self.hidden = false
 		@is_placeholder = true
 		comboview.hidden = true
-		bgimageview.hidden = false
-		self.time_of_day = t
+		bgimageview.hidden = droptargetlabel.hidden = false
+		self.time_of_day = placeholder.label
+		update_time_of_day
 	end
 
 	def time_of_day= t
@@ -42,33 +45,47 @@ class AppointmentCell < UICollectionViewCell
 		self.hidden = false
 		@is_placeholder = false
 		comboview.hidden = false
-		bgimageview.hidden = true
+		bgimageview.hidden = droptargetlabel.hidden = true
 
 		personlabel = contentView.viewWithTag(102)
 
 		# timelabel.text   = ev.startDate.time_of_day_label.to_s.upcase.sub('_', ' ')
 		self.time_of_day = ev.startDate.longer_time_of_day_label.to_s
-		imageview.image  = Event.image(ev){ cv.reloadItemsAtIndexPaths([path]) }
+		imageview.image  = ev.image{ cv.reloadItemsAtIndexPaths([path]) }
 		personlabel.text = ev.title
 
 		ghosted ? ghost : unghost
 		update_time_of_day
 	end
 
-	def update_time_of_day
-		ev = @event
-		if Time.now < ev.startDate
+	def startDate
+		@event ? @event.startDate : @placeholder.startDate
+	end
+
+	def endDate
+		@event ? @event.endDate : @placeholder.startDate+2.hours
+	end
+
+	def update_time_of_day(prev=nil)
+		same = (prev == startDate)
+
+		if Time.now < startDate
 			# future
-			timelabel.color = UIColor.colorWithHue(0.0333, saturation:0.89, brightness:0.60, alpha:0.50)
-		elsif Time.now > ev.endDate
+			timelabel.color = UIColor.colorWithHue(0.0333, saturation:0.19, brightness:0.60, alpha:0.90)
+			comboview.alpha = 1.0
+			timelabel.hidden = same
+		elsif Time.now > endDate
 			# past
-			timelabel.color = UIColor.colorWithHue(0.0333, saturation:0.89, brightness:0.30, alpha:0.40)
+			timelabel.color = UIColor.colorWithHue(0.0333, saturation:0.89, brightness:0.30, alpha:0.0)
+			comboview.alpha = 0.3
+			timelabel.hidden = same
 		else
-			timelabel.color = UIColor.colorWithHue(0.0333, saturation:0.89, brightness:0.60, alpha:0.90)
+			timelabel.color = UIColor.colorWithHue(0.0333, saturation:0.94, brightness:0.70, alpha:0.90)
+			comboview.alpha = 1.0
+			timelabel.hidden = same
 		end
 
-		# a little dim if past
-		# a red underline if present
+		return startDate
 	end
 
 	def droptargetlabel

@@ -30,7 +30,7 @@ class DragToReorder < CalDragManager
 		@drag_path = @over_path
 		@drag_cell = @over_cell
 		@limit_to_section = @over_section
-		@over_cell.ghost
+		@over_cell && @over_cell.ghost
 		puts "ghosted..."
 		@vc.animate_open @over_section
 
@@ -38,6 +38,22 @@ class DragToReorder < CalDragManager
 		draggable = UIImageView.alloc.initWithImage(imgview.image)
 		draggable.frame = CGRectMake(0,0,60,60)
 		draggable
+	end
+
+	def confirm title, msg, action, &cb
+		BW::UIAlertView.default({
+		  :title               => title,
+		  :message             => msg,
+		  :buttons             => ["Cancel", action],
+		  :cancel_button_index => 0
+		}) do |alert|
+			cb.call(alert.clicked_button.cancel? ? false : true)
+		end.show
+	end
+
+	def should_delete ev, &cb
+		return cb.call(true) if ev.fast_delete?
+		confirm("Delete Event?", "Delete #{ev.title}?", "Delete", &cb)
 	end
 
 	def on_drag_ended
@@ -51,8 +67,16 @@ class DragToReorder < CalDragManager
     	over_target = @over_cell && over_special_section
 
 		if !over_target
-			animate_drag_img_tumble
-			@vc.animate_rm_and_close @press_thing
+			should_delete @press_thing do |yes|
+				if yes
+	  				animate_drag_img_tumble
+					@vc.animate_rm_and_close @press_thing
+				else
+					@drag_cell.hidden = false
+					animate_drag_img_fade
+					@vc.animate_close
+				end
+			end
 		elsif @press_thing == end_thing
 			@drag_cell.hidden = false
 			animate_drag_img_fade

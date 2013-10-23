@@ -23,6 +23,7 @@ class CalViewController < UICollectionViewController
 		collectionView.delegate = self
 		collectionView.dataSource = self
 		@cvm.load_events
+		update_today_events_styles
 
 		# add the drag gestures from the dock
 		mgr = DragUpToAdd.new(view, collectionView, @dock_controller, self)
@@ -34,6 +35,8 @@ class CalViewController < UICollectionViewController
 
 		# add the swiping main menu gesture
 		view.addGestureRecognizer(UIPanGestureRecognizer.alloc.initWithTarget(self, action: :swipeHandler))
+
+		1.minute.every{ update_today_events_styles }
 	end
 
 	def swipeHandler sender = nil
@@ -49,6 +52,11 @@ class CalViewController < UICollectionViewController
 		# navigationController.setToolbarHidden(true,animated:true)
 	end
 
+	def viewDidAppear(animated)
+		super
+		update_today_events_styles
+	end
+
 	def viewWillDisappear(animated)
 		super
 		# App.notification_center.unobserve @ekobserver if @ekobserver
@@ -57,6 +65,7 @@ class CalViewController < UICollectionViewController
 	def reload
   		@cvm.load_events
   		collectionView.reloadData
+		update_today_events_styles
 	end
 
 
@@ -113,6 +122,7 @@ class CalViewController < UICollectionViewController
 		    	positions = @cvm.placeholder_positions
 		    	@cvm.hover nil
 				collectionView.deleteItemsAtIndexPaths(positions)
+				update_today_events_styles
 			end
 			if img
 				loc = @cvm.index_path_for_thing(@last_ev)
@@ -131,10 +141,12 @@ class CalViewController < UICollectionViewController
 				collectionView.deleteItemsAtIndexPaths(positions)
 				path = @cvm.index_path_for_thing(@last_ev)
 				collectionView.insertItemsAtIndexPaths([path])
+				update_today_events_styles
 			else
 				path = @cvm.index_path_for_thing(ev)
 				@last_ev = @cvm.add_event_before_event(ev, person, title)
 				collectionView.insertItemsAtIndexPaths([path])
+				update_today_events_styles
 			end
 			if img
 				loc = @cvm.index_path_for_thing(@last_ev)
@@ -154,6 +166,7 @@ class CalViewController < UICollectionViewController
 				collectionView.deleteItemsAtIndexPaths([old_path])
 				@cvm.move_to_placeholder(thing_was, placeholder)
 				collectionView.reloadItemsAtIndexPaths([end_path])
+				update_today_events_styles
 			}
 			animate_close
 		else
@@ -164,11 +177,28 @@ class CalViewController < UICollectionViewController
 				new_path = [end_path.section, new_loc].nsindexpath
 				collectionView.deleteItemsAtIndexPaths([old_path])
 				collectionView.insertItemsAtIndexPaths([new_path])
+				update_today_events_styles
 			}
 			animate_close
 		end
 	end
 
+	def after_animations
+		super
+		update_today_events_styles
+	end
+
+	def scrollViewDidScroll(sv)
+		update_today_events_styles
+	end
+
+	def update_today_events_styles
+		prev = nil
+		@cvm && @cvm.today_paths.each do |path|
+			cell = collectionView.cellForItemAtIndexPath(path)
+			prev = cell && cell.update_time_of_day(prev)
+		end
+	end
 
 	####################################
 
@@ -208,15 +238,8 @@ class CalViewController < UICollectionViewController
 		end
 	end
 
-	def friend_name ev
-		return unless friend_id = Event.friend_ab_record_id(ev)
-		fname, abrecord = lookup_friend_id friend_id
-		fname
-	end
-
 	def display_friend_record ev, navigationController
-		return unless friend_id = Event.friend_ab_record_id(ev)
-		fname, abrecord = lookup_friend_id friend_id
+		return unless abrecord = ev.person_abrecord
 		display_person navigationController, abrecord
 	end
 
@@ -274,7 +297,7 @@ class CalViewController < UICollectionViewController
 			cell.as_event(ev, cv, path)
 		when Placeholder;
 			cell = cv.dequeueReusableCellWithReuseIdentifier('Appt', forIndexPath:path)
-			cell.as_placeholder(ev.label)
+			cell.as_placeholder(ev)
 		end
 		cell
 	end

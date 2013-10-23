@@ -1,5 +1,97 @@
 class Contact < MotionDataWrapper::Model; end
 
+class EKEvent
+
+	def record
+		@record ||= Event.find_by_event_identifier(eventIdentifier)
+	end
+
+	def dock_item
+		@dock_item ||= DockItem.matching(self)
+	end
+
+	# delegated getters
+	def is_hidden?; record && record.is_hidden; end
+	def person_uid; record && record.friend_ab_record_id; end
+
+	# delegated setters
+	def hide!; post is_hidden: true; end
+	def delete!; Event.delete!(self); end
+	def post options; Event.post eventIdentifier, options; end
+
+
+	# related persons
+
+	def person=(person)
+		post friend_ab_record_id: person.uid,
+			 friend_name: person.composite_name,
+			 friend_image: person.photo,
+	end
+
+
+	def person_abrecord
+		person_abrecord ||= (person_uid && ABAddressBookGetPersonWithRecordID(AddressBook.address_book, person_uid))
+	end
+
+	def person
+		person_abrecord && AddressBook::Person.new(AddressBook.address_book, person_abrecord)
+	end
+
+	def person_name
+		person && person.composite_name
+	end
+
+
+
+	# etc
+
+	def fast_delete?
+		facebook? or raw_from_dock_item?
+	end
+
+	def facebook?
+		self.URL && self.URL.host =~ /facebook/
+	end
+
+	def raw_from_dock_item?
+		dock_item.matcher_type == :regex && !notes
+		title != 'DEFAULT' && !dock_item.is_hidden && !notes
+	end
+
+	def hide_matching!
+		Event.legit_events_matching(startDate, title).each do |e|
+			e.post is_hidden: true
+		end
+	end
+
+
+
+	# images
+
+	def image_from_time
+		case t = startDate.time_of_day_label
+		when :dawn;  return UIImage.imageNamed('img/tod/dawn.jpg')
+		when :bfst;   return UIImage.imageNamed('img/tod/breakfast.jpg')
+		when :morn;  return UIImage.imageNamed('img/tod/breakfast.jpg')
+		when :lunch;  return UIImage.imageNamed('img/tod/lunch.jpg')
+		when :aft;  return UIImage.imageNamed('img/tod/afternoon.jpg')
+		when :hpy_hr;  return UIImage.imageNamed('img/tod/happy_hour.jpg')
+		when :eve;    return UIImage.imageNamed('img/tod/evening.jpg')
+		when :night;  return UIImage.imageNamed('img/tod/night.jpg')
+		else
+			return UIImage.imageNamed('img/tod/night.jpg')
+		end
+	end
+
+	def image(&callback)
+		return UIImage.alloc.initWithData(record.friend_image) if record && record.friend_image
+		Event.possibly_fetch_background_image(self, callback) unless record and record.friend_ab_record_id and !record.friend_image
+		dock_item.title != 'DEFAULT' ? dock_item.uiimage : image_from_time
+	end
+
+end
+
+
 class Event < MotionDataWrapper::Model
 
 
@@ -19,7 +111,7 @@ class Event < MotionDataWrapper::Model
 		ev.setCalendar(@event_store.defaultCalendarForNewEvents)
 		error = Pointer.new('@')
 		@event_store.saveEvent(ev, span:EKSpanThisEvent, commit:true, error:error)
-		Event.assign(ev.eventIdentifier, friend) if friend
+		ev.person = friend if friend
 		ev
 	end
 
@@ -41,7 +133,7 @@ class Event < MotionDataWrapper::Model
 			next if ev.allDay? or ev.availability == EKEventAvailabilityFree
 			next if ev.endDate.timeIntervalSinceDate(ev.startDate) > 18.hours
 			next if ev.startDate.timeIntervalSinceNow < -20.hours
-			next if Event.is_hidden?(ev.eventIdentifier)
+			next if ev.is_hidden?
 			true
 		end
 	end
@@ -51,51 +143,9 @@ class Event < MotionDataWrapper::Model
 	end
 
 
-	##########
-	# setters
-
-	def self.hide event_id
-		post event_id, is_hidden: true
-	end
-
-	def self.hide_matching ev
-		legit_events_matching(ev.startDate, ev.title).each do |e|
-			post e.eventIdentifier, is_hidden: true
-		end
-	end
-
-	def self.assign event_id, person
-		puts "assign: eventIdentifier: #{event_id}, friend_ab_record_id: #{person.uid}"
-		post event_id,
-			friend_ab_record_id: person.uid,
-			friend_name: person.composite_name,
-			friend_image: person.photo,
-	end
-
-	def self.unassign event_id
-		post event_id,
-			friend_ab_record_id: nil,
-			friend_name: nil,
-			friend_image: nil,
-	end
-
 
 	##########
 	# getters
-
-	def self.unlinked_painted?(ev)
-		return painted?(ev) && unlinked?(ev)
-	end
-
-	def self.unlinked?(ev)
-		event = find_by_event_identifier(ev.eventIdentifier)
-		return !event || !event.friend_ab_record_id
-	end
-
-	def self.friend_ab_record_id(ev)
-		event = find_by_event_identifier(ev.eventIdentifier)
-		return event && event.friend_ab_record_id
-	end
 
 	def self.refresh(ev)
 		event = find_by_event_identifier(ev.eventIdentifier)
@@ -107,47 +157,6 @@ class Event < MotionDataWrapper::Model
 		@event_store ||= EKEventStore.alloc.init
 		error = Pointer.new('@')
 		@event_store.removeEvent(ev, span:EKSpanThisEvent, commit:true, error:error)
-	end
-
-	def self.is_hidden? event_id
-		event = find_by_event_identifier(event_id)
-		event && event.is_hidden
-	end
-
-
-
-	##############################
-	#### MOVE TO DISPLAYMODEL ####
-
-	def self.image_from_time(t)
-		case t
-		when :dawn;  return UIImage.imageNamed('img/tod/dawn.jpg')
-		when :bfst;   return UIImage.imageNamed('img/tod/breakfast.jpg')
-		when :morn;  return UIImage.imageNamed('img/tod/breakfast.jpg')
-		when :lunch;  return UIImage.imageNamed('img/tod/lunch.jpg')
-		when :aft;  return UIImage.imageNamed('img/tod/afternoon.jpg')
-		when :hpy_hr;  return UIImage.imageNamed('img/tod/happy_hour.jpg')
-		when :eve;    return UIImage.imageNamed('img/tod/evening.jpg')
-		when :night;  return UIImage.imageNamed('img/tod/night.jpg')
-		else
-			return UIImage.imageNamed('img/tod/night.jpg')
-		end
-	end
-
-
-	def self.image(ev, &callback)
-		if e = find_by_event_identifier(ev.eventIdentifier)
-			return UIImage.alloc.initWithData(e.friend_image) if e.friend_image
-		end
-
-		possibly_fetch_background_image(ev, callback) unless e and e.friend_ab_record_id and !e.friend_image
-
-		DockItem.image(ev) || image_from_time(ev.startDate.time_of_day_label)
-	end
-
-
-	def self.painted?(ev)
-		return %{ creative exercise sweet }.include?(ev.title || '?')
 	end
 
 
@@ -177,8 +186,7 @@ class Event < MotionDataWrapper::Model
 			  
   				if response.ok? and imagedata = response.body
 					# NSLog "got imagedata: #{imagedata.inspect}"
-					post ev.eventIdentifier,
-						friend_image: imagedata
+					ev.post friend_image: imagedata
 					Dispatch::Queue.main.async(&callback)
 				else
 					NSLog "error response: #{response.to_s}"

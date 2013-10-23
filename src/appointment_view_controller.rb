@@ -2,7 +2,7 @@ class AppointmentViewController < EKEventViewController
 
 	def makeHeaderView(tv)
 		v = UIView.alloc.initWithFrame(CGRectMake(0,0,tv.frame.width, 110))
-		friend_name = @superdelegate.friend_name(event)
+		friend_name = event.person_name
 
 		blueColor = UIColor.colorWithRed(0.0, green: 0.48, blue: 1.0, alpha:0.8)
 

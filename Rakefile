@@ -8,9 +8,13 @@ Motion::Project::App.setup do |app|
   app.seed_id = 'B7P78ULCXS'
   app.identifier = 'org.nxhx.sand'
   app.icons = ['cloudy-dune-57.png', 'cloudy-dune-114.png', 'cloudy-dune-120.png']
-  app.version = '1.0.3'
+  app.version = '1.0.4'
   app.info_plist['FacebookAppID'] = '544764115578692'
-  app.info_plist['URL types'] = { 'URL Schemes' => 'fb544764115578692'}
+  app.info_plist['URL types'] = { 'URL Schemes' => ['fb544764115578692', 'sandapp']}
+  # app.info_plist['CFBundleURLTypes'] = [
+  #   { 'CFBundleURLName' => 'com.mycompany.x-videoplayer',
+  #     'CFBundleURLSchemes' => ['x-videoplayer'] }
+  # ]
 
   app.sdk_version = "7.0"
   # app.deployment_target = "6.1"

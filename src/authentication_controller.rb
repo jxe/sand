@@ -1,6 +1,7 @@
 class AuthenticationController < UIViewController
 	def button_pressed
 		please_authenticate_all_with_callback do
+			DockItem.load_defaults
 			dismissViewControllerAnimated(true, completion: nil)
 			App.notification_center.postNotificationName(EKEventStoreChangedNotification, object: self)
 		end

@@ -77,6 +77,10 @@ class CalViewModel
 		ev
 	end
 
+	def today_paths
+		(0..objs(Time.today.start_of_day).size-1).map{ |i| [0,i].nsindexpath }
+	end
+
 	def inspect_row date
 		objs(date).map do |obj|
 			case obj
@@ -120,9 +124,9 @@ class CalViewModel
 	def remove_event(ev)
 		objs(ev.startDate.start_of_day).delete(ev)
 		if ev.calendar.allowsContentModifications
-	  		Event.delete!(ev)
+	  		ev.delete!
   		else
-  			Event.hide_matching(ev)
+  			ev.hide_matching!
   		end
 	end
 

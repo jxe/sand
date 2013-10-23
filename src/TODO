@@ -1,86 +1,85 @@
 TIME TILL v1.0:
-12.5h ~ 2d
+10h ~ 1d
 
 ====================
 
-* "sorrow"
-* one step animation for...
+v0.4.1 --- 1h
+* (10m) one step animation for...
 	* move to new loc (Reorder)
 		animate_drag_img_spring_to @over_cell
 		@vc.animate_mv_and_close(@press_thing, end_thing)
-* an X should appear on the thing when we are about to delete it
+* (15m) an X should appear on the thing when we are about to delete it
+* (30m) trash can floaty view
 
-* AppointmentCell.foviation="past_present_or_future" (dims past and future slightly)
-* CalController.refresh_foviations() called after animations and scrolls
-* (1h) various adds, removes, moved, etc, update foviation boundaries
+v0.4.2 --- 4h
+* (3h) sounds
+* (1h) @draggable_img is a whole AppointmentCell, not an image
+* (20m) @draggable_img's time title changes as you hover
 
-v0.5 (1h)
+====================
+
+v0.5 --- 2h
+- (30m) Configure / deconfigure check mark overlay
+- (30m) find checkmark and x-out overlay images
+- (1h) Tap ghosted to rate
+
+====================
+
+v0.6 --- 1h
 * (1h) recent friends in ABPicker
 
-v0.6 (3h)
-* (3h) sounds
+====================
+
+v0.7 --- 1h
 * (10m) settings pane to toggle sounds
-
-====================
-
-v0.4.1 (1h)
-* trash can floaty view
-* highlight regions immediately as you drag up
-* (10m) @draggable_img is a whole AppointmentCell, not an image
-* (20m) @draggable_img's time title changes as you hover
-* (15m) friend photo on event page (use autolayout macros)
-
-====================
-
-v.0.4b1 (2h)
-* (20m) opening TODAY hides the past except for...
-* (30m) special droptarget in TODAY called [DONE], with a checkmark and is :most_recent_past
-* (30m) @display_model.mark_done() - moves to most_recent_past loc, extends foveation
-* (30m) drags from Dock to [DONE] add things to a guessed time of day
-
-====================
-
-v1.0 (2h)
+* (30m) highlight regions immediately as you drag up
 * (5m) re-enable observer - redraw if we haven't added anything recently
 * (5m) image credits linked from credits page
 * (15m) figure out how to get sidemenu to go right to auth page, and auth page goes to tutorial page (in AuthenticationController.button_pressed)
 
 ====================
 
-v1.1 (11h)
-* (1h) weather w/ forecast or whatever
-* (5h) longTap in suggestions webview does some kind of share
-* (5h) Add friends to dock
-
-* edit title and notes in place on event page, using https://github.com/jverdi/JVFloatLabeledTextField
+v1.0 (2h) --- 1h
+- (1h) needs better splash screen
 
 ====================
 
-v1.3
-* rate appts by tapping/holding/sliding, after they're done
-* calls out to LWLDB
-
-====================
-
-- move some Event.* stuff to DeviceCalendar and CalendarDatabase
-- move most Event.* functions into CalendarDisplayModel
-- remove sugarcube
-
-v0.7
+v1.0.1
 * Fetch fb friend faces when addr book face blank and fb?
 * Friend faces and event images separate core data fields
-* Core data migration
 * refetch person photos periodically
 * prefer friend photos to fb images on fb events
 
-v0.9
-- needs better splash screen
-* option to show allday events
-* UIDynamics failed drops fall off screen
-* UIDynamics successful drops spring into place
+====================
 
-v1.0
+v1.1
+* (5h) Add friends to dock
+* (5h) longTap in suggestions webview does some kind of share
+* (1h) weather w/ forecast or whatever
+- Swipe right for do it now instead
+- Swipe right for defer
+- Swipe left for move to present
+- Swipe left for done
+- Drag add friend to event to link friend
+- Multiple friends per event
+* animation at midnight
+* (15m) friend photo on event page (use autolayout macros)
+* edit title and notes in place on event page, using https://github.com/jverdi/JVFloatLabeledTextField
+* option to show allday events
+* rate appts by tapping/holding/sliding, after they're done
+- move some Event.* stuff to DeviceCalendar and CalendarDatabase
+- remove sugarcube
+
+====================
+
+WHENEVER
+* (20m) opening TODAY hides the past except for...
+* (30m) special droptarget in TODAY called [DONE], with a checkmark and is :most_recent_past
+* (30m) @display_model.mark_done() - moves to most_recent_past loc, extends foveation
+* (30m) drags from Dock to [DONE] add things to a guessed time of day
 * GLDB suggestions included in share (2h)
 - deploy gldb to heroku incl scratch (1h)
 - fix up gldb scratch to work on firebase and hammer.js (1h)
 * recommended activities .js window
+* calls out to LWLDB
+
