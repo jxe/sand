@@ -36,6 +36,7 @@ class DragUpToAdd < CalDragManager
 			puts "on_drag_ended, placeholder #{placeholder.inspect}"
 			@vc.with_person_and_title_for_droptext @text do |person, title|
 				if title
+					sound "tick.m4a"
 					case placeholder
 					when Placeholder
 						puts ">animate_add_and_close"

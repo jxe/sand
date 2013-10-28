@@ -6,10 +6,30 @@ class DockController < UICollectionViewController
 	# lifecycle
 
 	def willMoveToParentViewController(cal)
-		dock_height = 53
+		super
+	end
+
+	def didMoveToParentController(cal)
+		super
+	end
+
+	def size_yourself_bro(cal)
+		dock_height = 63
 		dock_y = cal.view.frame.size.height - dock_height
-		collectionView.frame = CGRectMake(0, dock_y, cal.view.frame.size.width, dock_height)
-		cal.view.addSubview(collectionView)
+		puts "size yourself called: #{dock_y}"
+		view.frame = CGRectMake(0, dock_y, cal.view.frame.size.width, dock_height)
+	end
+
+	def viewWillAppear(animated=nil)
+		super
+		observe 'ReloadDock' do |x|
+			puts "observed!"
+		    collectionView.reloadData
+		end
+	end
+
+	def viewWillDisappear(animated)
+		super
 	end
 
 	def viewDidLoad
@@ -64,38 +84,13 @@ class DockController < UICollectionViewController
 		end
 	end
 
-	def process_sand_url url
-		case spec = url.resourceSpecifier
-		when /^reset-dock$/
-			dismissViewController
-			BW::UIAlertView.default({
-			  :title               => "Reset Dock",
-			  :message             => "Reset Dock to Factory Defaults?",
-			  :buttons             => ["Cancel", "Engage"],
-			  :cancel_button_index => 0
-			}) do |alert|
-			  unless alert.clicked_button.cancel?
-				DockItem.load_defaults
-				collectionView.reloadData
-			  end
-			end.show
-
-
-		when /^dockitem\?(.*)$/
-			begin
-				DockItem.install($1.URLQueryParameters)
-			rescue Exception => e
-				BW::UIAlertView.default(:title => e.message)
-			end
-			dismissViewController
-			collectionView.reloadData
-		else
-			BW::UIAlertView.default(:title => "Unrecognized sandapp: URL")
-		end
-	end
-
 	def webView(wv, shouldStartLoadWithRequest: req, navigationType: type)
-		req.URL.scheme =~ /sandapp/ ? process_sand_url(req.URL) : true
+		if req.URL.scheme =~ /sandapp/
+			App.delegate.process_sand_url(req.URL, self)
+			false
+		else
+			true
+		end
 	end
 
 	def self.instance

@@ -17,6 +17,8 @@ class CalViewController < UICollectionViewController
 		collectionView.contentInset = UIEdgeInsetsMake(26,0,0,0)
 		@dock_controller = storyboard.instantiateViewControllerWithIdentifier('Dock')
 		addChildViewController(@dock_controller)
+		@dock_controller.didMoveToParentViewController(self)
+		view.addSubview(@dock_controller.view)
 
 		# populate myself
 		@cvm = CalViewModel.new
@@ -46,10 +48,11 @@ class CalViewController < UICollectionViewController
 
 	def viewWillAppear(animated)
 		super
+		@dock_controller.size_yourself_bro(self)
 		@animator = UIDynamicAnimator.alloc.initWithReferenceView(view.window)
 		@animator.delegate = self
+		observe("ReloadCalendar"){ |x| reload }
 		# @ekobserver = App.notification_center.observe(EKEventStoreChangedNotification){ |x| reload }
-		# navigationController.setToolbarHidden(true,animated:true)
 	end
 
 	def viewDidAppear(animated)
@@ -156,19 +159,33 @@ class CalViewController < UICollectionViewController
 		}
 	end
 
-	def animate_mv_and_close thing_was, placeholder
+	def animate_mv_and_close thing_was, placeholder, img = nil
 		end_path = @cvm.index_path_for_thing(placeholder)
 		case placeholder
 		when Placeholder
 			push_animation{
-				# delete from old location and replace placeholder
+		    	# get the old location
 				old_path = @cvm.index_path_for_event(thing_was)
-				collectionView.deleteItemsAtIndexPaths([old_path])
+
+				# and the starting placeholder positions
+		    	positions = @cvm.placeholder_positions
+
+				# reload the placeholder as an event
 				@cvm.move_to_placeholder(thing_was, placeholder)
+		    	@cvm.hover nil
+
+				# delete all the placeholders except the one we replaced, plus the thing we deleted
+				collectionView.deleteItemsAtIndexPaths(positions - [end_path] + [old_path])
+
+				# reload the new placeholder
 				collectionView.reloadItemsAtIndexPaths([end_path])
-				update_today_events_styles
+
+				if img
+					loc = @cvm.index_path_for_thing(thing_was)
+					cell = collectionView.cellForItemAtIndexPath(loc)
+					snap_to img, cell.center
+				end
 			}
-			animate_close
 		else
 			push_animation{
 				# delete from old location and replace placeholder
@@ -178,6 +195,12 @@ class CalViewController < UICollectionViewController
 				collectionView.deleteItemsAtIndexPaths([old_path])
 				collectionView.insertItemsAtIndexPaths([new_path])
 				update_today_events_styles
+
+				if img
+					loc = @cvm.index_path_for_thing(thing_was)
+					cell = collectionView.cellForItemAtIndexPath(loc)
+					snap_to img, cell.center
+				end
 			}
 			animate_close
 		end

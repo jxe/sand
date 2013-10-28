@@ -3,7 +3,9 @@ class AuthenticationController < UIViewController
 		please_authenticate_all_with_callback do
 			DockItem.load_defaults
 			dismissViewControllerAnimated(true, completion: nil)
-			App.notification_center.postNotificationName(EKEventStoreChangedNotification, object: self)
+			App.notification_center.post "ReloadCalendar"
+
+			# App.notification_center.postNotificationName(EKEventStoreChangedNotification, object: self)
 		end
 	end
 

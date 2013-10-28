@@ -130,10 +130,21 @@ module ViewControllerImprovements
 	end
 
 	def go_to_url nc = nil, url
-		uiWebView = push_webview(nc)
-		nsurl = NSURL.URLWithString(url)
+		@recent_url = url
+		@uiWebView = push_webview(nc)
+		reload_webview
+	end
+
+	def webView(wv, didFailLoadWithError: err)
+      UI.confirm "Load failed", "Retry?", "Yeah" do |yes|
+      	yes ? reload_webview : dismissViewController
+      end
+	end
+
+	def reload_webview
+		nsurl = NSURL.URLWithString(@recent_url)
 		nsreq = NSURLRequest.requestWithURL(nsurl)
-		uiWebView.loadRequest(nsreq)
+		@uiWebView.loadRequest(nsreq)
 	end
 
 	def display_person nc = nil, ab_person
@@ -143,14 +154,18 @@ module ViewControllerImprovements
 		display_controller_in_navcontroller(v, nc)
 	end
 
-	def menu options, canceled = nil, &cb
-		UIActionSheet.alert nil, buttons: ['Cancel', nil, *options], success: proc{ |thing|
-			cb.call(thing) unless thing == 'Cancel' or thing == :Cancel
-		}, cancel: proc{
-			canceled.call() if canceled
-		}
+	def menu *args, &cb
+		UI.menu *args, &cb
 	end
 
+	def observe msg, &cb
+		@observers ||= []
+		@observers << App.notification_center.observe(msg, &cb)
+	end
 
+	def viewWillDisappear(animated = nil)
+		super
+		@observers && @observers.each{ |o| App.notification_center.unobserve o }
+	end
 
 end

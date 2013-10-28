@@ -26,6 +26,7 @@ class DragToReorder < CalDragManager
     end
 
 	def on_drag_started
+		sound "tock.m4a"
 		@press_thing = @vc.thing_at_point(@p)
 		@drag_path = @over_path
 		@drag_cell = @over_cell
@@ -40,20 +41,9 @@ class DragToReorder < CalDragManager
 		draggable
 	end
 
-	def confirm title, msg, action, &cb
-		BW::UIAlertView.default({
-		  :title               => title,
-		  :message             => msg,
-		  :buttons             => ["Cancel", action],
-		  :cancel_button_index => 0
-		}) do |alert|
-			cb.call(alert.clicked_button.cancel? ? false : true)
-		end.show
-	end
-
 	def should_delete ev, &cb
 		return cb.call(true) if ev.fast_delete?
-		confirm("Delete Event?", "Delete #{ev.title}?", "Delete", &cb)
+		UI.confirm("Delete Event?", "Delete #{ev.title}?", "Delete", &cb)
 	end
 
 	def on_drag_ended
@@ -67,6 +57,7 @@ class DragToReorder < CalDragManager
     	over_target = @over_cell && over_special_section
 
 		if !over_target
+			sound "wssh.m4a"
 			should_delete @press_thing do |yes|
 				if yes
 	  				animate_drag_img_tumble
@@ -82,8 +73,9 @@ class DragToReorder < CalDragManager
 			animate_drag_img_fade
 			@vc.animate_close
 		else
-			animate_drag_img_spring_to @over_cell
-			@vc.animate_mv_and_close(@press_thing, end_thing)
+			sound "blip.m4a"
+			# animate_drag_img_spring_to @over_cell
+			@vc.animate_mv_and_close(@press_thing, end_thing, @dragging)
 		end
 	end
 

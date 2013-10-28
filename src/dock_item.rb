@@ -20,7 +20,18 @@ class DockItem < MotionDataWrapper::Model
 		data['suggestions_desc'] ||= "Suggestions for #{data['title']}"
 		data['suggestions_url']  ||= "http://www.yelp.com/search?find_desc=#{data['title'].sub(' ', '+')}&find_loc=%%"
 
-		create(data)
+		item = if prev = find_by_title(data['title'])
+			data.each{ |k,v| prev.send("#{k}=", v) }
+			prev.save
+			prev
+		else
+			create(data)
+		end
+		Dispatch::Queue.main.async{
+			sleep 0.1
+			App.notification_center.post 'ReloadDock'
+		}
+		item
 	end
 
 	# TODO: match by time of day, match default
@@ -80,6 +91,10 @@ class DockItem < MotionDataWrapper::Model
 	def self.load_defaults
 		all.each(&:destroy)
 		DEFAULT_DOCK_ITEMS.each{ |item| create(item) }
+		Dispatch::Queue.main.async{
+			sleep 0.1
+			App.notification_center.post 'ReloadDock'
+		}
 	end
 
 	def self.suggestions_url(ev, loc)

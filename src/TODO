@@ -3,18 +3,20 @@ TIME TILL v1.0:
 
 ====================
 
-v0.4.1 --- 1h
-* (10m) one step animation for...
-	* move to new loc (Reorder)
-		animate_drag_img_spring_to @over_cell
-		@vc.animate_mv_and_close(@press_thing, end_thing)
-* (15m) an X should appear on the thing when we are about to delete it
+v0.4.2 --- 3h 30m
+- (10m) webViews should complain about bad URLs and close themselves
+* (1h) recent friends in ABPicker
 * (30m) trash can floaty view
-
-v0.4.2 --- 4h
-* (3h) sounds
 * (1h) @draggable_img is a whole AppointmentCell, not an image
 * (20m) @draggable_img's time title changes as you hover
+* (30m) highlight regions immediately as you drag up
+
+====================
+
+v0.4.3
+- cute animation for dockitem install
+- extra item in dock for DockItemStore+About+Tutorial
+* (30m) settings pane to toggle sounds
 
 ====================
 
@@ -22,17 +24,15 @@ v0.5 --- 2h
 - (30m) Configure / deconfigure check mark overlay
 - (30m) find checkmark and x-out overlay images
 - (1h) Tap ghosted to rate
+- little red and green counters for tws/suboptimal
 
 ====================
 
-v0.6 --- 1h
-* (1h) recent friends in ABPicker
-
-====================
+- drag-up installs dockItem in two phases:
+	dockItem.eventFor(startTime)
+	dockItem.didInstall(event) => (:changed, :removed)
 
 v0.7 --- 1h
-* (10m) settings pane to toggle sounds
-* (30m) highlight regions immediately as you drag up
 * (5m) re-enable observer - redraw if we haven't added anything recently
 * (5m) image credits linked from credits page
 * (15m) figure out how to get sidemenu to go right to auth page, and auth page goes to tutorial page (in AuthenticationController.button_pressed)
@@ -49,6 +49,7 @@ v1.0.1
 * Friend faces and event images separate core data fields
 * refetch person photos periodically
 * prefer friend photos to fb images on fb events
+* (15m) an X should appear on the thing when we are about to delete it
 
 ====================
 

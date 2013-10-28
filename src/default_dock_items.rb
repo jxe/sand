@@ -39,7 +39,7 @@ DEFAULT_DOCK_ITEMS = [
 	{
 		is_hidden: true,
 		title: "breakfast",
-		image_url: "img/activities/work.jpg",
+		image_url: "img/tod/breakfast.jpg",
 		regex: "@breakfast",
 		suggestions_desc: "Suggestions for breakfast",
 		suggestions_url: "http://www.yelp.com/search?find_desc=breakfast&find_loc=%%"
@@ -47,7 +47,7 @@ DEFAULT_DOCK_ITEMS = [
 	{
 		is_hidden: true,
 		title: "lunch",
-		image_url: "img/activities/work.jpg",
+		image_url: "img/tod/lunch.jpg",
 		regex: "@lunch",
 		suggestions_desc: "Suggestions for lunch",
 		suggestions_url: "http://www.yelp.com/search?find_desc=lunch&find_loc=%%"
@@ -55,7 +55,7 @@ DEFAULT_DOCK_ITEMS = [
 	{
 		is_hidden: true,
 		title: "dinner",
-		image_url: "img/activities/work.jpg",
+		image_url: "img/tod/evening.jpg",
 		regex: "@evening",
 		suggestions_desc: "Suggestions for dinner",
 		suggestions_url: "http://www.yelp.com/search?find_desc=dinner&find_loc=%%"
@@ -63,7 +63,7 @@ DEFAULT_DOCK_ITEMS = [
 	{
 		is_hidden: true,
 		title: "bars",
-		image_url: "img/activities/work.jpg",
+		image_url: "img/tod/night.jpg",
 		regex: "@night",
 		suggestions_desc: "Suggestions for bars",
 		suggestions_url: "http://www.yelp.com/search?find_desc=bars&find_loc=%%"

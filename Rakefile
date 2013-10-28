@@ -11,10 +11,10 @@ Motion::Project::App.setup do |app|
   app.version = '1.0.4'
   app.info_plist['FacebookAppID'] = '544764115578692'
   app.info_plist['URL types'] = { 'URL Schemes' => ['fb544764115578692', 'sandapp']}
-  # app.info_plist['CFBundleURLTypes'] = [
-  #   { 'CFBundleURLName' => 'com.mycompany.x-videoplayer',
-  #     'CFBundleURLSchemes' => ['x-videoplayer'] }
-  # ]
+  app.info_plist['CFBundleURLTypes'] = [
+    { 'CFBundleURLName' => 'org.nxhx.sand',
+      'CFBundleURLSchemes' => ['sandapp', 'fb544764115578692'] }
+  ]
 
   app.sdk_version = "7.0"
   # app.deployment_target = "6.1"
