@@ -36,13 +36,13 @@ Motion::Project::App.setup do |app|
 
   app.interface_orientations = [:portrait]
 
-  app.frameworks += %w{ AdSupport Accounts Social EventKit EventKitUI AddressBook AddressBookUI QuartzCore IOKit }
+  app.frameworks += %w{ AdSupport Accounts Social EventKit EventKitUI AddressBook AddressBookUI QuartzCore IOKit SystemConfiguration }
   app.weak_frameworks += %w{ AdSupport Accounts Social }
   app.pods{
     pod 'RequestUtils'
     pod 'Facebook-iOS-SDK', '~> 3.7'
     pod 'SVProgressHUD',  :git => 'https://github.com/samvermette/SVProgressHUD.git', :commit => '1.0'
-    pod 'HockeySDK'
+    pod 'CrittercismSDK'
   }
 
   app.entitlements['application-identifier'] = "#{app.seed_id}.#{app.identifier}"

@@ -4,19 +4,8 @@ class AppDelegate
 
   def application(application, didFinishLaunchingWithOptions:launchOptions)
     # NSLog "%@", "App running!"
-    BITHockeyManager.sharedHockeyManager.configureWithIdentifier("040b1933cc1d3cdaacd5d7e61ad7c540", delegate: self)
-    BITHockeyManager.sharedHockeyManager.startManager
+    Crittercism.enableWithAppID("527bdb3dd0d8f74cd4000003")
 
-    # kscrash = KSCrashInstallationEmail.sharedInstance
-    # kscrash.recipients = ["joe@nxhx.org"]
-    # kscrash.addConditionalAlertWithTitle("Crash Detected",
-    #                             message: "The app crashed last time it was launched. Send a crash report?",
-    #                           yesAnswer: "Sure!",
-    #                            noAnswer: "No thanks")
-    
-    # kscrash.install
-    # kscrash.sendAllReportsWithCompletion(nil)
-    
     s = UIStoryboard.storyboardWithName("MainStoryboard", bundle:nil)
 
     self.window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
