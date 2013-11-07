@@ -19,6 +19,7 @@ class DragToReorder < CalDragManager
 
 
     def gestureRecognizerShouldBegin(gr)
+    	return false if inside_dock?
     	p = gr.locationInView(@cv)
 		thing = @vc.thing_at_point(p)
 		return true if thing and EKEvent === thing

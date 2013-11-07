@@ -35,6 +35,7 @@ class DockItemCell < UICollectionViewCell
 		imageview.image = case labeltext
 		when /friend/; UIImage.imageNamed('friends.jpg')
 		when /appt/;   UIImage.imageNamed('q.png')
+		when /upcarret/;   UIImage.imageNamed('upcarret.png')
 		end
 
 		label.color = UIColor.blackColor

@@ -27,9 +27,11 @@ class DockItem < MotionDataWrapper::Model
 		else
 			create(data)
 		end
-		Dispatch::Queue.main.async{
+		Dispatch::Queue.concurrent.async{
 			sleep 0.1
-			App.notification_center.post 'ReloadDock'
+			Dispatch::Queue.main.async{
+				App.notification_center.post 'ReloadDock'
+			}
 		}
 		item
 	end

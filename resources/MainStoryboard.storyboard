@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="12E55" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="jC6-0L-hTW">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="13A603" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="jC6-0L-hTW">
     <dependencies>
         <deployment version="1552" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3742"/>
@@ -78,6 +78,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="blurry-sand.png" translatesAutoresizingMaskIntoConstraints="NO" id="gBZ-Pn-qYz">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Sand is a Calendar app and needs to use your contacts, calendar, and facebook (for facebook events)." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="217" translatesAutoresizingMaskIntoConstraints="NO" id="HAl-zT-4HR">
                                 <rect key="frame" x="52" y="159" width="217" height="124"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -102,13 +106,16 @@
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="HAl-zT-4HR" firstAttribute="centerX" secondItem="f9Q-SM-Xfs" secondAttribute="centerX" id="EBM-by-b9X"/>
+                            <constraint firstItem="gBZ-Pn-qYz" firstAttribute="top" secondItem="gd7-mN-WcF" secondAttribute="top" id="Ekj-e8-7b7"/>
+                            <constraint firstAttribute="trailing" secondItem="gBZ-Pn-qYz" secondAttribute="trailing" id="Kwe-Js-KaY"/>
                             <constraint firstAttribute="centerX" secondItem="f9Q-SM-Xfs" secondAttribute="centerX" id="OrF-x1-His"/>
                             <constraint firstItem="HAl-zT-4HR" firstAttribute="top" secondItem="gd7-mN-WcF" secondAttribute="top" constant="207" id="QI6-Fc-e7T"/>
+                            <constraint firstAttribute="bottom" secondItem="gBZ-Pn-qYz" secondAttribute="bottom" id="ZMd-5P-7HT"/>
                             <constraint firstItem="f9Q-SM-Xfs" firstAttribute="top" secondItem="gd7-mN-WcF" secondAttribute="top" constant="130" id="dyd-5e-SoO"/>
                             <constraint firstAttribute="centerX" secondItem="HAl-zT-4HR" secondAttribute="centerX" id="gLa-Dp-nDz"/>
+                            <constraint firstItem="gBZ-Pn-qYz" firstAttribute="leading" secondItem="gd7-mN-WcF" secondAttribute="leading" id="mR4-sY-C0K"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -478,6 +485,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="blurry-sand.png" width="16" height="16"/>
         <image name="droptarget.png" width="16" height="16"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

@@ -5,6 +5,7 @@ class CalDragManager < DragManager
 
     def initialize(v, cv, dock, vc)
     	super(v, cv)
+    	@dock_controller = dock
     	@dockView = dock.view
     	@dock = dock.collectionView
     	@vc = vc
@@ -37,12 +38,17 @@ class CalDragManager < DragManager
 	end
 
 	def on_drag_hovered_section
-	    @vc.animate_open @over_section if @over_section and !@vc.section_open and !@vc.animations_running
+		if @over_section and !@vc.section_open and !@vc.animations_running
+			NSLog "%@", "Opening section #{@over_section.inspect}"
+		    @vc.animate_open @over_section 
+		end
 	end
 
 	def on_drag_over_section
-		puts "on_drag_over_section: #{@was_over_section} -> #{@over_section}"
-    	@vc.animate_close if @was_over_section && @vc.section_open
+		if @was_over_section && @vc.section_open
+			NSLog "%@", "on_drag_over_section: #{@was_over_section} -> #{@over_section}"
+    		@vc.animate_close 
+    	end
 	end
 
 end

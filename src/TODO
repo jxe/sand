@@ -1,26 +1,71 @@
 TIME TILL v1.0:
-10h ~ 1d
+13h ~ 1d
 
 ====================
 
-v0.4.2 --- 3h 30m
-- (10m) webViews should complain about bad URLs and close themselves
+- it breaks on the leap forward, because Time.today != Time.today.delta(days: 0).start_of_day
+
+====================
+
+- add friends to dock
+* (2h) dock reordering and drag-off-to-delete
+
+====================
+
+(5h 30m)
+
+v0.5.1 -- 2h 30m
+* (30m) "We've detected FB events in your calendar.  LINK FB to SHOW THEM" (ask every time)
+* (20m) only ask for FB events once a week
 * (1h) recent friends in ABPicker
+
+v0.5.1 -- 2h 30m
+* (30m) write tutorial text
+* (1h) transparent tutorial overlay!
+* (30m) Dockmenu includes "About" which has thanks, tutorial, and image credits
+
+v0.6
 * (30m) trash can floaty view
-* (1h) @draggable_img is a whole AppointmentCell, not an image
-* (20m) @draggable_img's time title changes as you hover
+* scroll to reveal new dockitem installs
+
+v0.7 -- 3h
+* (30m) subtler, quicker sounds
 * (30m) highlight regions immediately as you drag up
 
 ====================
 
-v0.4.3
-- cute animation for dockitem install
-- extra item in dock for DockItemStore+About+Tutorial
-* (30m) settings pane to toggle sounds
+v1.0 --- 5h 30m
+* (10m) re-enable observer - redraw if we haven't added anything recently
+* (1h) @draggable_img is a whole AppointmentCell, not an image
+* (10m) webViews should complain about bad URLs and close themselves
+* (20m) @draggable_img's time title changes as you hover
 
 ====================
 
-v0.5 --- 2h
+v1.0.1
+* (30m) settings pane to toggle sounds
+* Fetch fb friend faces when addr book face blank and fb?
+* Friend faces and event images separate core data fields
+* refetch person photos periodically
+* prefer friend photos to fb images on fb events
+* (15m) an X should appear on the thing when we are about to delete it
+* recenter icon
+* (30m) dock item install animation has image download progress bar
+
+- drag-up installs dockItem in two phases:
+	dockItem.eventFor(startTime)
+	dockItem.didInstall(event) => (:changed, :removed)
+
+
+====================
+
+v1.1
+
+* (30m) multifriend datamodel for events
+* (10m) drag +friend onto event to add a friend
+* (10m) longpress friendlink button on detail page to unlink friend
+* (10m) tap friendlink button gives menu of friends for multifriend
+
 - (30m) Configure / deconfigure check mark overlay
 - (30m) find checkmark and x-out overlay images
 - (1h) Tap ghosted to rate
@@ -28,32 +73,6 @@ v0.5 --- 2h
 
 ====================
 
-- drag-up installs dockItem in two phases:
-	dockItem.eventFor(startTime)
-	dockItem.didInstall(event) => (:changed, :removed)
-
-v0.7 --- 1h
-* (5m) re-enable observer - redraw if we haven't added anything recently
-* (5m) image credits linked from credits page
-* (15m) figure out how to get sidemenu to go right to auth page, and auth page goes to tutorial page (in AuthenticationController.button_pressed)
-
-====================
-
-v1.0 (2h) --- 1h
-- (1h) needs better splash screen
-
-====================
-
-v1.0.1
-* Fetch fb friend faces when addr book face blank and fb?
-* Friend faces and event images separate core data fields
-* refetch person photos periodically
-* prefer friend photos to fb images on fb events
-* (15m) an X should appear on the thing when we are about to delete it
-
-====================
-
-v1.1
 * (5h) Add friends to dock
 * (5h) longTap in suggestions webview does some kind of share
 * (1h) weather w/ forecast or whatever

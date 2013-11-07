@@ -14,7 +14,7 @@ class CalViewController < UICollectionViewController
 		super
 
 		# set up the screen
-		collectionView.contentInset = UIEdgeInsetsMake(26,0,0,0)
+		collectionView.contentInset = UIEdgeInsetsMake(26,0,50,0)
 		@dock_controller = storyboard.instantiateViewControllerWithIdentifier('Dock')
 		addChildViewController(@dock_controller)
 		@dock_controller.didMoveToParentViewController(self)
@@ -36,15 +36,10 @@ class CalViewController < UICollectionViewController
 		addDragManager(mgr, UILongPressGestureRecognizer)
 
 		# add the swiping main menu gesture
-		view.addGestureRecognizer(UIPanGestureRecognizer.alloc.initWithTarget(self, action: :swipeHandler))
+		# view.addGestureRecognizer(UIPanGestureRecognizer.alloc.initWithTarget(self, action: :swipeHandler))
 
 		1.minute.every{ update_today_events_styles }
 	end
-
-	def swipeHandler sender = nil
-		sideMenu.showFromPanGesture(sender)
-	end
-
 
 	def viewWillAppear(animated)
 		super

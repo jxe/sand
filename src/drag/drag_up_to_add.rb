@@ -8,7 +8,19 @@ class DragUpToAdd < CalDragManager
 		origin = CGPointMake(position.x - translation.x, position.y - translation.y)
 		@dock_path = @dock.indexPathForItemAtPoint(origin)
 		puts "got path: #{@dock_path.inspect}"
+		return false unless @dock_path
 		@dock_path ? true : false
+		cell = @dock.cellForItemAtIndexPath(@dock_path)
+		@text = cell.contentView.viewWithTag(102).text
+		@dock_item = cell.dock_item
+		return true unless @text =~ /upcarret/
+		UI.menu ["Get DockItems"] do |chose|
+			case chose
+			when /Get/
+				@dock_controller.go_to_url nil, "http://nxhx.org/hourglass/"
+			end
+		end
+		return false
 	end
 
 	def on_drag_started

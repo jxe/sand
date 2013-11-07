@@ -105,19 +105,22 @@ class DockController < UICollectionViewController
 	end
 
 	def collectionView(cv, numberOfItemsInSection: section)
-		DockItem.visible.size + 2
+		DockItem.visible.size + 3
 	end
 
 	def collectionView(cv, cellForItemAtIndexPath: path)
 		cell = cv.dequeueReusableCellWithReuseIdentifier('DockItem', forIndexPath:path)
+		extras = DockItem.visible
 
 		case path.row
 		when 0
 			cell.system_item = "appt"
 		when 1
 			cell.system_item = "friend"
+		when extras.size + 2
+			cell.system_item = "upcarret"
 		else
-			cell.dock_item = DockItem.visible[path.row - 2]
+			cell.dock_item = extras[path.row - 2]
 		end
 
 		cell
