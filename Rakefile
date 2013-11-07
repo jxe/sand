@@ -69,7 +69,7 @@ end
 
 desc "Generate App Store Build"
 task :appstore => [
-  :check_versions
+  :check_versions,
   :clean,
   "archive:distribution",
   :send_to_crittercism
