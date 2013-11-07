@@ -72,7 +72,7 @@ DEFAULT_DOCK_ITEMS = [
 	{
 		is_hidden: true,
 		title: "DEFAULT",
-		image_url: "img/activities/work.jpg",
+		image_url: "img/q.png",
 		regex: "DEFAULT",
 		suggestions_desc: "Suggestions from Yelp for %T",
 		suggestions_url: "http://www.yelp.com/search?find_desc=%T&find_loc=%%"

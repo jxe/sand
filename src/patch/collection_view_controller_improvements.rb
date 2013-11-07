@@ -3,11 +3,16 @@ module CollectionViewControllerImprovements
 	attr_reader :animations_running, :section_map
 
 	def reveal_section s
+		last_section = collectionView.numberOfSections - 1
 		screen_top = collectionView.contentOffset.y.to_i + 40  # for the status bar
 		screen_height = collectionView.frame.height.to_i  # for the dock
 		screen_bottom = screen_top + screen_height - 50
 		section_top = top_of_header_for_section(s)
-		section_bottom = top_of_header_for_section(s+1)
+		section_bottom = if s == last_section
+			section_top + 40
+		else
+			top_of_header_for_section(s+1)
+		end
 		return unless section_top and section_bottom
 
 		if screen_bottom < section_bottom
@@ -34,9 +39,10 @@ module CollectionViewControllerImprovements
 		bottom = top + collectionView.frame.height.to_i
 		map = {}
 		next_section = 0
+		last_section = collectionView.numberOfSections - 1
 
 		(top..bottom).each do |y|
-			next_section += 1 unless top_of_header_for_section(next_section) > y
+			next_section += 1 if next_section <= last_section and top_of_header_for_section(next_section) <= y
 			map[y] = next_section - 1
 		end
 

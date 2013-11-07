@@ -110,5 +110,10 @@ class DockItem < MotionDataWrapper::Model
 	end
 
 
+	def fresh_event_at(startTime)
+	end
+
+	def configure_event(event, &cb)
+	end
 
 end

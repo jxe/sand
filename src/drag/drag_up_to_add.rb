@@ -37,6 +37,33 @@ class DragUpToAdd < CalDragManager
 		true unless UILongPressGestureRecognizer === gr2
 	end
 
+	def on_drag_ended2
+		flip_cell nil
+		return animate_drag_img_tumble if inside_dock?
+		placeholder = @vc.thing_at_point(@p)
+		unless placeholder
+			animate_drag_img_tumble
+			@vc.animate_close
+		end
+
+
+		sound "tick.m4a"
+		event = @dock_item.fresh_event_at(placeholder.startTime)
+
+		case placeholder
+		when Placeholder
+			@vc.animate_add_and_close placeholder, event, @dragging
+
+		when EKEvent
+			@vc.animate_insert_and_close placeholder, event, @dragging
+
+		end
+
+		@dock_item.configure_event(event) do |result|
+			result == :failed ? @vc.animate_discard(event) : @vc.reload_event(event)
+		end
+	end
+
 	def on_drag_ended
 		# @vc.animate_close
 		flip_cell nil
