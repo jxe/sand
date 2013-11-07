@@ -71,13 +71,15 @@ desc "Generate App Store Build"
 task :appstore => [
   :check_versions,
   :clean,
+  'pod:install',
   "archive:distribution",
   :send_to_crittercism
 ]
 
 task :check_versions do
-  raise "git wrong version" unless `git describe` == ENV['tag']
-  raise "app wrong version" unless app.version == ENV['tag'].sub(/^v/, '1.')
+  gitv = `git describe --dirty`.strip
+  raise "git wrong version #{gitv}; #{ENV['tag']};" unless gitv == ENV['tag']
+  raise "app wrong version" unless Motion::Project::App.config.version == ENV['tag'].sub(/^v/, '1.')
   # should ensure that the checkout is of a clean tag that's been pushed
   # and that the app.version is set right
 end
@@ -89,9 +91,9 @@ end
 task :send_to_crittercism do
   cmd = <<-CMD
     cd #{build_path} &&
-    zip -r Sand.dsym.zip Sand.dsym &&
+    zip -r Sand.dSYM.zip Sand.dSYM &&
     curl "https://api.crittercism.com/api_beta/dsym/527bdb3dd0d8f74cd4000003"
-      -F dsym=@"Sand.dsym.zip"
+      -F dsym=@"Sand.dSYM.zip"
       -F key="mkt70lo9yrfnyxbjfq6ousjcpdxazidi"
   CMD
   puts cmd
