@@ -66,3 +66,34 @@ Motion::Project::App.setup do |app|
   app.build_dir = '/tmp/build-sand/'
 
 end
+
+desc "Generate App Store Build"
+task :appstore => [
+  :check_versions
+  :clean,
+  "archive:distribution",
+  :send_to_crittercism
+]
+
+task :check_versions do
+  raise "git wrong version" unless `git describe` == ENV['tag']
+  raise "app wrong version" unless app.version == ENV['tag'].sub(/^v/, '1.')
+  # should ensure that the checkout is of a clean tag that's been pushed
+  # and that the app.version is set right
+end
+
+def build_path
+  "/tmp/build-sand/iPhoneOS-7.0-Release/"
+end
+
+task :send_to_crittercism do
+  cmd = <<-CMD
+    cd #{build_path} &&
+    zip -r Sand.dsym.zip Sand.dsym &&
+    curl "https://api.crittercism.com/api_beta/dsym/527bdb3dd0d8f74cd4000003"
+      -F dsym=@"Sand.dsym.zip"
+      -F key="mkt70lo9yrfnyxbjfq6ousjcpdxazidi"
+  CMD
+  puts cmd
+  sh cmd.gsub("\n", "\\\n")
+end
