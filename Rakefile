@@ -74,7 +74,7 @@ desc "Generate App Store Build"
 task :appstore => [
   :check_versions,
   :clean,
-  'pod:install',
+  # 'pod:install',
   "archive:distribution",
   :send_to_crittercism
 ]
