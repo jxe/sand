@@ -1,0 +1,1 @@
+atos -o /tmp/build-sand/iPhoneOS*Development/Sand.dSYM/Contents/Resources/DWARF/Sand -arch armv7 -l $*
