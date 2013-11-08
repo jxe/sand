@@ -73,8 +73,24 @@ end
 desc "Generate App Store Build"
 task :appstore => [
   :check_versions,
+  # :clean,
+  # 'pod:install',
+  "archive:distribution",
+  :send_to_crittercism
+]
+
+task :fresh_appstore => [
+  :check_versions,
   :clean,
   # 'pod:install',
+  "archive:distribution",
+  :send_to_crittercism
+]
+
+task :full_appstore => [
+  :check_versions,
+  :clean,
+  'pod:install',
   "archive:distribution",
   :send_to_crittercism
 ]
@@ -87,13 +103,9 @@ task :check_versions do
   # and that the app.version is set right
 end
 
-def build_path
-  "/tmp/build-sand/iPhoneOS-7.0-Release/"
-end
-
 task :send_to_crittercism do
   cmd = <<-CMD
-    cd #{build_path} &&
+    cd /tmp/build-sand/*-Release/ &&
     zip -r Sand.dSYM.zip Sand.dSYM &&
     curl "https://api.crittercism.com/api_beta/dsym/527bdb3dd0d8f74cd4000003"
       -F dsym=@"Sand.dSYM.zip"
