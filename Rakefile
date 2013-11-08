@@ -57,7 +57,7 @@ Motion::Project::App.setup do |app|
 
   app.development do
     app.codesign_certificate = 'iPhone Developer: Joe Edelman' #  (B7P78ULCXS)
-    app.provisioning_profile = "/Users/joe/Library/MobileDevice/Provisioning Profiles/C5317494-CC09-4AC6-A00F-079F29EF4747.mobileprovision"
+    app.provisioning_profile = "/Users/joe/Library/MobileDevice/Provisioning Profiles/sand-beans-etc.mobileprovision"
   end
 
   app.files += Dir.glob("./src/**/*.rb")
