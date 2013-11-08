@@ -5,7 +5,7 @@ Bundler.require
 Motion::Project::App.setup do |app|
 
   app.name = 'Sand'
-  app.version = '1.0.5'
+  app.version = '1.0.5.1'
 
   app.sdk_version = "7.0"
   app.deployment_target = "6.1"
