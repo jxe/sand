@@ -8,8 +8,8 @@ Motion::Project::App.setup do |app|
   app.version = '1.0.5'
 
   app.sdk_version = "7.0"
-  # app.deployment_target = "6.1"
-  app.deployment_target = "7.0"
+  app.deployment_target = "6.1"
+  # app.deployment_target = "7.0"
   app.device_family = [:iphone]
 
   app.identifier = 'org.nxhx.sand'
@@ -36,13 +36,14 @@ Motion::Project::App.setup do |app|
 
   app.interface_orientations = [:portrait]
 
-  app.frameworks += %w{ AdSupport Accounts Social EventKit EventKitUI AddressBook AddressBookUI QuartzCore IOKit SystemConfiguration }
+  app.frameworks += %w{ AdSupport Accounts Social EventKit EventKitUI AddressBook AddressBookUI QuartzCore IOKit SystemConfiguration CoreGraphics }
   app.weak_frameworks += %w{ AdSupport Accounts Social }
   app.pods{
     pod 'RequestUtils'
     pod 'Facebook-iOS-SDK', '~> 3.7'
     pod 'SVProgressHUD',  :git => 'https://github.com/samvermette/SVProgressHUD.git', :commit => '1.0'
     pod 'CrittercismSDK'
+    pod 'AKLocationManager'
   }
 
   app.entitlements['application-identifier'] = "#{app.seed_id}.#{app.identifier}"

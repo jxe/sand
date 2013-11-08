@@ -62,19 +62,22 @@ class CalViewModel
 	######
 	# creating/removing events
 
-	def add_event_at_placeholder(pl, person, text)
-		start_time = pl.startDate
-		date = start_time.start_of_day
-		ev = Event.add_event(start_time, person, text)
-		@objs[date][@objs[date].index(pl)] = ev
-	end
-
-	def add_event_before_event(ev0, person, text)
-		start_time = ev0.startDate
-		date = start_time.start_of_day
-		ev = Event.add_event(start_time, person, text)
-		@objs[date].insert(@objs[date].index(ev0), ev)
-		ev
+	def add_event(ev, before_event = nil)
+		puts "ae: ev: #{ev.inspect}"
+		date = ev.startDate.start_of_day
+		row = objs(date)
+		if before_event and place = row.index(before_event)
+			row.insert(place, ev)
+		elsif later = row.detect{ |e| e.startDate >= ev.startDate }
+			place = row.index(later)
+			row.insert(place, ev)
+		else
+			place = row.length
+			row << ev
+		end
+		section = sections.index(date)
+		puts "returning: #{[section, place].inspect}"
+		[section, place]
 	end
 
 	def today_paths
@@ -143,12 +146,15 @@ class CalViewModel
 
 	def placeholder_positions
 		return [] unless @date_open
-		p = []
-		objs(@date_open).each_with_index do |t,i|
-			p << i if Placeholder === t
-		end
+		results = []
 		section = sections.index(@date_open)
-		p.map{ |p| [section,p].nsindexpath }
+		objs(@date_open).each_with_index do |t,i|
+			if Placeholder === t
+				NSLog "%@", "Adding: #{[section, i].inspect}"
+				results << [section, i].nsindexpath
+			end
+		end
+		results
 	end
 
 	def section(n)

@@ -1,6 +1,15 @@
 module ViewControllerImprovements
 
+	def configure_animator
+		if Kernel.const_defined? "UIDynamicAnimator"
+			@animator = UIDynamicAnimator.alloc.initWithReferenceView(view.window)
+			@animator.delegate = self
+		end
+	end
+
+
 	def apply_gravity view, g = 0.3
+		return view.removeFromSuperview() unless @animator
 		@animated_view = view
 		g = UIGravityBehavior.alloc.initWithItems [view]
 		g.magnitude = 1.0
@@ -13,6 +22,7 @@ module ViewControllerImprovements
 	end
 
 	def snap_to view, point
+		return view.removeFromSuperview() unless @animator
 		pt = collectionView.convertPoint(point, toView: view.window)
 		@animated_view = view
 		@animator.addBehavior UISnapBehavior.alloc.initWithItem(view, snapToPoint: pt)
@@ -91,13 +101,18 @@ module ViewControllerImprovements
 
 	def with_location &blk
 		blk.call(@cached_location) if @cached_location
-		BW::Location.get_once(significant: true) do |result|
+		AKLocationManager.distanceFilterAccuracy = KCLLocationAccuracyKilometer
+		AKLocationManager.startLocatingWithUpdateBlock(proc{ |result|
 			blk.call(@cached_location = result)
-		end
+			AKLocationManager.stopLocating
+		}, failedBlock: proc{ |error|
+			blk.call(@cached_location = nil)
+			AKLocationManager.stopLocating
+		})
 	end
 
 	def with_street_address &blk
-		with_location{ |loc| reverse_geocode(loc){ |addr| blk.call(addr) } }
+		with_location{ |loc| loc ? reverse_geocode(loc){ |addr| blk.call(addr) } : blk.call("nowhere") }
 	end
 
 	def lookup_friend_id friend_id

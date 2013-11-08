@@ -1,5 +1,10 @@
 class DayHeaderReusableView < UICollectionReusableView; attr_accessor :section; end
-class SandFlowLayout < UICollectionViewFlowLayout; end
+
+class SandFlowLayout < UICollectionViewFlowLayout
+	def prepareForCollectionViewUpdates(foo)
+		super rescue nil  # ios 6.1 bug workaround
+	end
+end
 
 class CalViewController < UICollectionViewController
 	include ViewControllerImprovements
@@ -44,8 +49,7 @@ class CalViewController < UICollectionViewController
 	def viewWillAppear(animated)
 		super
 		@dock_controller.size_yourself_bro(self)
-		@animator = UIDynamicAnimator.alloc.initWithReferenceView(view.window)
-		@animator.delegate = self
+		configure_animator
 		observe("ReloadCalendar"){ |x| reload }
 		# @ekobserver = App.notification_center.observe(EKEventStoreChangedNotification){ |x| reload }
 	end
@@ -83,7 +87,9 @@ class CalViewController < UICollectionViewController
     	return if @cvm.date_open
     	push_animation{
 			@cvm.hover s
-			collectionView.insertItemsAtIndexPaths(@cvm.placeholder_positions)
+			positions = @cvm.placeholder_positions
+			NSLog "%@", "Placeholder postions: #{positions.inspect}"
+			collectionView.insertItemsAtIndexPaths(positions)
     	}
 		push_animation{
 			reveal_section s
@@ -111,48 +117,25 @@ class CalViewController < UICollectionViewController
 		}
     end
 
-	def animate_add_and_close placeholder, person, title, img = nil
-		push_animation{
-			path = @cvm.index_path_for_thing(placeholder)
-			@last_ev = @cvm.add_event_at_placeholder(placeholder, person, title)
-			path && collectionView.reloadItemsAtIndexPaths([path])
-	    	if @cvm.date_open
-		    	positions = @cvm.placeholder_positions
-		    	@cvm.hover nil
-				collectionView.deleteItemsAtIndexPaths(positions)
-				update_today_events_styles
-			end
-			if img
-				loc = @cvm.index_path_for_thing(@last_ev)
-				cell = collectionView.cellForItemAtIndexPath(loc)
-				snap_to img, cell.center
-			end
-		}
-	end
+    def animate_add_event(ev, before_event = nil, draggy_image = nil)
+    	push_animation{
+    		puts "aae: ev: #{ev.inspect}"
 
-	def animate_insert_and_close ev, person, title, img = nil
-		push_animation{
-	    	if @cvm.date_open
-		    	positions = @cvm.placeholder_positions
-				@last_ev = @cvm.add_event_before_event(ev, person, title)
+    		positions = @cvm.placeholder_positions
+			if positions and positions.size > 0
 		    	@cvm.hover nil
 				collectionView.deleteItemsAtIndexPaths(positions)
-				path = @cvm.index_path_for_thing(@last_ev)
-				collectionView.insertItemsAtIndexPaths([path])
-				update_today_events_styles
-			else
-				path = @cvm.index_path_for_thing(ev)
-				@last_ev = @cvm.add_event_before_event(ev, person, title)
-				collectionView.insertItemsAtIndexPaths([path])
-				update_today_events_styles
 			end
-			if img
-				loc = @cvm.index_path_for_thing(@last_ev)
+
+    		added_loc = @cvm.add_event(ev, before_event)
+			collectionView.insertItemsAtIndexPaths([added_loc.nsindexpath])
+
+	    	if draggy_image and loc = @cvm.index_path_for_thing(ev)
 				cell = collectionView.cellForItemAtIndexPath(loc)
-				snap_to img, cell.center
+				snap_to draggy_image, cell.center
 			end
-		}
-	end
+    	}
+    end
 
 	def animate_mv_and_close thing_was, placeholder, img = nil
 		end_path = @cvm.index_path_for_thing(placeholder)

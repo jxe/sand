@@ -13,15 +13,29 @@ class AppointmentCell < UICollectionViewCell
 		return if @is_placeholder
 		bgimageview.hidden = droptargetlabel.hidden = false
 		imageview.alpha = 1.0
-		comboview.slide :right, 60, damping: 0.6, duration: 0.3
+
+		if Kernel.const_defined? "UIDynamicAnimator"
+			comboview.slide :right, 60, damping: 0.6, duration: 0.3
+		else
+			comboview.slide :right, 60, duration: 0.3
+		end
 	end
 
 	def recover_from_being_placeholder
 		return if @is_placeholder
-		comboview.slide :left, 60, damping: 0.6, duration: 0.3 do
-			bgimageview.hidden = droptargetlabel.hidden = true
-			imageview.alpha = 0.8
+
+		if Kernel.const_defined? "UIDynamicAnimator"
+			comboview.slide :left, 60, damping: 0.6, duration: 0.3 do
+				bgimageview.hidden = droptargetlabel.hidden = true
+				imageview.alpha = 0.8
+			end
+		else
+			comboview.slide :left, 60, duration: 0.3 do
+				bgimageview.hidden = droptargetlabel.hidden = true
+				imageview.alpha = 0.8
+			end
 		end
+
 	end
 
 

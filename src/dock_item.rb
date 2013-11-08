@@ -70,6 +70,10 @@ class DockItem < MotionDataWrapper::Model
 		(m = matching(ev)) && m.uiimage
 	end
 
+	def event_at(placeholder)
+		Event.add_event(placeholder.startDate, nil, title)
+	end
+
 	def matcher_type
 		case regex
 		when "DEFAULT"; :default

@@ -37,65 +37,58 @@ class DragUpToAdd < CalDragManager
 		true unless UILongPressGestureRecognizer === gr2
 	end
 
-	def on_drag_ended2
+	# def on_drag_ended2
+	# 	flip_cell nil
+	# 	return animate_drag_img_tumble if inside_dock?
+	# 	placeholder = @vc.thing_at_point(@p)
+	# 	unless placeholder
+	# 		animate_drag_img_tumble
+	# 		@vc.animate_close
+	# 	end
+
+
+	# 	sound "tick.m4a"
+	# 	event = @dock_item.fresh_event_at(placeholder.startTime)
+
+	# 	...
+
+	# 	@dock_item.configure_event(event) do |result|
+	# 		result == :failed ? @vc.animate_discard(event) : @vc.reload_event(event)
+	# 	end
+	# end
+
+	def on_drag_ended
 		flip_cell nil
 		return animate_drag_img_tumble if inside_dock?
 		placeholder = @vc.thing_at_point(@p)
-		unless placeholder
+
+		if !placeholder
 			animate_drag_img_tumble
 			@vc.animate_close
+			return
 		end
-
 
 		sound "tick.m4a"
-		event = @dock_item.fresh_event_at(placeholder.startTime)
+		before_event = EKEvent === placeholder && placeholder
 
-		case placeholder
-		when Placeholder
-			@vc.animate_add_and_close placeholder, event, @dragging
-
-		when EKEvent
-			@vc.animate_insert_and_close placeholder, event, @dragging
-
+		if @dock_item
+			ev = @dock_item.event_at(placeholder)
+			@vc.animate_add_event(ev, before_event, @dragging)
+			return
 		end
 
-		@dock_item.configure_event(event) do |result|
-			result == :failed ? @vc.animate_discard(event) : @vc.reload_event(event)
-		end
-	end
 
-	def on_drag_ended
-		# @vc.animate_close
-		flip_cell nil
-		return animate_drag_img_tumble if inside_dock?
+		# below only used for 'friend' and 'appt'
 
-		puts "on_drag_ended, not inside dock"
-
-		if placeholder = @vc.thing_at_point(@p)
-			puts "on_drag_ended, placeholder #{placeholder.inspect}"
-			@vc.with_person_and_title_for_droptext @text do |person, title|
-				if title
-					sound "tick.m4a"
-					case placeholder
-					when Placeholder
-						puts ">animate_add_and_close"
-						@vc.animate_add_and_close placeholder, person, title, @dragging
-						# animate_drag_img_spring_to @over_cell.layer.modelLayer.position
-						puts "<animate_add_and_close"
-					when EKEvent
-						puts ">animate_insert_and_close"
-						# animate_drag_img_spring_to @over_cell
-						@vc.animate_insert_and_close placeholder, person, title, @dragging
-						puts "<animate_insert_and_close"
-					end
-				else
-					animate_drag_img_tumble
-					@vc.animate_close
-				end
+		@vc.with_person_and_title_for_droptext @text do |person, title|
+			unless title
+				animate_drag_img_tumble
+				@vc.animate_close
+				return
 			end
-		else
-			animate_drag_img_tumble
-			@vc.animate_close
+
+			ev = Event.add_event(placeholder.startDate, person, title)
+			@vc.animate_add_event(ev, before_event, @dragging)
 		end
 	end
 

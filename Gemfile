@@ -14,12 +14,12 @@ gem 'sugarcube', :require => [
 	'sugarcube-animations',
 	'sugarcube-nsuserdefaults',
 	'sugarcube-timer',
+	'sugarcube-coregraphics',
 	'sugarcube-foundation'
 ]
 
 gem 'bubble-wrap', :require => [
 	'bubble-wrap/core',
 	'bubble-wrap/ui',
-	'bubble-wrap/http',
-	'bubble-wrap/location'
+	'bubble-wrap/http'
 ]
