@@ -103,3 +103,41 @@ WHENEVER
 * recommended activities .js window
 * calls out to LWLDB
 
+
+============
+
+slimming:
+
+ 
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/app.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/device.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/device/ios/camera.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/device/ios/camera_wrapper.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/device/ios/screen.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/device/screen.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/ios/app.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/ios/device.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/json.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/kvo.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/ns_index_path.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/ns_notification_center.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/ns_url_request.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/ns_user_defaults.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/persistence.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/pollute.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/string.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/bubble-wrap-1.4.0/motion/core/time.rb
+
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/sugarcube-1.3.5/lib/sugarcube-uikit/calayer.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/sugarcube-1.3.5/lib/sugarcube-uikit/nsattributedstring.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/sugarcube-1.3.5/lib/sugarcube-uikit/nsstring.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/sugarcube-1.3.5/lib/sugarcube-uikit/symbol.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/sugarcube-1.3.5/lib/sugarcube-uikit/uifont.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/sugarcube-1.3.5/lib/sugarcube-uikit/uiimage.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/sugarcube-1.3.5/lib/sugarcube-uikit/uilabel.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/sugarcube-1.3.5/lib/sugarcube-uikit/uipickerview.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/sugarcube-1.3.5/lib/sugarcube-uikit/uiview.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/sugarcube-1.3.5/lib/sugarcube-uikit/uiviewcontroller.rb
+   Compile /usr/local/Cellar/ruby/2.0.0-p247/lib/ruby/gems/2.0.0/gems/sugarcube-1.3.5/lib/sugarcube-uikit/uiwebview.rb
+

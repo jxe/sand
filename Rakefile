@@ -23,12 +23,12 @@ Motion::Project::App.setup do |app|
 
   app.info_plist['UILaunchImages'] = [
    {
-     'UILaunchImageName' => 'blurry-sand',
+     'UILaunchImageName' => 'Default',
      'UILaunchImageMinimumOSVersion' => '7.0',
      'UILaunchImageSize' => '{320, 480}'
    },
    {
-     'UILaunchImageName' => 'blurry-sand',
+     'UILaunchImageName' => 'Default',
      'UILaunchImageMinimumOSVersion' => '7.0',
      'UILaunchImageSize' => '{320, 568}'
    }
@@ -50,14 +50,15 @@ Motion::Project::App.setup do |app|
   app.release do
     app.codesign_certificate = 'iPhone Distribution: Joseph Edelman' #  (B7P78ULCXS)
     app.provisioning_profile = "/Users/joe/Library/MobileDevice/Provisioning Profiles/7A8826C3-DE6C-4B57-84AA-3B91B1CD456B.mobileprovision"
+    app.codesign_certificate = 'iPhone Distribution: Joseph Edelman' #  (B7P78ULCXS)
     # app.codesign_certificate = 'iPhone Developer: Joe Edelman' #  (B7P78ULCXS)
     # app.provisioning_profile = "/Users/joe/Library/MobileDevice/Provisioning Profiles/C5317494-CC09-4AC6-A00F-079F29EF4747.mobileprovision"
   end
 
-  app.development do
-    app.codesign_certificate = 'iPhone Developer: Joe Edelman' #  (B7P78ULCXS)
-    app.provisioning_profile = "/Users/joe/Library/MobileDevice/Provisioning Profiles/C5317494-CC09-4AC6-A00F-079F29EF4747.mobileprovision"
-  end
+  # app.development do
+  #   app.codesign_certificate = 'iPhone Developer: Joe Edelman' #  (B7P78ULCXS)
+  #   app.provisioning_profile = "/Users/joe/Library/MobileDevice/Provisioning Profiles/C5317494-CC09-4AC6-A00F-079F29EF4747.mobileprovision"
+  # end
 
   app.files += Dir.glob("./src/**/*.rb")
   app.files_dependencies \
