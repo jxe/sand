@@ -97,7 +97,7 @@ task :full_appstore => [
 
 task :check_versions do
   gitv = `git describe --dirty`.strip
-  raise "git dirty! #{gitv}" if gitv =~ /dirty/
+  raise "git dirty! #{gitv}" if gitv =~ /\-/
 end
 
 
