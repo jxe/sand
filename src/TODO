@@ -5,6 +5,12 @@ TIME TILL v1.0:
 
 - it breaks on the leap forward, because Time.today != Time.today.delta(days: 0).start_of_day
 
+- redo location stuff... SVProgressHUD while finding loc / geocoding
+- don't fetch location if we don't need it
+- loading indicator for uiwebview in general?
+- load failed rety yeah seems to hang
+- i don't want bg location!
+
 ====================
 
 - add friends to dock
