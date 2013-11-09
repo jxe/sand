@@ -3,6 +3,17 @@ TIME TILL v1.0:
 
 ====================
 
+STORE
+- add default dock items to store
+- store can't scroll quite to bottom
+- naming a different thing than insta search
+
+====================
+
+- make colleen's changes to IoM
+
+====================
+
 - it breaks on the leap forward, because Time.today != Time.today.delta(days: 0).start_of_day
 
 - redo location stuff... SVProgressHUD while finding loc / geocoding

@@ -5,11 +5,10 @@ Bundler.require
 Motion::Project::App.setup do |app|
 
   app.name = 'Sand'
-  app.version = '1.05.1'
+  app.version =  `git describe --dirty`.strip.sub(/^v0\./, '1.0')   #'1.05.2'
 
   app.sdk_version = "7.0"
   app.deployment_target = "6.1"
-  # app.deployment_target = "7.0"
   app.device_family = [:iphone]
 
   app.identifier = 'org.nxhx.sand'
@@ -98,11 +97,10 @@ task :full_appstore => [
 
 task :check_versions do
   gitv = `git describe --dirty`.strip
-  raise "git wrong version #{gitv}; #{ENV['tag']};" unless gitv == ENV['tag']
-  raise "app wrong version" unless Motion::Project::App.config.version == ENV['tag'].sub(/^v0\./, '1.0')
-  # should ensure that the checkout is of a clean tag that's been pushed
-  # and that the app.version is set right
+  raise "git dirty! #{gitv}" if gitv =~ /dirty/
 end
+
+
 
 task :send_to_crittercism do
   cmd = <<-CMD
