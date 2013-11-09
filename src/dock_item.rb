@@ -3,6 +3,7 @@ class DockItem < MotionDataWrapper::Model
 	# sandapp:dockitem?title=band+practice&image_url=http://example.com/band-practice.jpg
 
 	def self.visible
+		ensure_loaded
 		all.select{ |x| !x.is_hidden}
 	end
 
@@ -38,6 +39,7 @@ class DockItem < MotionDataWrapper::Model
 
 	# TODO: match by time of day, match default
 	def self.matching(ev)
+		ensure_loaded
 		match_by_regex = all.detect{ |x| ev.title =~ /#{x.regex}/ }
 		return match_by_regex if match_by_regex
 		time_of_day = ev.startDate.longer_time_of_day_label
@@ -92,6 +94,10 @@ class DockItem < MotionDataWrapper::Model
 		else
 			UIImage.imageNamed(image_url)
 		end
+	end
+
+	def self.ensure_loaded
+		empty? and load_defaults
 	end
 
 	def self.load_defaults

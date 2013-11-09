@@ -79,7 +79,7 @@ class EKEvent
 		when :eve;    return UIImage.imageNamed('img/tod/evening.jpg')
 		when :night;  return UIImage.imageNamed('img/tod/night.jpg')
 		else
-			return UIImage.imageNamed('img/tod/night.jpg')
+			return UIImage.imageNamed('q.png')
 		end
 	end
 

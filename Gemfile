@@ -15,7 +15,9 @@ gem 'sugarcube', :require => [
 	'sugarcube-nsuserdefaults',
 	'sugarcube-timer',
 	'sugarcube-coregraphics',
-	'sugarcube-foundation'
+	'sugarcube-foundation',
+	'sugarcube-factories',
+	'sugarcube-localized'
 ]
 
 gem 'bubble-wrap', :require => [
