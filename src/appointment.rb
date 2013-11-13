@@ -200,8 +200,7 @@ class Event < MotionDataWrapper::Model
 			Dispatch::Queue.concurrent.async do 
 				record = ev.organizer.ABRecordWithAddressBook(AddressBook.address_book)
 				ev.person = AddressBook::Person.new(nil, record) if record
-				e = ev
-				Dispatch::Queue.main.async(&callback) if e and e.friend_image
+				Dispatch::Queue.main.async(&callback) if ev.friend_image
 			end
 		end
 	end
