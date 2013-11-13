@@ -13,6 +13,7 @@ class EKEvent
 	# delegated getters
 	def is_hidden?; record && record.is_hidden; end
 	def person_uid; record && record.friend_ab_record_id; end
+        def friend_image; record && record.friend_image; end
 
 	# delegated setters
 	def hide!; post is_hidden: true; end
@@ -198,8 +199,8 @@ class Event < MotionDataWrapper::Model
 			# url = ev.organizer.URL
 			Dispatch::Queue.concurrent.async do 
 				record = ev.organizer.ABRecordWithAddressBook(AddressBook.address_book)
-				person = record && AddressBook::Person.new(nil, record)
-				e = person && assign(ev.eventIdentifier, person)
+				ev.person = AddressBook::Person.new(nil, record) if record
+				e = ev
 				Dispatch::Queue.main.async(&callback) if e and e.friend_image
 			end
 		end
