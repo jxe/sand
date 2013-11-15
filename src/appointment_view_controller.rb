@@ -68,14 +68,14 @@ class AppointmentViewController < EKEventViewController
 
 	def viewWillAppear(animated = true)
 		super
+		tv = view.subviews.objectAtIndex(0)
+		tv.tableHeaderView = makeHeaderView(tv)
 	end
 
 	def viewDidLoad
 		super
 		# l = UILabel.alloc.initWithFrame [[20,20],[280,44]]
-	 #    l.text = "Check this out"
-		tv = view.subviews.objectAtIndex(0)
-		tv.tableHeaderView = makeHeaderView(tv)
+	    # l.text = "Check this out"
 
 	    editItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemEdit, target:self, action: :editCalEvent)
 	    navigationItem.rightBarButtonItem = editItem

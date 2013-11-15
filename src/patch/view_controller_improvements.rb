@@ -135,13 +135,13 @@ module ViewControllerImprovements
 		bounds = UIScreen.mainScreen.bounds
 		rect = CGRectMake(0, 0, bounds.width, bounds.height);
 
-    	uiWebView = UIWebView.alloc.initWithFrame(rect)
-    	uiWebView.delegate = self
+    	@uiWebView = UIWebView.alloc.initWithFrame(rect)
+    	@uiWebView.delegate = self
     	
 		vc = UIViewController.alloc.init
-    	vc.view.addSubview(uiWebView)
+    	vc.view.addSubview(@uiWebView)
 		display_controller_in_navcontroller(vc, nc)
-		return uiWebView
+		return @uiWebView
 	end
 
 	def go_to_url nc = nil, url
@@ -151,14 +151,22 @@ module ViewControllerImprovements
 	end
 
 	def webView(wv, didFailLoadWithError: err)
-      UI.confirm "Load failed", "Retry?", "Yeah" do |yes|
-      	yes ? reload_webview : dismissViewController
-      end
+		return if err.code == NSURLErrorCancelled
+		return dismissViewController unless @recent_url
+        UI.confirm "Load failed", "Retry?", "Yeah" do |yes|
+        	yes ? reload_webview : dismissViewController
+        end
+	end
+
+	def set_webview_url url
+		@recent_url = url
+		reload_webview
 	end
 
 	def reload_webview
 		nsurl = NSURL.URLWithString(@recent_url)
-		nsreq = NSURLRequest.requestWithURL(nsurl)
+		nsreq = nsurl && NSURLRequest.requestWithURL(nsurl)
+		return UI.alert('Bad URL', "Can't load: #{@recent_url}") unless nsreq
 		@uiWebView.loadRequest(nsreq)
 	end
 

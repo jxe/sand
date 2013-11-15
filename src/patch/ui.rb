@@ -8,6 +8,14 @@ module UI
 		}
 	end
 
+	def self.alert title, msg
+		BW::UIAlertView.default({
+		  :title               => title,
+		  :message             => msg,
+		  :buttons             => ["OK"]
+		}).show
+	end
+
 	def self.confirm title, msg, action, &cb
 		BW::UIAlertView.default({
 		  :title               => title,

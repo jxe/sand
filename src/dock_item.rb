@@ -60,7 +60,7 @@ class DockItem < MotionDataWrapper::Model
 	def self.raw_suggestions_url(ev)
 		# time_label = ev.startDate.time_of_day_label
 		url = matching(ev).suggestions_url
-		url.sub("%T", ev.title.sub(' ', '%20'))
+		url.sub("%T", ev.title.gsub(' ', '%20'))
 	end
 
 	def suggestions_descriptor(ev)

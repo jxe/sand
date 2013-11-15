@@ -319,9 +319,7 @@ class CalViewController < UICollectionViewController
 		uiWebView = push_webview(navigationController)
 		with_street_address do |loc|
 			url = DockItem.suggestions_url(event, loc)
-			nsurl = NSURL.URLWithString(url)
-			nsreq = NSURLRequest.requestWithURL(nsurl)
-			uiWebView.loadRequest(nsreq)
+			set_webview_url(url)
 		end
 	end
 
