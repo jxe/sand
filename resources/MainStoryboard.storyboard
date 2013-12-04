@@ -78,7 +78,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="blurry-sand.png" translatesAutoresizingMaskIntoConstraints="NO" id="gBZ-Pn-qYz">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default-568h@2x.png" translatesAutoresizingMaskIntoConstraints="NO" id="gBZ-Pn-qYz">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
@@ -485,7 +485,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="blurry-sand.png" width="16" height="16"/>
+        <image name="Default-568h@2x.png" width="16" height="16"/>
         <image name="droptarget.png" width="16" height="16"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

@@ -3,36 +3,42 @@ TIME TILL v1.0:
 
 ====================
 
-STORE
-- add default dock items to store
-- store can't scroll quite to bottom
-- naming a different thing than insta search
+0.6 - (3h)
+
+* Welcome pane image doesn't load and black makes text impossible to read
+* (2h) dock reordering and drag-off-to-delete
+* (30m) trash can floaty view (appears during drag_to_reorder and dock reorder)
+* (10m) don't fetch location if we don't need it
+* (30m) "We've detected FB events in your calendar.  LINK FB to SHOW THEM" (ask every time)
 
 ====================
 
-- make colleen's changes to IoM
+STORE
+- add default dock items to store
+- store has an icon that's too big!
+- store can't scroll quite to bottom
+- naming a different thing than insta search
 
 ====================
 
 - it breaks on the leap forward, because Time.today != Time.today.delta(days: 0).start_of_day
 
 - redo location stuff... SVProgressHUD while finding loc / geocoding
-- don't fetch location if we don't need it
 - loading indicator for uiwebview in general?
 - load failed rety yeah seems to hang
 - i don't want bg location!
 
+* scroll to reveal new dockitem installs
+
 ====================
 
 - add friends to dock
-* (2h) dock reordering and drag-off-to-delete
 
 ====================
 
 (5h 30m)
 
 v0.5.1 -- 2h 30m
-* (30m) "We've detected FB events in your calendar.  LINK FB to SHOW THEM" (ask every time)
 * (20m) only ask for FB events once a week
 * (1h) recent friends in ABPicker
 
@@ -40,10 +46,6 @@ v0.5.1 -- 2h 30m
 * (30m) write tutorial text
 * (1h) transparent tutorial overlay!
 * (30m) Dockmenu includes "About" which has thanks, tutorial, and image credits
-
-v0.6
-* (30m) trash can floaty view
-* scroll to reveal new dockitem installs
 
 v0.7 -- 3h
 * (30m) subtler, quicker sounds
