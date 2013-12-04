@@ -81,14 +81,13 @@ class DragUpToAdd < CalDragManager
 		# below only used for 'friend' and 'appt'
 
 		@vc.with_person_and_title_for_droptext @text do |person, title|
-			unless title
+			if title
+				ev = Event.add_event(placeholder.startDate, person, title)
+				@vc.animate_add_event(ev, before_event, @dragging)
+			else
 				animate_drag_img_tumble
 				@vc.animate_close
-				return
 			end
-
-			ev = Event.add_event(placeholder.startDate, person, title)
-			@vc.animate_add_event(ev, before_event, @dragging)
 		end
 	end
 

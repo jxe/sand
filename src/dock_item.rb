@@ -64,6 +64,7 @@ class DockItem < MotionDataWrapper::Model
 	end
 
 	def suggestions_descriptor(ev)
+		return unless ev.title
 		raw = suggestions_desc || "%T"
 		raw.sub("%T", ev.title)
 	end
@@ -112,7 +113,7 @@ class DockItem < MotionDataWrapper::Model
 	def self.suggestions_url(ev, loc)
 		# loc = loc.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
 		# loc2 = CFURLCreateStringByAddingPercentEscapes(nil, loc, nil, "!*'();:@&=+$,/?%#[]", KCFStringEncodingUTF8)
-		loc2 = loc.gsub("\n"," ").sub(" United States", "").gsub(/\u200E|\s/, '%20')
+		loc2 = loc.gsub("\n"," ").sub(" United States", "").gsub(/\u200E|\s|\+/, '%20').gsub(/(\d+)\-(\d+)/, "\\1")
 		raw = raw_suggestions_url(ev)
 		url = raw.sub("%%", loc2.strip)
 		NSLog "%@", "URL: #{url}"

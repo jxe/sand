@@ -85,6 +85,7 @@ class CalViewController < UICollectionViewController
 
     def animate_open s
     	return if @cvm.date_open
+    	return unless Integer === s and s >= 0 and s < 15  # FIXME: hack for bug I don't understand
     	push_animation{
 			@cvm.hover s
 			positions = @cvm.placeholder_positions
@@ -227,7 +228,7 @@ class CalViewController < UICollectionViewController
 			end
 			alert.show			
 		when /friend/
-			AddressBook.pick :autofocus_search => true do |person|
+			AddressBook.pick do |person|
 				if person
 					cb.call(person, person.composite_name) 
 				else

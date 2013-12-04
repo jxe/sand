@@ -1,49 +1,57 @@
 class AppointmentViewController < EKEventViewController
 
-	def makeHeaderView(tv)
+	def one_button tv, v1
 		v = UIView.alloc.initWithFrame(CGRectMake(0,0,tv.frame.width, 110))
-		friend_name = event.person_name
-
-		blueColor = UIColor.colorWithRed(0.0, green: 0.48, blue: 1.0, alpha:0.8)
-
-		suggs_button = UIButton.buttonWithType(UIButtonTypeCustom)
-		suggs_button.backgroundColor = blueColor
-		for_what = DockItem.suggestion_descriptor(event)
-		suggs_button.setTitle("#{for_what}", forState: UIControlStateNormal)
-		suggs_button.addTarget(self, action: :suggestions, forControlEvents: UIControlEventTouchUpInside)
-
-		if !friend_name
-			v.frame = CGRectMake(0,0,tv.frame.width, 60)
-
-			Motion::Layout.new do |layout|
-			  layout.view v
-			  layout.subviews "suggs" => suggs_button
-			  layout.vertical "|-5-[suggs]-5-|"
-			  layout.horizontal "|-10-[suggs]-10-|"
-			end
-
-			return v
-		end
-
-		friend_button = UIButton.buttonWithType(UIButtonTypeCustom)
-		friend_button.backgroundColor = blueColor
-		if friend_name
-			friend_button.setTitle(friend_name, forState: UIControlStateNormal)
-			friend_button.addTarget(self, action: :friend_record, forControlEvents: UIControlEventTouchUpInside)
-		else
-			friend_button.setTitle("Link a friend", forState: UIControlStateNormal)
-			friend_button.addTarget(self, action: :link_friend, forControlEvents: UIControlEventTouchUpInside)
-		end
-
+		v.frame = CGRectMake(0,0,tv.frame.width, 60)
 		Motion::Layout.new do |layout|
 		  layout.view v
-		  layout.subviews "friend" => friend_button, "suggs" => suggs_button
+		  layout.subviews "suggs" => v1
+		  layout.vertical "|-5-[suggs]-5-|"
+		  layout.horizontal "|-10-[suggs]-10-|"
+		end
+		v
+	end
+
+
+	def two_buttons tv, v1, v2
+		v = UIView.alloc.initWithFrame(CGRectMake(0,0,tv.frame.width, 110))
+		Motion::Layout.new do |layout|
+		  layout.view v
+		  layout.subviews "friend" => v2, "suggs" => v1
 		  layout.vertical "|-5-[friend]-5-[suggs(==friend)]-5-|"
 		  layout.horizontal "|-10-[friend]-10-|"
 		  layout.horizontal "|-10-[suggs]-10-|"
 		end
-
 		v
+	end
+
+	def makeHeaderView(tv)
+		blueColor = UIColor.colorWithRed(0.0, green: 0.48, blue: 1.0, alpha:0.8)
+		buttons = []
+
+		if for_what = DockItem.suggestion_descriptor(event)
+			suggs_button = UIButton.buttonWithType(UIButtonTypeCustom)
+			suggs_button.backgroundColor = blueColor
+			suggs_button.setTitle("#{for_what}", forState: UIControlStateNormal)
+			suggs_button.addTarget(self, action: :suggestions, forControlEvents: UIControlEventTouchUpInside)
+			buttons << suggs_button
+		end
+
+		if friend_name = event.person_name
+			friend_button = UIButton.buttonWithType(UIButtonTypeCustom)
+			friend_button.backgroundColor = blueColor
+			friend_button.setTitle(friend_name, forState: UIControlStateNormal)
+			friend_button.addTarget(self, action: :friend_record, forControlEvents: UIControlEventTouchUpInside)
+			buttons << friend_button
+		end
+
+		# friend_button.setTitle("Link a friend", forState: UIControlStateNormal)
+		# friend_button.addTarget(self, action: :link_friend, forControlEvents: UIControlEventTouchUpInside)
+
+
+		return one_button tv, *buttons if buttons.length == 1
+		return two_buttons tv, *buttons if buttons.length == 2
+		return nil
 	end
 
 	def link_friend sender=nil
