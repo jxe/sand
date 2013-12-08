@@ -3,13 +3,38 @@ TIME TILL v1.0:
 
 ====================
 
+DONE
+
+- highlight the selected cell when affair is shown
+- everything bigger vertically
+
+- on cvc scroll, hide affair
+
+- recognize single click on upcarret
+- replace upcarret with a button cell
+- add separator dock cells
+
+====================
+
 0.6 - (3h)
 
-* Welcome pane image doesn't load and black makes text impossible to read
-* (2h) dock reordering and drag-off-to-delete
-* (30m) trash can floaty view (appears during drag_to_reorder and dock reorder)
-* (10m) don't fetch location if we don't need it
+* (30m) replace sep friend and appt adders with a plus that brings up a view that has a adressbook search or a textfield or a visit the dock store thing
+* using motion layout to add a uitextfield as it's tableheaderview
+* that thing should have a hint
+* textFieldShouldReturn: implemented in ComposerView (which is a UITextFieldDelegate) that posts an appointment
+* add also a button for visiting the dock store
+
+* (30m) drag-off-to-delete on dock
+   https://github.com/jallen/DraggableCollectionView/commit/67c4b09cc8dfff094a06b418cea2f77bd4f965ae
+* (5m) switch to that branch that allows drag-off
+* (20m) add a hook for drag off started that dims background
+
 * (30m) "We've detected FB events in your calendar.  LINK FB to SHOW THEM" (ask every time)
+* reload_all_images() invalidates all loaded images in event store!
+* Appointment.any_facebook? true if there are any facebook invites
+
+--
+
 
 ====================
 
@@ -21,14 +46,10 @@ STORE
 
 ====================
 
+* (30m) trash can floaty view (appears during drag_to_reorder and dock reorder)
+
 - it breaks on the leap forward, because Time.today != Time.today.delta(days: 0).start_of_day
-
-- redo location stuff... SVProgressHUD while finding loc / geocoding
-- loading indicator for uiwebview in general?
-- load failed rety yeah seems to hang
 - i don't want bg location!
-
-* scroll to reveal new dockitem installs
 
 ====================
 

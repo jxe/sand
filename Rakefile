@@ -43,6 +43,8 @@ Motion::Project::App.setup do |app|
     pod 'SVProgressHUD',  :git => 'https://github.com/samvermette/SVProgressHUD.git', :commit => '1.0'
     pod 'CrittercismSDK'
     pod 'AKLocationManager'
+    pod 'DraggableCollectionView'
+    pod 'MLPAutoCompleteTextField', '~> 1.5'
   }
 
   app.entitlements['application-identifier'] = "#{app.seed_id}.#{app.identifier}"

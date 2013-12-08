@@ -20,10 +20,18 @@ class CalViewController < UICollectionViewController
 
 		# set up the screen
 		collectionView.contentInset = UIEdgeInsetsMake(26,0,50,0)
+
+		# set up the dock
 		@dock_controller = storyboard.instantiateViewControllerWithIdentifier('Dock')
 		addChildViewController(@dock_controller)
 		@dock_controller.didMoveToParentViewController(self)
 		view.addSubview(@dock_controller.view)
+
+		# put the event viewer offscreen
+		@affairController = AffairController.instance
+		addChildViewController(@affairController)
+		@affairController.didMoveToParentViewController(self)
+		view.addSubview(@affairController.view)
 
 		# populate myself
 		@cvm = CalViewModel.new
@@ -49,6 +57,7 @@ class CalViewController < UICollectionViewController
 	def viewWillAppear(animated)
 		super
 		@dock_controller.size_yourself_bro(self)
+		@affairController.hide(self)
 		configure_animator
 		observe("ReloadCalendar"){ |x| reload }
 		# @ekobserver = App.notification_center.observe(EKEventStoreChangedNotification){ |x| reload }
@@ -138,6 +147,11 @@ class CalViewController < UICollectionViewController
     	}
     end
 
+    def redraw(event)
+    	p = @cvm.index_path_for_thing(event)
+		collectionView.reloadItemsAtIndexPaths([p])
+    end
+
 	def animate_mv_and_close thing_was, placeholder, img = nil
 		end_path = @cvm.index_path_for_thing(placeholder)
 		case placeholder
@@ -194,6 +208,10 @@ class CalViewController < UICollectionViewController
 		update_today_events_styles
 	end
 
+	def scrollViewWillBeginDragging(sv)
+		@affairController.hide_animated
+	end
+
 	def update_today_events_styles
 		prev = nil
 		@cvm && @cvm.today_paths.each do |path|
@@ -227,20 +245,12 @@ class CalViewController < UICollectionViewController
 				cb.call nil, alert.plain_text_field.text
 			end
 			alert.show			
-		when /friend/
-			AddressBook.pick do |person|
-				if person
-					cb.call(person, person.composite_name) 
-				else
-					cb.call(nil, nil)
-				end
-			end
 		else
 			cb.call(nil, text)
 		end
 	end
 
-	def display_friend_record ev, navigationController
+	def display_friend_record ev, navigationController = nil
 		return unless abrecord = ev.person_abrecord
 		display_person navigationController, abrecord
 	end
@@ -254,6 +264,11 @@ class CalViewController < UICollectionViewController
 		view_event(thing) if EKEvent === thing
 	end
 
+	def view_event ev
+		return false unless ev
+		@affairController.initWithEventAndParent(ev, Event.event_store, self)
+		@affairController.show_animated
+	end
 
 
 	##############
@@ -318,10 +333,7 @@ class CalViewController < UICollectionViewController
 
 	def display_suggestions event, navigationController = nil
 		uiWebView = push_webview(navigationController)
-		with_street_address do |loc|
-			url = DockItem.suggestions_url(event, loc)
-			set_webview_url(url)
-		end
+		DockItem.with_suggestions_url(event){ |url| set_webview_url(url) }
 	end
 
 	def was_modified(ev)

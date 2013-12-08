@@ -81,40 +81,6 @@ module ViewControllerImprovements
 		})
 	end
 
-	def reverse_geocode loc, &blk
-		@cached_geocodes ||= {}
-		close = @cached_geocodes.keys.select{ |l| l.distanceFromLocation(loc) < 1000 }
-		if not close.empty?
-			blk.call(@cached_geocodes[close.first])
-		else
-			@coder ||= CLGeocoder.alloc.init
-			@coder.reverseGeocodeLocation(loc, completionHandler:lambda{
-				|placemarks, error|
-				if !error && placemarks[0]
-					addr = ABCreateStringWithAddressDictionary(placemarks[0].addressDictionary, false)
-					@cached_geocodes[loc] = addr
-					blk.call(addr)
-				end
-			})
-		end
-	end
-
-	def with_location &blk
-		blk.call(@cached_location) if @cached_location
-		AKLocationManager.distanceFilterAccuracy = KCLLocationAccuracyKilometer
-		AKLocationManager.startLocatingWithUpdateBlock(proc{ |result|
-			blk.call(@cached_location = result)
-			AKLocationManager.stopLocating
-		}, failedBlock: proc{ |error|
-			blk.call(@cached_location = nil)
-			AKLocationManager.stopLocating
-		})
-	end
-
-	def with_street_address &blk
-		with_location{ |loc| loc ? reverse_geocode(loc){ |addr| blk.call(addr) } : blk.call("nowhere") }
-	end
-
 	def lookup_friend_id friend_id
 		abrecord = friend_id && ABAddressBookGetPersonWithRecordID(AddressBook.address_book, friend_id)
 		if abrecord
@@ -123,12 +89,6 @@ module ViewControllerImprovements
 			return fname, abrecord
 		end
 		return nil
-	end
-
-	def view_event ev
-		return false unless ev
-		@eventViewController = AppointmentViewController.alloc.initWithEventAndParent(ev, Event.event_store, self)
-		display_controller_in_navcontroller( @eventViewController )
 	end
 
 	def push_webview nc = nil

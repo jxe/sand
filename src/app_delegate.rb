@@ -62,12 +62,12 @@ class AppDelegate
         begin
           DockItem.install(data)
         rescue Exception => e
-          Dispatch::Queue.main.async{ 
-            SVProgressHUD.dismiss
+          Dispatch::Queue.main.async{
+            SVProgressHUD.dismiss rescue nil
             BW::UIAlertView.default(:title => e.message)
           }
         ensure
-          Dispatch::Queue.main.async{ SVProgressHUD.dismiss }
+          Dispatch::Queue.main.async{ SVProgressHUD.dismiss rescue nil }
         end
       end
 

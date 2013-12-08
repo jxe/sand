@@ -24,11 +24,10 @@ class EKEvent
 	# related persons
 
 	def person=(person)
-		post friend_ab_record_id: person.uid,
-			 friend_name: person.composite_name,
-			 friend_image: person.photo,
+		post friend_ab_record_id: person && person.uid,
+			 friend_name: person && person.composite_name,
+			 friend_image: person && person.photo
 	end
-
 
 	def person_abrecord
 		person_abrecord ||= (person_uid && ABAddressBookGetPersonWithRecordID(AddressBook.address_book, person_uid))

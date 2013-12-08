@@ -35,6 +35,7 @@ class DockController < UICollectionViewController
 	def viewDidLoad
 		super
 		@@instance = self
+		collectionView.draggable = true
 		collectionView.delegate = self
 		collectionView.dataSource = self
 
@@ -100,12 +101,35 @@ class DockController < UICollectionViewController
 	##############
 	# data source
 
+
+	def collectionView(cv, canMoveItemAtIndexPath: path)
+		path.row >= 1
+	end
+
+	def collectionView(cv, moveItemAtIndexPath:path0, toIndexPath:path1)
+		DockItem.move(path0.row - 1, path1.row - 1)
+	end
+
+	def collectionView(cv, canMoveItemAtIndexPath:path0, toIndexPath:path1)
+		path0.row >= 1 and path1.row >= 1
+	end
+
+	# def collectionView(cv, alterTranslation:translation)
+	# end
+
+	# def collectionView(cv, transformForDraggingItemAtIndexPath:path, duration: duration)
+	# 	return
+	# end
+
+
+
+
 	def numberOfSectionsInCollectionView(cv)
 		1
 	end
 
 	def collectionView(cv, numberOfItemsInSection: section)
-		DockItem.visible.size + 3
+		DockItem.visible.size + 2
 	end
 
 	def collectionView(cv, cellForItemAtIndexPath: path)
@@ -115,8 +139,6 @@ class DockController < UICollectionViewController
 		case path.row
 		when 0
 			cell.system_item = "appt"
-		when 1
-			cell.system_item = "friend"
 		when extras.size + 2
 			cell.system_item = "upcarret"
 		else

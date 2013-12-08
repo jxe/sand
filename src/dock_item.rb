@@ -4,7 +4,19 @@ class DockItem < MotionDataWrapper::Model
 
 	def self.visible
 		ensure_loaded
-		all.select{ |x| !x.is_hidden}
+		all.select{ |x| !x.is_hidden}.sort_by{ |x| x.dock_position || -1 }
+	end
+
+	def self.move(i,j)
+		vis = visible
+		puts "vis is: #{vis.inspect}"
+		obj = vis.delete_at(i)
+		vis.insert(j, obj)
+		vis.each_with_index do |o, i|
+			o.dock_position = i
+			o.save
+		end
+		puts "vis is: #{vis.inspect}"
 	end
 
 	def self.install(data)
@@ -57,12 +69,6 @@ class DockItem < MotionDataWrapper::Model
 		matching(ev).suggestions_descriptor(ev)
 	end
 
-	def self.raw_suggestions_url(ev)
-		# time_label = ev.startDate.time_of_day_label
-		url = matching(ev).suggestions_url
-		url.sub("%T", ev.title.gsub(' ', '%20'))
-	end
-
 	def suggestions_descriptor(ev)
 		return unless ev.title
 		raw = suggestions_desc || "%T"
@@ -110,15 +116,71 @@ class DockItem < MotionDataWrapper::Model
 		}
 	end
 
-	def self.suggestions_url(ev, loc)
-		# loc = loc.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
-		# loc2 = CFURLCreateStringByAddingPercentEscapes(nil, loc, nil, "!*'();:@&=+$,/?%#[]", KCFStringEncodingUTF8)
-		loc2 = loc.gsub("\n"," ").sub(" United States", "").gsub(/\u200E|\s|\+/, '%20').gsub(/(\d+)\-(\d+)/, "\\1")
-		raw = raw_suggestions_url(ev)
-		url = raw.sub("%%", loc2.strip)
-		NSLog "%@", "URL: #{url}"
-		url
+
+
+	def self.with_suggestions_url(event, &blk)
+		matching(event).with_suggestions_url(event, &blk)
 	end
+
+	def with_suggestions_url(event, &blk)
+		raw = suggestions_url.sub("%T", event.title.gsub(' ', '%20'))
+		if raw =~ /%%/
+			with_street_address do |loc|
+				loc2 = loc.gsub("\n"," ").sub(" United States", "").gsub(/\b(\d+)\D(\d+)\b/, "\\1").gsub(/\u200E|\s|\+/, '%20')
+				NSLog("%@", "Loc is: #{loc}\nLoc2 is: #{loc2}")
+				url = raw.sub("%%", loc2.strip)
+				NSLog("%@", "URL is: #{url}")
+				blk.call(url)
+			end
+		else
+			blk.call(raw)
+		end
+	end
+
+
+	# location stuff
+
+	@@cached_location = nil
+	@@cached_geocodes = {}
+
+	def with_location &blk
+		blk.call(@@cached_location) if @@cached_location
+		AKLocationManager.distanceFilterAccuracy = KCLLocationAccuracyKilometer
+		AKLocationManager.startLocatingWithUpdateBlock(proc{ |result|
+			blk.call(@@cached_location = result)
+			AKLocationManager.stopLocating
+		}, failedBlock: proc{ |error|
+			blk.call(@@cached_location = nil)
+			AKLocationManager.stopLocating
+		})
+	end
+
+	def with_street_address &blk
+		with_location{ |loc| loc ? reverse_geocode(loc){ |addr| blk.call(addr) } : blk.call("nowhere") }
+	end
+
+	def reverse_geocode loc, &blk
+		close = @@cached_geocodes.keys.select{ |l| l.distanceFromLocation(loc) < 1000 }
+		if not close.empty?
+			blk.call(@@cached_geocodes[close.first])
+		else
+			@@coder ||= CLGeocoder.alloc.init
+			@@coder.reverseGeocodeLocation(loc, completionHandler:lambda{
+				|placemarks, error|
+				if !error && placemarks[0]
+					addr = ABCreateStringWithAddressDictionary(placemarks[0].addressDictionary, false)
+					@@cached_geocodes[loc] = addr
+					blk.call(addr)
+				end
+			})
+		end
+	end
+
+
+
+	# loc = loc.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+	# loc2 = CFURLCreateStringByAddingPercentEscapes(nil, loc, nil, "!*'();:@&=+$,/?%#[]", KCFStringEncodingUTF8)
+	# NSLog "%@", "URL: #{url}"
 
 
 	def fresh_event_at(startTime)
