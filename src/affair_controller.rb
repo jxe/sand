@@ -28,10 +28,13 @@ class AffairController < UIViewController
 	def hide(cal)
 		view.frame = CGRectMake(0, cal.view.frame.size.height, cal.view.frame.size.width, cal.view.frame.size.height)
 		view.endEditing(true)
+		@superdelegate && @superdelegate.doneEditing
 	end
 
 	def hide_animated(sender = nil)
 		view.endEditing(true)
+		@superdelegate.doneEditing if @superdelegate
+
 		UIView.animateWithDuration 0.2, animations:lambda{
 			f = UIApplication.sharedApplication.keyWindow.frame
 			view.frame = CGRectMake(0, f.size.height, f.size.width, f.size.height)
@@ -58,14 +61,16 @@ class AffairController < UIViewController
 	end
 
 	def viewDidLoad
+		super
+
 		# set up actions
 		closeButton.addTarget(self, action: :hide_animated, forControlEvents: UIControlEventTouchUpInside)
 		friendButton.addTarget(self, action: :go_friend, forControlEvents: UIControlEventTouchUpInside)
 		suggsButton.addTarget(self, action: :go_suggs, forControlEvents: UIControlEventTouchUpInside)
 
 		friendField.autoCompleteDataSource = self
-		friendField.autoCompleteTableAppearsAsKeyboardAccessory = true
 		friendField.autoCompleteDelegate = self
+		# friendField.autoCompleteTableAppearsAsKeyboardAccessory = true
 
 		friendField.delegate = self
 		titleField.delegate = self
@@ -76,6 +81,15 @@ class AffairController < UIViewController
 		# urlButton.addTarget(self, action: :suggestions, forControlEvents: UIControlEventTouchUpInside)
 		xFriendButton.addTarget(self, action: :xFriend, forControlEvents: UIControlEventTouchUpInside)
 		# locationButton.addTarget(self, action: :suggestions, forControlEvents: UIControlEventTouchUpInside)
+
+		l = view.layer
+		l.masksToBounds = false
+		# l.cornerRadius = 8
+		l.shadowOffset = CGSizeMake(0, -2)
+		l.shadowRadius = 0.5
+		l.shadowOpacity = 0.4
+		l.shadowColor = UIColor.blackColor.CGColor
+		# l.shadowPath = UIBezierPath.bezierPathWithRoundedRect(l.bounds, cornerRadius:8).CGPath
 	end
 
 	def xFriend(sender=nil)

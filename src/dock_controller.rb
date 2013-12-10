@@ -139,10 +139,10 @@ class DockController < UICollectionViewController
 		case path.row
 		when 0
 			cell.system_item = "appt"
-		when extras.size + 2
+		when extras.size + 1
 			cell.system_item = "upcarret"
 		else
-			cell.dock_item = extras[path.row - 2]
+			cell.dock_item = extras[path.row - 1]
 		end
 
 		cell

@@ -259,9 +259,22 @@ class CalViewController < UICollectionViewController
 	##############
 	# wiring
 
+	def collectionView(cv, shouldSelectItemAtIndexPath:path)
+		return true if !@selected_path or !path.eql?(@selected_path)
+		doneEditing
+		@affairController.hide_animated
+		@selected_path = nil
+		false
+	end
+
 	def collectionView(cv, didSelectItemAtIndexPath:path)
+		@selected_path = path
 		thing = @cvm.thing_at_index_path path
 		view_event(thing) if EKEvent === thing
+	end
+
+	def doneEditing
+		collectionView.deselectItemAtIndexPath(@selected_path, animated:false)
 	end
 
 	def view_event ev

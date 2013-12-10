@@ -45,6 +45,7 @@ Motion::Project::App.setup do |app|
     pod 'AKLocationManager'
     pod 'DraggableCollectionView'
     pod 'MLPAutoCompleteTextField', '~> 1.5'
+    pod 'MLPSpotlight', '~> 1.2'
   }
 
   app.entitlements['application-identifier'] = "#{app.seed_id}.#{app.identifier}"

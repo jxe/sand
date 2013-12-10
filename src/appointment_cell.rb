@@ -6,6 +6,11 @@ class AppointmentCell < UICollectionViewCell
 		l.contents = UIImage.imageNamed('blackrect.png').CGImage
 		l.frame = CGRectMake(-6,-12,85,90)
 		pl.insertSublayer(l, atIndex:0)
+
+		v = UIView.alloc.initWithFrame(self.bounds)
+		v.backgroundColor = UIColor.colorWithHue(0.65, saturation:0.20, brightness:1.0, alpha:1.0)
+		v.layer.cornerRadius = 4
+		self.selectedBackgroundView = v
 		self
 	end
 
