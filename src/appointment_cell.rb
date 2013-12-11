@@ -8,8 +8,17 @@ class AppointmentCell < UICollectionViewCell
 		pl.insertSublayer(l, atIndex:0)
 
 		v = UIView.alloc.initWithFrame(self.bounds)
-		v.backgroundColor = UIColor.colorWithHue(0.65, saturation:0.20, brightness:1.0, alpha:1.0)
-		v.layer.cornerRadius = 4
+		v.backgroundColor = UIColor.colorWithHue(0.60, saturation:0.05, brightness:1.0, alpha:1.0)
+		l = v.layer
+
+		l.masksToBounds = false
+		l.cornerRadius = 4
+		l.shadowOffset = CGSizeMake(0, 0)
+		l.shadowRadius = 3.8
+		l.shadowOpacity = 0.5
+		l.shadowColor = UIColor.yellowColor.CGColor
+		l.shadowPath = UIBezierPath.bezierPathWithRoundedRect(l.bounds, cornerRadius:4).CGPath
+
 		self.selectedBackgroundView = v
 		self
 	end
@@ -71,7 +80,7 @@ class AppointmentCell < UICollectionViewCell
 		# timelabel.text   = ev.startDate.time_of_day_label.to_s.upcase.sub('_', ' ')
 		self.time_of_day = ev.startDate.longer_time_of_day_label.to_s
 		imageview.image  = ev.image{ cv.reloadItemsAtIndexPaths([path]) }
-		personlabel.text = ev.title
+		personlabel.text = ev.title || ev.person_name || "No name"
 
 		ghosted ? ghost : unghost
 		update_time_of_day

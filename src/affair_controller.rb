@@ -25,13 +25,19 @@ class AffairController < UIViewController
 		end
 	end
 
+	def visible?
+		@state != :hidden
+	end
+
 	def hide(cal)
+		@state = :hidden
 		view.frame = CGRectMake(0, cal.view.frame.size.height, cal.view.frame.size.width, cal.view.frame.size.height)
 		view.endEditing(true)
 		@superdelegate && @superdelegate.doneEditing
 	end
 
 	def hide_animated(sender = nil)
+		@state = :hidden
 		view.endEditing(true)
 		@superdelegate.doneEditing if @superdelegate
 
@@ -42,6 +48,7 @@ class AffairController < UIViewController
 	end
 
 	def show_animated
+		@state = :peeking
 		UIView.animateWithDuration 0.2, animations:lambda{
 			f = UIApplication.sharedApplication.keyWindow.frame
 			dock_y = f.size.height - 180
@@ -50,6 +57,7 @@ class AffairController < UIViewController
 	end
 
 	def fully_show
+		@state = :visible
 		UIView.animateWithDuration 0.2, animations:lambda{
 			f = UIApplication.sharedApplication.keyWindow.frame
 			view.frame = CGRectMake(0, 0, f.size.width, f.size.height)
@@ -67,13 +75,18 @@ class AffairController < UIViewController
 		closeButton.addTarget(self, action: :hide_animated, forControlEvents: UIControlEventTouchUpInside)
 		friendButton.addTarget(self, action: :go_friend, forControlEvents: UIControlEventTouchUpInside)
 		suggsButton.addTarget(self, action: :go_suggs, forControlEvents: UIControlEventTouchUpInside)
+		urlButton.addTarget(self, action: :go_url, forControlEvents: UIControlEventTouchUpInside)
 
 		friendField.autoCompleteDataSource = self
 		friendField.autoCompleteDelegate = self
-		# friendField.autoCompleteTableAppearsAsKeyboardAccessory = true
+		friendField.autoCompleteTableBackgroundColor = UIColor.whiteColor
+		friendField.autoCompleteTableCellBackgroundColor = UIColor.whiteColor
+		friendField.maximumNumberOfAutoCompleteRows = 6
+		friendField.autoCompleteTableAppearsAsKeyboardAccessory = true
 
 		friendField.delegate = self
 		titleField.delegate = self
+		detailsView.delegate = self
 
 		# add the swiping main menu gesture
 		view.addGestureRecognizer(UIPanGestureRecognizer.alloc.initWithTarget(self, action: :swipeHandler))
@@ -116,7 +129,7 @@ class AffairController < UIViewController
 
 			y = gr.locationInView(view.superview).y
 
-			puts "vy: #{vy}, y: #{y}"
+			# puts "vy: #{vy}, y: #{y}"
 			return hide_animated if y > 400
 			return show_animated if y > 300
 			return fully_show
@@ -130,13 +143,13 @@ class AffairController < UIViewController
 			ab = AddressBook.address_book
 			source = ABAddressBookCopyDefaultSource(ab);
 			ppl = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(ab, source, KABPersonSortByLastName)
+    		ABAddressBookRegisterExternalChangeCallback(ab, Proc.new {|_,_,_| @ab_people = nil }, nil)
 			ppl.map{ |abp|  AddressBook::Person.new(ab, abp) }
 		end
 	end
 
 	def autoCompleteTextField(tf, possibleCompletionsForString:str)
-		ab_people.select{ |p| p.composite_name =~ /^#{str}/ }
-		# return ["Foo", "Bar", "Baz"]
+		ab_people.select{ |p| p.composite_name =~ /\b#{str}/ }
 	end
 
 	def textFieldShouldBeginEditing(tf)
@@ -145,7 +158,8 @@ class AffairController < UIViewController
 	end
 
 	def textFieldDidEndEditing(tf)
-		if tf == titleField
+		case tf
+		when titleField
 			event.title = tf.text
 			Event.save(event)
 			@superdelegate.redraw(event)
@@ -155,13 +169,21 @@ class AffairController < UIViewController
 		true
 	end
 
+	def textViewDidEndEditing(tv)
+		case tv
+		when detailsView
+			event.notes = tv.text
+			Event.save(event)
+		end
+	end
+
 	def textFieldShouldReturn(tf)
 		textFieldDidEndEditing(tf)
 	end
 
 	def autoCompleteTextField(tf, didSelectAutoCompleteString:str, withAutoCompleteObject:obj, forRowAtIndexPath:path)
 		event.person = obj
-		event.title = obj.composite_name if !event.title || event.title.length == 0
+		# event.title = obj.composite_name if !event.title || event.title.length == 0
 		Event.save(event)
 		@superdelegate.redraw(event)
 		layout
@@ -169,7 +191,7 @@ class AffairController < UIViewController
 	end
 
 	def autoCompleteTextField(tf, shouldStyleAutoCompleteTableView:tv, forBorderStyle:bs)
-		tv.backgroundColor = UIColor.whiteColor
+		# tv.frame.width = 320.0
 		return true
 		# no op
 	end
@@ -191,18 +213,30 @@ class AffairController < UIViewController
 			friendField.text = ""
 		end
 
-		urlText = event.URL ? event.URL.to_s : "No URL"
-		locationButton.setTitle event.location || "No Location", forState: UIControlStateNormal
-		urlButton.setTitle urlText, forState: UIControlStateNormal
+		if event.URL
+			urlButton.hidden = false
+			suggsButton.hidden = true
+			urlText = event.URL.absoluteString
+			urlButton.setTitle urlText, forState: UIControlStateNormal
+		elsif for_what = DockItem.suggestion_descriptor(event)
+			urlButton.hidden = true
+			suggsButton.hidden = false			
+			suggsButton.setTitle for_what, forState: UIControlStateNormal
+		else
+			urlButton.hidden = true
+			suggsButton.hidden = true
+		end
 
-		for_what = DockItem.suggestion_descriptor(event)
-		suggsButton.setTitle for_what || "No suggestions", forState: UIControlStateNormal
-
+		locationButton.setTitle event.location || "No Location", forState: UIControlStateNormal		
 		detailsView.text = event.notes || ""
 	end
 
 	def go_friend sender = nil
 		@superdelegate.display_friend_record event
+	end
+
+	def go_url sender = nil
+		@superdelegate.go_to_url event.URL.absoluteString
 	end
 
 	def go_suggs sender = nil

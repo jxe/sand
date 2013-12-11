@@ -1,5 +1,6 @@
 class DockItemCell < UICollectionViewCell
 	attr_reader :dock_item
+	attr_reader :system_item
 
 	def imageview; contentView.viewWithTag(100); end
 	def label; contentView.viewWithTag(102); end
@@ -21,27 +22,27 @@ class DockItemCell < UICollectionViewCell
 
 	def dock_item=(dock_item)
 		@dock_item = dock_item
+		@system_item = nil
 		label.text = dock_item.title
 		imageview.image = dock_item.uiimage
 		label.color = UIColor.whiteColor
 		label.shadowColor = UIColor.blackColor
-		comboview.backgroundColor = UIColor.blackColor
+		# comboview.backgroundColor = UIColor.blackColor
 		label.backgroundColor = UIColor.colorWithHue(34, saturation:0.97, brightness:0.12, alpha:0.22)
+		label.hidden = false
 	end
 
 	def system_item=(labeltext)
+		@system_item = labeltext
 		@dock_item = nil
 		label.text = labeltext
 		imageview.image = case labeltext
-		when /friend/; UIImage.imageNamed('friends.jpg')
-		when /appt/;   UIImage.imageNamed('q.png')
-		when /upcarret/;   UIImage.imageNamed('upcarret.png')
+		when /appt/;   UIImage.imageNamed('plus.png')
+		when /upcarret/;   UIImage.imageNamed('moreicon.png')
 		end
 
-		label.color = UIColor.blackColor
-		label.shadowColor = UIColor.whiteColor
-		comboview.backgroundColor = UIColor.whiteColor
-		label.backgroundColor = UIColor.colorWithHue(34, saturation:0.0, brightness:1.0, alpha:0.22)
+		label.hidden = true
+		# comboview.backgroundColor = UIColor.whiteColor
 	end
 
 end

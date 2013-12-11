@@ -102,12 +102,12 @@ class Event < MotionDataWrapper::Model
 		@event_store ||= EKEventStore.alloc.init
 	end
 
-	def self.add_event start_time, friend, title = nil
+	def self.add_event start_time, friend = nil, title = nil
 		@event_store ||= EKEventStore.alloc.init
 		ev = EKEvent.eventWithEventStore(@event_store)
 		ev.startDate = start_time
 		ev.endDate = start_time + 2.hours
-		ev.title = title || (friend && "with #{friend.composite_name}") || "New event"
+		ev.title = title
 		ev.setCalendar(@event_store.defaultCalendarForNewEvents)
 		error = Pointer.new('@')
 		@event_store.saveEvent(ev, span:EKSpanThisEvent, commit:true, error:error)

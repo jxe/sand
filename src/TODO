@@ -3,23 +3,44 @@ TIME TILL v1.0:
 
 ====================
 
-DONE
+TODO
+- BUG: it doesn't grab someones pic the second time you add them as an appt
 
-- highlight the selected cell when affair is shown
-- everything bigger vertically
+- drag-to-reorder should be turned off when CVC fully occluded
 
-- recognize single click on upcarret
-- replace upcarret with a button cell
+- change time by sliding left, right
+   - https://github.com/cbpowell/CPPickerView
+
+- [FIX] recalc person list when addressbook changes
+
+- be smarter about when to confirm deletion
+   - don't confirm if just a dock item, just a title, or just a person
+   - i.e., confirm if there are notes or location and its not facebook
+
+- when you confirm deletion, use the event.calc_title
+
+====================
+
+- cells highlight as you click them
+
 - add separator dock cells
+
+
+- styled, adjustable time displays
+- merge title and place
+- location is clickable to go to map
+- location does google places
+- friend autocomplete takes up full screen above keyboard
+- attendees back into view
+- plus cell is circular
+
+- CVC dims/undims during dock dragaround
+- about button above calview
 
 ====================
 
 0.6 - (3h)
 
-* (30m) replace sep friend and appt adders with a plus that brings up a view that has a adressbook search or a textfield or a visit the dock store thing
-* using motion layout to add a uitextfield as it's tableheaderview
-* that thing should have a hint
-* textFieldShouldReturn: implemented in ComposerView (which is a UITextFieldDelegate) that posts an appointment
 * add also a button for visiting the dock store
 
 * (30m) drag-off-to-delete on dock

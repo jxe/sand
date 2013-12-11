@@ -1,6 +1,7 @@
 class DragUpToAdd < CalDragManager
 
 	def gestureRecognizerShouldBegin(gr)
+		return false unless @vc.drag_up_from_dock_enabled?
 		vel = @gr.velocityInView(@dock)
         return false unless vel.x.abs < vel.y.abs and inside_dock?
         position = gr.locationInView(@dock)
@@ -14,12 +15,14 @@ class DragUpToAdd < CalDragManager
 		@text = cell.contentView.viewWithTag(102).text
 		@dock_item = cell.dock_item
 		return true unless @text =~ /upcarret/
+
 		UI.menu ["Get DockItems"] do |chose|
 			case chose
 			when /Get/
 				@dock_controller.go_to_url nil, "http://nxhx.org/hourglass/"
 			end
 		end
+
 		return false
 	end
 
@@ -71,15 +74,9 @@ class DragUpToAdd < CalDragManager
 		sound "tick.m4a"
 		before_event = EKEvent === placeholder && placeholder
 
-		if @dock_item
-			ev = @dock_item.event_at(placeholder)
-			@vc.animate_add_event(ev, before_event, @dragging)
-			return
-		end
-
-		ev = Event.add_event(placeholder.startDate, nil, "")
+		ev = @dock_item ? @dock_item.event_at(placeholder) : Event.add_event(placeholder.startDate)
 		@vc.animate_add_event(ev, before_event, @dragging)
-		@vc.view_event(ev)
+		@vc.view_event(ev) unless @dock_item
 	end
 
 end

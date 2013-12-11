@@ -273,12 +273,19 @@ class CalViewController < UICollectionViewController
 		view_event(thing) if EKEvent === thing
 	end
 
+	def drag_up_from_dock_enabled?
+		return !@affairController.visible?
+	end
+
 	def doneEditing
-		collectionView.deselectItemAtIndexPath(@selected_path, animated:false)
+		collectionView.deselectItemAtIndexPath(@selected_path, animated:true)
+		@selected_path = nil
 	end
 
 	def view_event ev
 		return false unless ev
+		@selected_path = @cvm.index_path_for_thing(ev)
+		@selected_path && collectionView.selectItemAtIndexPath(@selected_path, animated:true, scrollPosition: UICollectionViewScrollPositionNone)
 		@affairController.initWithEventAndParent(ev, Event.event_store, self)
 		@affairController.show_animated
 	end

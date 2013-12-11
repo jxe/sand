@@ -14,7 +14,8 @@ class DockController < UICollectionViewController
 	end
 
 	def size_yourself_bro(cal)
-		dock_height = 63
+		# dock_height = 63
+		dock_height = 75
 		dock_y = cal.view.frame.size.height - dock_height
 		puts "size yourself called: #{dock_y}"
 		view.frame = CGRectMake(0, dock_y, cal.view.frame.size.width, dock_height)
@@ -47,9 +48,9 @@ class DockController < UICollectionViewController
 
 		gradient = CAGradientLayer.layer
 		gradient.frame = collectionView.frame
-		gradient.endPoint = [0.5, 0.07]
+		gradient.endPoint = [0.5, 0.04]
+		sandClear = UIColor.colorWithHue(0.12, saturation:0.62, brightness:0.7, alpha:0.6)
 		startColor = UIColor.colorWithHue(0.12, saturation:0.32, brightness:0.28, alpha:0.95)
-		sandClear = UIColor.colorWithHue(0.12, saturation:0.22, brightness:1.0, alpha:0.6)
 		# UIColor.colorWithWhite(0.9, alpha: 1.0)
 		# gradient.colors = [startColor.CGColor, sandClear.CGColor]
 		gradient.colors = [sandClear.CGColor, startColor.CGColor]
@@ -58,28 +59,29 @@ class DockController < UICollectionViewController
 		v.layer.insertSublayer(gradient, atIndex:0)
 		collectionView.backgroundView = v
 
-		@dtgr = UITapGestureRecognizer.alloc.initWithTarget(self, action: :doubleTap)
-		@dtgr.numberOfTapsRequired = 2
+		@dtgr = UITapGestureRecognizer.alloc.initWithTarget(self, action: :singleTap)
+		@dtgr.numberOfTapsRequired = 1
 		collectionView.addGestureRecognizer(@dtgr)
 	end
 
-	def doubleTap
+	def singleTap
 		case @dtgr.state
 		when UIGestureRecognizerStateEnded
 			pt = @dtgr.locationInView(collectionView)
-			puts "pt: #{pt.inspect}"
 			path = collectionView.indexPathForItemAtPoint(pt)
-			puts "path: #{path.inspect}"
 			cell = path && collectionView.cellForItemAtIndexPath(path)
+			return unless cell && cell.system_item == 'upcarret'
+			go_to_url nil, "http://nxhx.org/hourglass/"
+			return
 			options = ["Get More DockItems"]
-			options << "Hide #{cell.dock_item.title}" if cell and cell.dock_item
+			# options << "Hide #{cell.dock_item.title}" if cell and cell.dock_item
 			menu options do |chose|
 				case chose
 				when /More/
 					go_to_url nil, "http://nxhx.org/hourglass/"
-				when /Hide/
-					cell.dock_item.hide!
-					collectionView.reloadData
+				# when /Hide/
+				# 	cell.dock_item.hide!
+				# 	collectionView.reloadData
 				end
 			end
 		end
@@ -103,7 +105,7 @@ class DockController < UICollectionViewController
 
 
 	def collectionView(cv, canMoveItemAtIndexPath: path)
-		path.row >= 1
+		path.row >= 1 and path.row < DockItem.visible.size + 1
 	end
 
 	def collectionView(cv, moveItemAtIndexPath:path0, toIndexPath:path1)
@@ -111,7 +113,7 @@ class DockController < UICollectionViewController
 	end
 
 	def collectionView(cv, canMoveItemAtIndexPath:path0, toIndexPath:path1)
-		path0.row >= 1 and path1.row >= 1
+		path0.row >= 1 and path1.row >= 1 and path1.row < DockItem.visible.size + 1
 	end
 
 	# def collectionView(cv, alterTranslation:translation)
