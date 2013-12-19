@@ -46,6 +46,7 @@ Motion::Project::App.setup do |app|
     pod 'DraggableCollectionView'
     pod 'MLPAutoCompleteTextField', '~> 1.5'
     pod 'MLPSpotlight', '~> 1.2'
+    pod 'CPPickerView'
   }
 
   app.entitlements['application-identifier'] = "#{app.seed_id}.#{app.identifier}"

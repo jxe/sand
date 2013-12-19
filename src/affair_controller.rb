@@ -71,6 +71,13 @@ class AffairController < UIViewController
 	def viewDidLoad
 		super
 
+		timeLabel.delegate = self
+		timeLabel.dataSource = self
+		timeLabel.itemFont = UIFont.boldSystemFontOfSize(12.0)
+		timeLabel.peekInset = UIEdgeInsetsMake(0, 18, 0, 18)
+		# timeLabel.rowIndent = 10.0
+		# timeLabel.showGlass = true
+
 		# set up actions
 		closeButton.addTarget(self, action: :hide_animated, forControlEvents: UIControlEventTouchUpInside)
 		friendButton.addTarget(self, action: :go_friend, forControlEvents: UIControlEventTouchUpInside)
@@ -196,9 +203,32 @@ class AffairController < UIViewController
 		# no op
 	end
 
+	def numberOfItemsInPickerView(pv)
+		16
+	end
+
+	def pickerView(pv, titleForItem:i)
+		return "" unless event
+		offset = ((i - 8)*15).minutes
+		date = event.startDate + offset
+		date.strftime("%l:%M%P")
+	end
+
+	def pickerView(pv, didSelectItem:i)
+		offset = ((i - 8)*15).minutes
+		event.startDate += offset
+		event.endDate += offset
+		Event.save(event)
+		@superdelegate.redraw(event)
+		timeLabel.reloadData
+		timeLabel.selectItemAtIndex(8, animated: false)
+	end
+
 	def layout
 		titleField.text = event.title
-		timeLabel.text = event.startDate.strftime("%l:%M%P")
+
+		timeLabel.reloadData
+		timeLabel.selectItemAtIndex(8, animated: false)
 
 		friend_name = event.person_name
 		if friend_name
