@@ -4,20 +4,9 @@ TIME TILL v1.0:
 ====================
 
 TODO
-- BUG: it doesn't grab someones pic the second time you add them as an appt
-
 - drag-to-reorder should be turned off when CVC fully occluded
 
-- change time by sliding left, right
-   - https://github.com/cbpowell/CPPickerView
-
 - [FIX] recalc person list when addressbook changes
-
-- be smarter about when to confirm deletion
-   - don't confirm if just a dock item, just a title, or just a person
-   - i.e., confirm if there are notes or location and its not facebook
-
-- when you confirm deletion, use the event.calc_title
 
 ====================
 

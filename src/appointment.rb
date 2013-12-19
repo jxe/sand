@@ -5,12 +5,18 @@ class EKEvent
 
 	def record
 		@record ||= Event.find_by_event_identifier(eventIdentifier)
+		if @record
+			NSLog("Found record for #{eventIdentifier}")
+		else
+			NSLog("No record for #{eventIdentifier}")
+		end
+		@record
 	end
 
 	def record!
-		record or begin
-			@record = Event.create(:event_identifier => eventIdentifier)
-		end
+		return record if record
+		NSLog("Creating record for: #{eventIdentifier}")
+		@record = Event.create(:event_identifier => eventIdentifier)
 	end
 
 	def dock_item
@@ -62,6 +68,7 @@ class EKEvent
     	image_record = Image.find_by_ab_record_id(person.uid)
     	image_record ||= Image.create(:ab_record_id => person.uid, :image => person.photo, :mtime => Time.now)
     	record.image = image_record
+    	self.record.save
     	person
     end
 
@@ -99,10 +106,12 @@ class EKEvent
 				# do we already have an image of the guy?
 		    	if self.record!.image = Image.find_by_ab_record_id(record.uniqueId)
 		    		friend_record = Friend.find_by_ab_record_id(person.uid)
-			    	friend_record && self.record!.addFriendsObject(friend_record)
+		    		friend_record && self.record!.addFriendsObject(friend_record)
+			    	self.record.save
 			    	return self.record.image.image || default_image
 			    else
-			    	self.image = Image.create(:ab_record_id => record.uniqueId, :mtime => Time.now)
+			    	self.record!.image = Image.create(:ab_record_id => record.uniqueId, :mtime => Time.now)
+			    	self.record.save
 			    	fetch_organizer_image(record, callback)
 			    end
 			end
