@@ -37,6 +37,7 @@ class DockController < UICollectionViewController
 		super
 		@@instance = self
 		collectionView.draggable = true
+		# collectionView.deletable = true
 		collectionView.delegate = self
 		collectionView.dataSource = self
 
@@ -114,6 +115,10 @@ class DockController < UICollectionViewController
 
 	def collectionView(cv, canMoveItemAtIndexPath:path0, toIndexPath:path1)
 		path0.row >= 1 and path1.row >= 1 and path1.row < DockItem.visible.size + 1
+	end
+
+	def collectionView(cv, deleteItemAtIndexPath: path)
+		NSLog('delete!');
 	end
 
 	# def collectionView(cv, alterTranslation:translation)

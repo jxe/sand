@@ -43,7 +43,7 @@ Motion::Project::App.setup do |app|
     pod 'SVProgressHUD',  :git => 'https://github.com/samvermette/SVProgressHUD.git', :commit => '1.0'
     pod 'CrittercismSDK'
     pod 'AKLocationManager'
-    pod 'DraggableCollectionView'
+    pod 'DraggableCollectionView', :git => 'https://github.com/lognllc/DraggableCollectionView.git'
     pod 'MLPAutoCompleteTextField', '~> 1.5'
     pod 'MLPSpotlight', '~> 1.2'
     pod 'CPPickerView'
