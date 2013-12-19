@@ -105,6 +105,10 @@ module ViewControllerImprovements
 	end
 
 	def go_to_url nc = nil, url
+		if url =~ /facebook.com\/event/
+			return UIApplication.sharedApplication.openURL(NSURL.URLWithString(url))
+		end
+
 		@recent_url = url
 		@uiWebView = push_webview(nc)
 		reload_webview
