@@ -2,21 +2,28 @@ class DockItem < MotionDataWrapper::Model
 
 	# sandapp:dockitem?title=band+practice&image_url=http://example.com/band-practice.jpg
 
+	def self.all_cached
+		@all ||= all
+	end
+
+	def self.reset_cache
+		@all = nil
+	end
+
 	def self.visible
 		ensure_loaded
-		all.select{ |x| !x.is_hidden}.sort_by{ |x| x.dock_position || -1 }
+		all_cached.select{ |x| !x.is_hidden or x.is_hidden == 0 }.sort_by{ |x| x.dock_position || -1 }
 	end
 
 	def self.move(i,j)
 		vis = visible
-		puts "vis is: #{vis.inspect}"
 		obj = vis.delete_at(i)
 		vis.insert(j, obj)
 		vis.each_with_index do |o, i|
 			o.dock_position = i
 			o.save
 		end
-		puts "vis is: #{vis.inspect}"
+		reset_cache
 	end
 
 	def self.install(data)
@@ -40,6 +47,7 @@ class DockItem < MotionDataWrapper::Model
 		else
 			create(data)
 		end
+		reset_cache
 		Dispatch::Queue.concurrent.async{
 			sleep 0.1
 			Dispatch::Queue.main.async{
@@ -52,17 +60,18 @@ class DockItem < MotionDataWrapper::Model
 	# TODO: match by time of day, match default
 	def self.matching(ev)
 		ensure_loaded
-		match_by_regex = all.detect{ |x| ev.title =~ /#{x.regex}/ }
+		match_by_regex = all_cached.detect{ |x| ev.title =~ /#{x.regex}/ }
 		return match_by_regex if match_by_regex
 		time_of_day = ev.startDate.longer_time_of_day_label
-		match_by_time = all.detect{ |x| time_of_day == x.regex[1..-1] }
+		match_by_time = all_cached.detect{ |x| time_of_day == x.regex[1..-1] }
 		return match_by_time if match_by_time
-		return find_by_regex('DEFAULT')
+		return all_cached.detect{ |x| x.regex == 'DEFAULT' }
 	end
 
 	def hide!
 		self.is_hidden = true
 		save
+		self.class.reset_cache
 	end
 
 	def self.suggestion_descriptor(ev)
@@ -110,6 +119,7 @@ class DockItem < MotionDataWrapper::Model
 	def self.load_defaults
 		all.each(&:destroy)
 		DEFAULT_DOCK_ITEMS.each{ |item| create(item) }
+		reset_cache
 		Dispatch::Queue.main.async{
 			sleep 0.1
 			App.notification_center.post 'ReloadDock'

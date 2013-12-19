@@ -1,4 +1,5 @@
-class Contact < MotionDataWrapper::Model; end
+class Friend < MotionDataWrapper::Model; end
+class Image < MotionDataWrapper::Model; end
 
 class EKEvent
 
@@ -6,31 +7,33 @@ class EKEvent
 		@record ||= Event.find_by_event_identifier(eventIdentifier)
 	end
 
+	def record!
+		record or begin
+			@record = Event.create(:event_identifier => eventIdentifier)
+		end
+	end
+
 	def dock_item
 		@dock_item ||= DockItem.matching(self)
 	end
 
-	# delegated getters
-	def is_hidden?; record && record.is_hidden; end
-	def person_uid; record && record.friend_ab_record_id; end
-        def friend_image; record && record.friend_image; end
 
-	# delegated setters
-	def hide!; post is_hidden: true; end
-	def delete!; Event.delete!(self); end
-	def post options; Event.post eventIdentifier, options; end
+	# TO FIX
 
+	def friend_record
+		record && record.friends.anyObject
+	end
 
-	# related persons
-
-	def person=(person)
-		post friend_ab_record_id: person && person.uid,
-			 friend_name: person && person.composite_name,
-			 friend_image: person && person.photo
+	def person_uid
+		r = friend_record
+		r && r.ab_record_id
 	end
 
 	def person_abrecord
-		person_abrecord ||= (person_uid && ABAddressBookGetPersonWithRecordID(AddressBook.address_book, person_uid))
+		@person_abrecord ||= begin
+			id = person_uid
+			id && ABAddressBookGetPersonWithRecordID(AddressBook.address_book, id)
+		end
 	end
 
 	def person
@@ -40,6 +43,105 @@ class EKEvent
 	def person_name
 		person && person.composite_name
 	end
+
+    def uiimage
+    	if img = record && record.image
+    		i = img.image
+    		i && UIImage.alloc.initWithData(i)
+    	end
+    end
+
+
+
+    # def friend_image; record && record.friend_image; end
+
+    def person=(person)
+    	friend_record = Friend.find_by_ab_record_id(person.uid)
+    	friend_record ||= Friend.create(:ab_record_id => person.uid, :name => person.composite_name, :mtime => Time.now)
+    	record!.addFriendsObject friend_record
+    	image_record = Image.find_by_ab_record_id(person.uid)
+    	image_record ||= Image.create(:ab_record_id => person.uid, :image => person.photo, :mtime => Time.now)
+    	record.image = image_record
+    	person
+    end
+
+    def default_image
+		dock_item.title != 'DEFAULT' ? dock_item.uiimage : image_from_time
+    end
+
+    def friends
+    	record && record.friends
+    end
+
+    # TODO, recheck if no linked image and it's been a day. or if there is one and it's been a week
+    def check_for_image?
+    	img = record && record.image
+    	friends = record && record.friends
+    	!img and (!friends or friends.count == 0)
+    end
+
+
+	def image(&callback)
+		# return default_image
+		linked_image = uiimage
+		return linked_image if linked_image
+
+		if check_for_image?
+			# Event.possibly_fetch_background_image(self, callback) unless record and record.friend_ab_record_id and !record.friend_image
+			url = self.URL && self.URL.absoluteString
+			if url =~ /facebook\.com\/events\/(\d+)\/$/
+				self.record!.image = Image.create(:facebook_event_id => $1, :mtime => Time.now)
+				self.record.save
+				fetch_facebook_image(callback)
+				return default_image
+
+			elsif organizer and not organizer.isCurrentUser and record = organizer.ABRecordWithAddressBook(AddressBook.address_book)
+				# do we already have an image of the guy?
+		    	if self.record!.image = Image.find_by_ab_record_id(record.uniqueId)
+		    		friend_record = Friend.find_by_ab_record_id(person.uid)
+			    	friend_record && self.record!.addFriendsObject(friend_record)
+			    	return self.record.image.image || default_image
+			    else
+			    	self.image = Image.create(:ab_record_id => record.uniqueId, :mtime => Time.now)
+			    	fetch_organizer_image(record, callback)
+			    end
+			end
+	    end
+		default_image
+	end
+
+	def fetch_organizer_image record, callback
+		Dispatch::Queue.concurrent.async do 
+			self.person = AddressBook::Person.new(nil, record)
+			Dispatch::Queue.main.async(&callback)
+		end
+	end
+
+	# TODO, also fetch organizers / inviter / friend face
+	def fetch_facebook_image(callback)
+		token = FBSession.activeSession.accessTokenData.accessToken
+		graphPhoto = "https://graph.facebook.com/#{record.image.facebook_event_id}/picture?width=146&height=146&access_token=#{token}"
+		BW::HTTP.get(graphPhoto) do |response|
+			unless response.ok? and response.body
+				NSLog("error response: #{response.to_s}; for query #{graphPhoto}")
+			else
+				record.image.image = response.body
+				record.image.save
+				Dispatch::Queue.main.async(&callback)
+			end
+		end
+	end
+
+
+
+	# delegated getters
+	def is_hidden?; record && record.is_hidden; end
+
+	# delegated setters
+	def hide!; post is_hidden: true; end
+	def delete!; Event.delete!(self); end
+	def post options; Event.post eventIdentifier, options; end
+
 
 
 
@@ -83,12 +185,6 @@ class EKEvent
 		end
 	end
 
-	def image(&callback)
-		return UIImage.alloc.initWithData(record.friend_image) if record && record.friend_image
-		Event.possibly_fetch_background_image(self, callback) unless record and record.friend_ab_record_id and !record.friend_image
-		dock_item.title != 'DEFAULT' ? dock_item.uiimage : image_from_time
-	end
-
 end
 
 
@@ -111,6 +207,7 @@ class Event < MotionDataWrapper::Model
 		ev.setCalendar(@event_store.defaultCalendarForNewEvents)
 		error = Pointer.new('@')
 		@event_store.saveEvent(ev, span:EKSpanThisEvent, commit:true, error:error)
+		NSLog("Event saved.")
 		ev.person = friend if friend
 		ev
 	end
@@ -133,7 +230,7 @@ class Event < MotionDataWrapper::Model
 			next if ev.allDay? or ev.availability == EKEventAvailabilityFree
 			next if ev.endDate.timeIntervalSinceDate(ev.startDate) > 18.hours
 			next if ev.startDate.timeIntervalSinceNow < -20.hours
-			next if ev.is_hidden?
+			next if ev.is_hidden? and ev.is_hidden? != 0
 			true
 		end
 	end
@@ -173,34 +270,5 @@ class Event < MotionDataWrapper::Model
         	end
         	e.save
         end
-	end
-
-	def self.possibly_fetch_background_image(ev, callback)
-		url = ev.URL && ev.URL.absoluteString
-		if url =~ /facebook\.com\/events\/(\d+)\/$/
-			fbId = $1
-			token = FBSession.activeSession.accessTokenData.accessToken
-			graphPhoto = "https://graph.facebook.com/#{fbId}/picture?width=146&height=146&access_token=#{token}"
-			NSLog "asking for photo: #{graphPhoto}"
-			BW::HTTP.get(graphPhoto) do |response|
-			  
-  				if response.ok? and imagedata = response.body
-					# NSLog "got imagedata: #{imagedata.inspect}"
-					ev.post friend_image: imagedata
-					Dispatch::Queue.main.async(&callback)
-				else
-					NSLog "error response: #{response.to_s}"
-				end
-
-			end
-
-		elsif ev.organizer and not ev.organizer.isCurrentUser
-			# url = ev.organizer.URL
-			Dispatch::Queue.concurrent.async do 
-				record = ev.organizer.ABRecordWithAddressBook(AddressBook.address_book)
-				ev.person = AddressBook::Person.new(nil, record) if record
-				Dispatch::Queue.main.async(&callback) if ev.friend_image
-			end
-		end
 	end
 end

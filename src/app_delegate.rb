@@ -4,7 +4,7 @@ class AppDelegate
 
   def application(application, didFinishLaunchingWithOptions:launchOptions)
     # NSLog "%@", "App running!"
-    Crittercism.enableWithAppID("527bdb3dd0d8f74cd4000003")
+    Crittercism.enableWithAppID("527bdb3dd0d8f74cd4000003") unless Device.simulator?
 
     s = UIStoryboard.storyboardWithName("MainStoryboard", bundle:nil)
 
