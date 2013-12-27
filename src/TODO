@@ -4,8 +4,8 @@ TIME TILL v1.0:
 ====================
 
 TODO
+- dock/affairview should trade places
 - drag-to-reorder should be turned off when CVC fully occluded
-
 - [FIX] recalc person list when addressbook changes
 
 ====================

@@ -26,6 +26,14 @@ class DragToReorder < CalDragManager
 		return false
     end
 
+    def imageFromCell(cell)
+	    UIGraphicsBeginImageContextWithOptions(cell.bounds.size, false, 0);
+		cell.layer.renderInContext(UIGraphicsGetCurrentContext())
+	    image = UIGraphicsGetImageFromCurrentImageContext()
+	    UIGraphicsEndImageContext()
+	    image
+    end
+
 	def on_drag_started
 		sound "tock.m4a"
 		@press_thing = @vc.thing_at_point(@p)
@@ -36,8 +44,9 @@ class DragToReorder < CalDragManager
 		puts "ghosted..."
 		@vc.animate_open @over_section
 
-		imgview = @drag_cell.contentView.viewWithTag(100)
-		draggable = UIImageView.alloc.initWithImage(imgview.image)
+		# imgview = @drag_cell.contentView.viewWithTag(100)
+		# draggable = UIImageView.alloc.initWithImage(imgview.image)
+		draggable = UIImageView.alloc.initWithImage(imageFromCell(@drag_cell))
 		draggable.frame = CGRectMake(0,0,60,60)
 		draggable
 	end

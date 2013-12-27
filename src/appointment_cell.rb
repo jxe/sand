@@ -23,6 +23,27 @@ class AppointmentCell < UICollectionViewCell
 		self
 	end
 
+	def personlabel
+		contentView.viewWithTag(102)
+	end
+
+
+	def update_timer_label seconds_remaining
+		@timer_label ||= begin
+			label = UILabel.alloc.initWithFrame(CGRectMake(0, 12, bounds.width, 30))
+			label.textColor = UIColor.redColor
+			label.textAlignment = NSTextAlignmentCenter
+			contentView.addSubview(label)
+			label
+		end
+		if seconds_remaining > 100
+			@timer_label.text = "#{(seconds_remaining / 60).to_i}m";
+		else
+			@timer_label.text = "#{seconds_remaining}s"
+		end
+	end
+
+
 	def becomes_placeholder
 		return if @is_placeholder
 		bgimageview.hidden = droptargetlabel.hidden = false
@@ -59,6 +80,7 @@ class AppointmentCell < UICollectionViewCell
 		self.hidden = false
 		@is_placeholder = true
 		comboview.hidden = true
+		kill_timer_label
 		bgimageview.hidden = droptargetlabel.hidden = false
 		self.time_of_day = placeholder.label
 		update_time_of_day
@@ -68,18 +90,35 @@ class AppointmentCell < UICollectionViewCell
 		timelabel.text = droptargetlabel.text = t.sub('_', ' ').upcase
 	end
 
+	def color_for_hour hour
+		hue = hour / 24.0
+		UIColor.colorWithHue(hue, saturation:1.0, brightness:0.6, alpha:1.0)
+	end
+
+	def kill_timer_label
+		@timer_label && @timer_label.removeFromSuperview
+		@timer_label = nil
+	end
+
 	def as_event(ev, cv, path, ghosted = nil)
 		@event = ev
 		self.hidden = false
 		@is_placeholder = false
 		comboview.hidden = false
+		kill_timer_label
 		bgimageview.hidden = droptargetlabel.hidden = true
-
-		personlabel = contentView.viewWithTag(102)
 
 		# timelabel.text   = ev.startDate.time_of_day_label.to_s.upcase.sub('_', ' ')
 		self.time_of_day = ev.startDate.longer_time_of_day_label.to_s
-		imageview.image  = ev.image{ cv.reloadItemsAtIndexPaths([path]) }
+
+		if imageview.image  = ev.image{ cv.reloadItemsAtIndexPaths([path]) }
+			imageview.backgroundColor = nil
+			personlabel.backgroundColor = UIColor.colorWithHue(31.0/360.0, saturation:0.92, brightness:0.3, alpha:0.21)
+		else
+			imageview.backgroundColor = color_for_hour(ev.startDate.hour)
+			personlabel.backgroundColor = nil
+		end
+
 		personlabel.text = ev.title || ev.person_name || "No name"
 
 		ghosted ? ghost : unghost

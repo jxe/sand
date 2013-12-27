@@ -147,6 +147,13 @@ class CalViewController < UICollectionViewController
     	}
     end
 
+    def update_timer_label event, seconds_remaining
+		loc = @cvm.index_path_for_thing(event)
+		if cell = collectionView.cellForItemAtIndexPath(loc)
+			cell.update_timer_label seconds_remaining
+		end
+    end
+
     def redraw(event)
     	p = @cvm.index_path_for_thing(event)
 		collectionView.reloadItemsAtIndexPaths([p])

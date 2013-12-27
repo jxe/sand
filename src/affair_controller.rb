@@ -81,7 +81,6 @@ class AffairController < UIViewController
 		# set up actions
 		closeButton.addTarget(self, action: :hide_animated, forControlEvents: UIControlEventTouchUpInside)
 		friendButton.addTarget(self, action: :go_friend, forControlEvents: UIControlEventTouchUpInside)
-		suggsButton.addTarget(self, action: :go_suggs, forControlEvents: UIControlEventTouchUpInside)
 		urlButton.addTarget(self, action: :go_url, forControlEvents: UIControlEventTouchUpInside)
 
 		friendField.autoCompleteDataSource = self
@@ -171,6 +170,7 @@ class AffairController < UIViewController
 			Event.save(event)
 			@superdelegate.redraw(event)
 			view.endEditing(true)
+			layout
 			show_animated
 		end
 		true
@@ -211,7 +211,7 @@ class AffairController < UIViewController
 		return "" unless event
 		offset = ((i - 8)*15).minutes
 		date = event.startDate + offset
-		date.strftime("%l:%M%P")
+		date.strftime("%l:%M%P")[0..-2]
 	end
 
 	def pickerView(pv, didSelectItem:i)
@@ -243,22 +243,34 @@ class AffairController < UIViewController
 			friendField.text = ""
 		end
 
-		if event.URL
+		if event.URL or event.location
 			urlButton.hidden = false
 			suggsButton.hidden = true
 			urlText = event.URL.absoluteString
 			urlButton.setTitle urlText, forState: UIControlStateNormal
-		elsif for_what = DockItem.suggestion_descriptor(event)
-			urlButton.hidden = true
-			suggsButton.hidden = false			
-			suggsButton.setTitle for_what, forState: UIControlStateNormal
+			locationButton.setTitle event.location || "No Location", forState: UIControlStateNormal
 		else
 			urlButton.hidden = true
-			suggsButton.hidden = true
+			locationButton.hidden = true
+			setup_big_button
 		end
 
-		locationButton.setTitle event.location || "No Location", forState: UIControlStateNormal		
 		detailsView.text = event.notes || ""
+	end
+
+
+	def setup_big_button
+		if event.title =~ /^\d+(m|h)\b/
+			suggsButton.hidden = false
+			suggsButton.setTitle "yay timer", forState: UIControlStateNormal
+			suggsButton.addTarget(self, action: :start_stop_timer, forControlEvents: UIControlEventTouchUpInside)
+		elsif for_what = DockItem.suggestion_descriptor(event)
+			suggsButton.hidden = false			
+			suggsButton.setTitle for_what, forState: UIControlStateNormal
+			suggsButton.addTarget(self, action: :go_suggs, forControlEvents: UIControlEventTouchUpInside)
+		else
+			suggsButton.hidden = true
+		end
 	end
 
 	def go_friend sender = nil
@@ -271,6 +283,10 @@ class AffairController < UIViewController
 
 	def go_suggs sender = nil
 		@superdelegate.display_suggestions event
+	end
+
+	def start_stop_timer sender = nil
+		event.start_stop_timer @superdelegate
 	end
 
 	def initWithEventAndParent(ev, eventStore, superdelegate)

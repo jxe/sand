@@ -62,9 +62,9 @@ class DockItem < MotionDataWrapper::Model
 		ensure_loaded
 		match_by_regex = all_cached.detect{ |x| ev.title =~ /#{x.regex}/ }
 		return match_by_regex if match_by_regex
-		time_of_day = ev.startDate.longer_time_of_day_label
-		match_by_time = all_cached.detect{ |x| time_of_day == x.regex[1..-1] }
-		return match_by_time if match_by_time
+		# time_of_day = ev.startDate.longer_time_of_day_label
+		# match_by_time = all_cached.detect{ |x| time_of_day == x.regex[1..-1] }
+		# return match_by_time if match_by_time
 		return all_cached.detect{ |x| x.regex == 'DEFAULT' }
 	end
 

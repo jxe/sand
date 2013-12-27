@@ -73,7 +73,7 @@ class EKEvent
     end
 
     def default_image
-		dock_item.title != 'DEFAULT' ? dock_item.uiimage : image_from_time
+		dock_item.title != 'DEFAULT' ? dock_item.uiimage : nil
     end
 
     def friends
@@ -153,6 +153,38 @@ class EKEvent
 
 
 
+	def start_timer
+		@time_left ||= begin
+			if title =~ /^(\d+)(m|h)\b/
+				num = $1
+				multiplier = ($2 == 'm' ? 60 : 60*60)
+				num.to_i * multiplier
+			else
+				10.minutes
+			end
+		end
+		@end_time = Time.now + @time_left
+		@timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: :update_timer, userInfo: nil, repeats: true)
+	end
+
+	def pause_timer
+		@timer.invalidate
+		@timer = nil
+	end
+
+	def update_timer
+		@time_left = @end_time - Time.now
+		@my_cvc.update_timer_label self, @time_left.to_i
+	end
+
+	def start_stop_timer cvc
+		@my_cvc ||= cvc
+		@timer ? pause_timer : start_timer
+
+		# do I have a timer? if so pause it
+		# every second that passes, find my cell and encourage it to display a thing
+		# set a localnotification
+	end
 
 	# etc
 
