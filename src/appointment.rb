@@ -5,17 +5,11 @@ class EKEvent
 
 	def record
 		@record ||= Event.find_by_event_identifier(eventIdentifier)
-		if @record
-			NSLog("Found record for #{eventIdentifier}")
-		else
-			NSLog("No record for #{eventIdentifier}")
-		end
 		@record
 	end
 
 	def record!
 		return record if record
-		NSLog("Creating record for: #{eventIdentifier}")
 		@record = Event.create(:event_identifier => eventIdentifier)
 	end
 
@@ -152,6 +146,12 @@ class EKEvent
 	def post options; Event.post eventIdentifier, options; end
 
 
+	def reset_timer
+		@my_cvc.update_timer_label self, nil if @my_cvc
+		pause_timer if @timer
+		@time_left = nil
+		@end_time = nil
+	end
 
 	def start_timer
 		@time_left ||= begin
@@ -165,6 +165,10 @@ class EKEvent
 		end
 		@end_time = Time.now + @time_left
 		@timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: :update_timer, userInfo: nil, repeats: true)
+	end
+
+	def timer_running?
+		@timer
 	end
 
 	def pause_timer
@@ -197,8 +201,7 @@ class EKEvent
 	end
 
 	def raw_from_dock_item?
-		dock_item.matcher_type == :regex && !notes
-		title != 'DEFAULT' && !dock_item.is_hidden && !notes
+		return true if dock_item.matcher_type == :regex && (!notes || notes.length == 0)
 	end
 
 	def hide_matching!
@@ -248,7 +251,6 @@ class Event < MotionDataWrapper::Model
 		ev.setCalendar(@event_store.defaultCalendarForNewEvents)
 		error = Pointer.new('@')
 		@event_store.saveEvent(ev, span:EKSpanThisEvent, commit:true, error:error)
-		NSLog("Event saved.")
 		ev.person = friend if friend
 		ev
 	end

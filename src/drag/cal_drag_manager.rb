@@ -39,15 +39,13 @@ class CalDragManager < DragManager
 
 	def on_drag_hovered_section
 		if @over_section and !@vc.section_open and !@vc.animations_running
-			NSLog "%@", "Opening section #{@over_section.inspect}"
 		    @vc.animate_open @over_section 
 		end
 	end
 
 	def on_drag_over_section
 		if @was_over_section && @vc.section_open
-			NSLog "%@", "on_drag_over_section: #{@was_over_section} -> #{@over_section}"
-    		@vc.animate_close 
+			@vc.animate_close 
     	end
 	end
 

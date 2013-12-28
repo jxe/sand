@@ -150,7 +150,6 @@ class CalViewModel
 		section = sections.index(@date_open)
 		objs(@date_open).each_with_index do |t,i|
 			if Placeholder === t
-				NSLog "%@", "Adding: #{[section, i].inspect}"
 				results << [section, i].nsindexpath
 			end
 		end

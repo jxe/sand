@@ -42,6 +42,7 @@ class DockItem < MotionDataWrapper::Model
 
 		item = if prev = find_by_title(data['title'])
 			data.each{ |k,v| prev.send("#{k}=", v) }
+			prev.is_hidden = false
 			prev.save
 			prev
 		else
@@ -137,9 +138,7 @@ class DockItem < MotionDataWrapper::Model
 		if raw =~ /%%/
 			with_street_address do |loc|
 				loc2 = loc.gsub("\n"," ").sub(" United States", "").gsub(/\b(\d+)\D(\d+)\b/, "\\1").gsub(/\u200E|\s|\+/, '%20')
-				NSLog("%@", "Loc is: #{loc}\nLoc2 is: #{loc2}")
 				url = raw.sub("%%", loc2.strip)
-				NSLog("%@", "URL is: #{url}")
 				blk.call(url)
 			end
 		else

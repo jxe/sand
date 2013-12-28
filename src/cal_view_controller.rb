@@ -98,7 +98,6 @@ class CalViewController < UICollectionViewController
     	push_animation{
 			@cvm.hover s
 			positions = @cvm.placeholder_positions
-			NSLog "%@", "Placeholder postions: #{positions.inspect}"
 			collectionView.insertItemsAtIndexPaths(positions)
     	}
 		push_animation{

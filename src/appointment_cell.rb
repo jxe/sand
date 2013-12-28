@@ -27,8 +27,8 @@ class AppointmentCell < UICollectionViewCell
 		contentView.viewWithTag(102)
 	end
 
-
 	def update_timer_label seconds_remaining
+		return kill_timer_label unless seconds_remaining
 		@timer_label ||= begin
 			label = UILabel.alloc.initWithFrame(CGRectMake(0, 12, bounds.width, 30))
 			label.textColor = UIColor.redColor

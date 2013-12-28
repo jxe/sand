@@ -167,11 +167,12 @@ class AffairController < UIViewController
 		case tf
 		when titleField
 			event.title = tf.text
+			event.reset_timer
 			Event.save(event)
 			@superdelegate.redraw(event)
 			view.endEditing(true)
 			layout
-			show_animated
+			show_animated if @state == :visible
 		end
 		true
 	end
@@ -194,7 +195,7 @@ class AffairController < UIViewController
 		Event.save(event)
 		@superdelegate.redraw(event)
 		layout
-		show_animated
+		show_animated if @state == :visible
 	end
 
 	def autoCompleteTextField(tf, shouldStyleAutoCompleteTableView:tv, forBorderStyle:bs)
@@ -260,9 +261,14 @@ class AffairController < UIViewController
 
 
 	def setup_big_button
+		suggsButton.removeTarget(self, action: nil, forControlEvents: UIControlEventTouchUpInside)
 		if event.title =~ /^\d+(m|h)\b/
 			suggsButton.hidden = false
-			suggsButton.setTitle "yay timer", forState: UIControlStateNormal
+			if event.timer_running?
+				suggsButton.setTitle "Stop timer", forState: UIControlStateNormal
+			else
+				suggsButton.setTitle "Start timer", forState: UIControlStateNormal
+			end
 			suggsButton.addTarget(self, action: :start_stop_timer, forControlEvents: UIControlEventTouchUpInside)
 		elsif for_what = DockItem.suggestion_descriptor(event)
 			suggsButton.hidden = false			
@@ -287,6 +293,7 @@ class AffairController < UIViewController
 
 	def start_stop_timer sender = nil
 		event.start_stop_timer @superdelegate
+		layout
 	end
 
 	def initWithEventAndParent(ev, eventStore, superdelegate)
