@@ -3,46 +3,49 @@ TIME TILL v1.0:
 
 ====================
 
+
+
+Sand
+- submit to app store
+- CVC dims/undims during dock dragaround
+- CVC dims as affair is dragged up?
+
+
+
+Sand
+   - pull in facebook friends in "add a friend"
+      - fetch them in autocomplete thing
+      - move fetch to app startup
+   - combine location field and title field
+   - SPEED?: take images out of dock_item coredata entries
+   - SPEED?: always lazyload images from coredata, including in dock?
+
+
 TODO
 - dock/affairview should trade places
-- drag-to-reorder should be turned off when CVC fully occluded
 - [FIX] recalc person list when addressbook changes
+- add a grip and better bento box backgrounds to affair
+- fix sizing for dock to be real sizing
 
 ====================
 
-- cells highlight as you click them
+- better cell highlight
 
 - add separator dock cells
-
 
 - styled, adjustable time displays
 - merge title and place
 - location is clickable to go to map
 - location does google places
-- friend autocomplete takes up full screen above keyboard
 - attendees back into view
-- plus cell is circular
-
-- CVC dims/undims during dock dragaround
-- about button above calview
 
 ====================
 
 0.6 - (3h)
 
-* add also a button for visiting the dock store
-
-* (30m) drag-off-to-delete on dock
-   https://github.com/jallen/DraggableCollectionView/commit/67c4b09cc8dfff094a06b418cea2f77bd4f965ae
-* (5m) switch to that branch that allows drag-off
-* (20m) add a hook for drag off started that dims background
-
 * (30m) "We've detected FB events in your calendar.  LINK FB to SHOW THEM" (ask every time)
 * reload_all_images() invalidates all loaded images in event store!
 * Appointment.any_facebook? true if there are any facebook invites
-
---
-
 
 ====================
 

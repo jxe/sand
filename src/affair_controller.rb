@@ -16,7 +16,7 @@ class AffairController < UIViewController
 	def detailsView;    view.viewWithTag(307); end
 	def locationButton; view.viewWithTag(308); end
 	def urlButton;      view.viewWithTag(309); end
-	def closeButton;    view.viewWithTag(310); end
+	# def closeButton;    view.viewWithTag(310); end
 
 	def self.instance
 		@instance ||= begin
@@ -27,6 +27,10 @@ class AffairController < UIViewController
 
 	def visible?
 		@state != :hidden
+	end
+
+	def fully_visible?
+		@state == :visible
 	end
 
 	def hide(cal)
@@ -74,12 +78,12 @@ class AffairController < UIViewController
 		timeLabel.delegate = self
 		timeLabel.dataSource = self
 		timeLabel.itemFont = UIFont.boldSystemFontOfSize(12.0)
-		timeLabel.peekInset = UIEdgeInsetsMake(0, 18, 0, 18)
+		timeLabel.peekInset = UIEdgeInsetsMake(0, 8, 0, 8)
 		# timeLabel.rowIndent = 10.0
-		# timeLabel.showGlass = true
+		timeLabel.showGlass = true
 
 		# set up actions
-		closeButton.addTarget(self, action: :hide_animated, forControlEvents: UIControlEventTouchUpInside)
+		# closeButton.addTarget(self, action: :hide_animated, forControlEvents: UIControlEventTouchUpInside)
 		friendButton.addTarget(self, action: :go_friend, forControlEvents: UIControlEventTouchUpInside)
 		urlButton.addTarget(self, action: :go_url, forControlEvents: UIControlEventTouchUpInside)
 
@@ -175,6 +179,11 @@ class AffairController < UIViewController
 			show_animated if @state == :visible
 		end
 		true
+	end
+
+	def textViewShouldBeginEditing(tv)
+		NSLog 'textViewShouldBeginEditing'
+		return event.calendar.allowsContentModifications
 	end
 
 	def textViewDidEndEditing(tv)

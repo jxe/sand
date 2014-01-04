@@ -56,13 +56,18 @@ class EKEvent
     # def friend_image; record && record.friend_image; end
 
     def person=(person)
-    	friend_record = Friend.find_by_ab_record_id(person.uid)
-    	friend_record ||= Friend.create(:ab_record_id => person.uid, :name => person.composite_name, :mtime => Time.now)
-    	record!.addFriendsObject friend_record
-    	image_record = Image.find_by_ab_record_id(person.uid)
-    	image_record ||= Image.create(:ab_record_id => person.uid, :image => person.photo, :mtime => Time.now)
-    	record.image = image_record
-    	self.record.save
+    	if !person and record
+    		record.setFriends(NSSet.set)
+    		record.image = nil if record.image and record.image.ab_record_id
+    	else
+	    	friend_record = Friend.find_by_ab_record_id(person.uid)
+	    	friend_record ||= Friend.create(:ab_record_id => person.uid, :name => person.composite_name, :mtime => Time.now)
+	    	record!.addFriendsObject friend_record
+	    	image_record = Image.find_by_ab_record_id(person.uid)
+	    	image_record ||= Image.create(:ab_record_id => person.uid, :image => person.photo, :mtime => Time.now)
+	    	record.image = image_record
+    	end
+    	record.save
     	person
     end
 

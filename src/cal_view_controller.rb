@@ -48,10 +48,27 @@ class CalViewController < UICollectionViewController
 		mgr = DragToReorder.new(view, collectionView, @dock_controller, self)
 		addDragManager(mgr, UILongPressGestureRecognizer)
 
-		# add the swiping main menu gesture
-		# view.addGestureRecognizer(UIPanGestureRecognizer.alloc.initWithTarget(self, action: :swipeHandler))
+		# recognize random single taps
+		@stgr = UITapGestureRecognizer.alloc.initWithTarget(self, action: :singleTap)
+		@stgr.numberOfTapsRequired = 1
+		@stgr.delegate = self
+		collectionView.addGestureRecognizer(@stgr)
 
 		1.minute.every{ update_today_events_styles }
+	end
+
+	def gestureRecognizerShouldBegin(gr)
+		return true unless gr == @stgr
+		return false if @affairController.fully_visible?
+		return true if @affairController.visible?
+		return false
+	end
+
+	def singleTap
+		case @stgr.state
+		when UIGestureRecognizerStateEnded
+			@affairController.hide_animated
+		end
 	end
 
 	def viewWillAppear(animated)
@@ -281,6 +298,10 @@ class CalViewController < UICollectionViewController
 
 	def drag_up_from_dock_enabled?
 		return !@affairController.visible?
+	end
+
+	def drag_to_reorder_enabled?
+		return !@affairController.fully_visible?
 	end
 
 	def doneEditing
