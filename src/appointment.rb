@@ -32,7 +32,7 @@ class EKEvent
 	def person_abrecord
 		@person_abrecord ||= begin
 			id = person_uid
-			id && ABAddressBookGetPersonWithRecordID(AddressBook.address_book, id)
+			id && id > 0 && ABAddressBookGetPersonWithRecordID(AddressBook.address_book, id)
 		end
 	end
 
@@ -55,20 +55,50 @@ class EKEvent
 
     # def friend_image; record && record.friend_image; end
 
+    def photo_or_linked_photo(person)
+    	p = person.photo
+    	return p if p
+    	ABPersonCopyArrayOfAllLinkedPeople(person.ab_person).each do |linked_ab_record|
+    		if ABPersonHasImageData(linked_ab_record)
+    			return ABPersonCopyImageData(linked_ab_record)
+    		end
+    	end
+    	nil
+    end
+
     def person=(person)
+    	@person_abrecord = nil
     	if !person and record
     		record.setFriends(NSSet.set)
     		record.image = nil if record.image and record.image.ab_record_id
+    		if self.title =~ /^@/
+    			self.title = nil
+    			Event.save(self)
+    		end
     	else
 	    	friend_record = Friend.find_by_ab_record_id(person.uid)
 	    	friend_record ||= Friend.create(:ab_record_id => person.uid, :name => person.composite_name, :mtime => Time.now)
 	    	record!.addFriendsObject friend_record
 	    	image_record = Image.find_by_ab_record_id(person.uid)
-	    	image_record ||= Image.create(:ab_record_id => person.uid, :image => person.photo, :mtime => Time.now)
+	    	image_record ||= Image.create(:ab_record_id => person.uid, :image => photo_or_linked_photo(person), :mtime => Time.now)	    	
+    		fix_image_record(image_record) if !image_record.image
 	    	record.image = image_record
+    		if self.title =~ /^@/ || !self.title
+    			self.title = "@#{person.composite_name}"
+    			Event.save(self)
+    		end
     	end
     	record.save
     	person
+    end
+
+    def fix_image_record image_record
+    	if image_record.ab_record_id > 0
+			record = ABAddressBookGetPersonWithRecordID(AddressBook.address_book, image_record.ab_record_id)
+			person = record && AddressBook::Person.new(AddressBook.address_book, record)
+			image_record.image = photo_or_linked_photo(person) if person
+			image_record.save
+		end
     end
 
     def default_image
@@ -82,8 +112,11 @@ class EKEvent
     # TODO, recheck if no linked image and it's been a day. or if there is one and it's been a week
     def check_for_image?
     	img = record && record.image
+    	img = nil if img and (!img.ab_record_id || img.ab_record_id==0) and !img.facebook_event_id
     	friends = record && record.friends
-    	!img and (!friends or friends.count == 0)
+    	return true if !img and (!friends or friends.count == 0)
+    	return true if img and !img.image and Time.now - img.mtime > 1.minutes
+    	return false
     end
 
 
@@ -125,19 +158,73 @@ class EKEvent
 		end
 	end
 
+	def fb_reconnect &callback
+	    FBSession.activeSession.closeAndClearTokenInformation
+	    FBSession.activeSession = nil
+	    FBSession.setActiveSession(nil)
+        FBSession.renewSystemCredentials(proc{ |result, error|
+        	return NSLog("error renewing: #{error.inspect} #{result.inspect}") if error
+        	FBSession.openActiveSessionWithReadPermissions(nil, allowLoginUI:true, 
+            	completionHandler:lambda{ |session, state, error| 
+            		if error
+						NSLog("FB errr: #{FBErrorUtility.userMessageForError(error)}")
+					else
+						callback.call
+					end
+                }
+            )
+        })
+	end
+
+	def fetch_facebook_image_with_retry(objid, params = '', &callback)
+		token = FBSession.activeSession.accessTokenData.accessToken
+		graphPhoto = "https://graph.facebook.com/#{objid}/picture?#{params}&access_token=#{token}"
+		NSLog("FETCHING: #{graphPhoto}")
+		BW::HTTP.get(graphPhoto) do |response|
+			if response.ok?
+				return Dispatch::Queue.main.async(proc{
+					NSLog "got photo at #{response.url}"
+					if response.url =~ /fbstatic/
+						callback.call(nil)
+					else
+						callback.call(response.body)
+					end
+				})
+			end
+			return fb_reconnect{ fetch_facebook_image_with_retry(objid, params, &callback) } if response.body =~ /access token/
+			NSLog("error response: #{response.body}")
+		end
+	end
+
 	# TODO, also fetch organizers / inviter / friend face
 	def fetch_facebook_image(callback)
-		token = FBSession.activeSession.accessTokenData.accessToken
-		graphPhoto = "https://graph.facebook.com/#{record.image.facebook_event_id}/picture?width=146&height=146&access_token=#{token}"
-		BW::HTTP.get(graphPhoto) do |response|
-			unless response.ok? and response.body
-				NSLog("error response: #{response.to_s}; for query #{graphPhoto}")
-			else
-				record.image.image = response.body
+		fetch_facebook_image_with_retry(record.image.facebook_event_id, "width=146&height=146") do |body|
+			# TODO: if no body, the thing doesn't have an image... 
+			#   mark the record and search for a fallback for the thing?
+			if body
+				record.image.image = body
 				record.image.save
-				Dispatch::Queue.main.async(&callback)
+				NSLog("image saved")
+				callback && Dispatch::Queue.main.async(&callback)
 			end
 		end
+
+		# conn = FBRequestConnection.alloc.init
+		# conn.errorBehavior = (FBRequestConnectionErrorBehaviorReconnectSession | FBRequestConnectionErrorBehaviorAlertUser | FBRequestConnectionErrorBehaviorRetry)
+		# params = { "width"=>146, "height"=> 146 }
+		# req = FBRequest.requestForGraphPath("#{record.image.facebook_event_id}/picture", parameters:params, HTTPMethod: 'GET')
+		# conn.addRequest(req, completionHandler: lambda{ |conn, result, error|
+		# 	if error
+		# 		NSLog("error response: #{error.userInfo.inspect}")
+		# 	else
+		# 		record.image.image = urlResponse
+		# 		record.image.save
+		# 		NSLog("image saved")
+		# 		callback && Dispatch::Queue.main.async(&callback)
+		# 	end
+		# })
+		# conn.start
+
 	end
 
 
@@ -149,6 +236,7 @@ class EKEvent
 	def hide!; post is_hidden: true; end
 	def delete!; Event.delete!(self); end
 	def post options; Event.post eventIdentifier, options; end
+
 
 
 	def reset_timer
@@ -169,6 +257,11 @@ class EKEvent
 			end
 		end
 		@end_time = Time.now + @time_left
+		@notification = UILocalNotification.alloc.init
+		@notification.fireDate = @end_time
+		@notification.alertBody = 'Done'
+		@notification.soundName = UILocalNotificationDefaultSoundName
+		UIApplication.sharedApplication.scheduleLocalNotification @notification
 		@timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: :update_timer, userInfo: nil, repeats: true)
 	end
 
@@ -179,11 +272,18 @@ class EKEvent
 	def pause_timer
 		@timer.invalidate
 		@timer = nil
+		UIApplication.sharedApplication.cancelLocalNotification @notification
+		@notification = nil
 	end
 
 	def update_timer
+		return unless @end_time
 		@time_left = @end_time - Time.now
-		@my_cvc.update_timer_label self, @time_left.to_i
+		if @time_left >= 0
+			@my_cvc.update_timer_label self, @time_left.to_i
+		else
+			reset_timer
+		end
 	end
 
 	def start_stop_timer cvc
@@ -198,7 +298,7 @@ class EKEvent
 	# etc
 
 	def fast_delete?
-		facebook? or raw_from_dock_item?
+		facebook? or raw_from_dock_item? or (!self.title && !self.notes)
 	end
 
 	def facebook?
@@ -261,6 +361,7 @@ class Event < MotionDataWrapper::Model
 	end
 
 	def self.save ev
+		@dock_item = nil
 		error = Pointer.new('@')
 		@event_store.saveEvent(ev, span:EKSpanThisEvent, commit:true, error:error)
 	end

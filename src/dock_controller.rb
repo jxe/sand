@@ -104,13 +104,23 @@ class DockController < UICollectionViewController
 	##############
 	# data source
 
+	def unhighlight
+		MLPSpotlight.removeSpotlightsInView(view.superview)
+	end
+
+	def highlight
+		MLPSpotlight.addSpotlightInView(view.superview, atPoint:view.center)
+	end
 
 	def collectionView(cv, canMoveItemAtIndexPath: path)
-		path.row >= 1 and path.row < DockItem.visible.size + 1
+		can = path.row >= 1 and path.row < DockItem.visible.size + 1
+		highlight if can
+		can
 	end
 
 	def collectionView(cv, moveItemAtIndexPath:path0, toIndexPath:path1)
 		DockItem.move(path0.row - 1, path1.row - 1)
+		unhighlight
 	end
 
 	def collectionView(cv, canMoveItemAtIndexPath:path0, toIndexPath:path1)
@@ -119,14 +129,8 @@ class DockController < UICollectionViewController
 
 	def collectionView(cv, deleteItemAtIndexPath: path)
 		DockItem.visible[path.row - 1].hide!
+		unhighlight
 	end
-
-	# def collectionView(cv, alterTranslation:translation)
-	# end
-
-	# def collectionView(cv, transformForDraggingItemAtIndexPath:path, duration: duration)
-	# 	return
-	# end
 
 
 

@@ -4,6 +4,14 @@ class AddressBook::Person
 	end
 end
 
+class AffairView < UIView
+	def hitTest(point, withEvent: event)
+		result = super
+		NSLog "AffairView point: #{point.inspect}, event: #{event.inspect}; result: #{result.inspect}"
+		result
+	end
+end
+
 class AffairController < UIViewController	
 	attr_reader :event
 
@@ -97,6 +105,7 @@ class AffairController < UIViewController
 		friendField.delegate = self
 		titleField.delegate = self
 		detailsView.delegate = self
+		detailsView.editable = true
 
 		# add the swiping main menu gesture
 		view.addGestureRecognizer(UIPanGestureRecognizer.alloc.initWithTarget(self, action: :swipeHandler))
@@ -159,7 +168,7 @@ class AffairController < UIViewController
 	end
 
 	def autoCompleteTextField(tf, possibleCompletionsForString:str)
-		ab_people.select{ |p| p.composite_name =~ /\b#{str}/ }
+		ab_people.select{ |p| p.composite_name =~ /\b#{str}/i }
 	end
 
 	def textFieldShouldBeginEditing(tf)
@@ -254,10 +263,14 @@ class AffairController < UIViewController
 		end
 
 		if event.URL or event.location
-			urlButton.hidden = false
 			suggsButton.hidden = true
-			urlText = event.URL.absoluteString
-			urlButton.setTitle urlText, forState: UIControlStateNormal
+			if event.URL
+				urlButton.hidden = false
+				urlText = event.URL.absoluteString
+				urlButton.setTitle urlText, forState: UIControlStateNormal
+			else
+				urlButton.hidden = true
+			end
 			locationButton.setTitle event.location || "No Location", forState: UIControlStateNormal
 		else
 			urlButton.hidden = true
@@ -266,6 +279,7 @@ class AffairController < UIViewController
 		end
 
 		detailsView.text = event.notes || ""
+		detailsView.editable = event.calendar.allowsContentModifications
 	end
 
 

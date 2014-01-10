@@ -1,4 +1,6 @@
 class AppointmentCell < UICollectionViewCell
+	attr_reader :event
+
 	def initWithCoder(c)
 		super
 		pl = comboview.layer

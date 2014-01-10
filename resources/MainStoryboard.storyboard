@@ -416,7 +416,7 @@
                         <viewControllerLayoutGuide type="top" id="YTu-Z8-Bmx"/>
                         <viewControllerLayoutGuide type="bottom" id="7nv-M2-ZY6"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="O0y-ib-bRy">
+                    <view key="view" clipsSubviews="YES" contentMode="scaleToFill" id="O0y-ib-bRy" customClass="AffairView">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
@@ -425,7 +425,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="yes"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="yes" returnKeyType="done"/>
                             </textField>
                             <button opaque="NO" tag="305" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sjt-po-bip">
                                 <rect key="frame" x="6" y="112" width="308" height="45"/>
@@ -470,7 +470,7 @@
                                 <rect key="frame" x="0.0" y="64" width="320" height="49"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="yes"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" returnKeyType="done"/>
                             </textField>
                             <button opaque="NO" tag="304" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8tj-hy-uXm">
                                 <rect key="frame" x="20" y="66" width="249" height="45"/>
@@ -578,6 +578,7 @@
         <image name="close.png" width="128" height="128"/>
         <image name="droptarget.png" width="146" height="146"/>
         <image name="search" width="16" height="16"/>
+        <image name="search-bg-all.png" width="320" height="44"/>
         <image name="search-bg-all.png" width="320" height="44"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

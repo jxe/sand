@@ -12,9 +12,32 @@ class AppDelegate
     window.rootViewController = s.instantiateInitialViewController;
     window.makeKeyAndVisible
 
-    unless AuthenticationController.all_authed?
+    # FBSession.activeSession.closeAndClearTokenInformation
+    # FBSession.activeSession = nil
+    # FBSession.setActiveSession(nil)
+
+    if AuthenticationController.all_authed?
+        # FBSession.renewSystemCredentials(proc{ |result, error|
+        #   if error
+        #     NSLog("error renewing: #{error.inspect} #{result.inspect}")
+        #     return
+        #   end
+        #   NSLog("result: #{result.inspect}")
+        #   FBSession.openActiveSessionWithReadPermissions(nil, allowLoginUI:true, 
+        #                         completionHandler:lambda{ |session, state, error| 
+        #                               if error
+        #                                   NSLog("FB errr: #{FBErrorUtility.userMessageForError(error)}")
+        #                               end
+        #                         }
+        #   )
+        # })
+
+        FBSession.openActiveSessionWithAllowLoginUI(true)
+
+    else
       auth_controller = s.instantiateViewControllerWithIdentifier('Auth')
       window.rootViewController.presentModalViewController(auth_controller, animated: false)
+
     end
 
     true
@@ -44,6 +67,10 @@ class AppDelegate
     process_sand_url url
     FBSession.activeSession.handleOpenURL(url)
     true
+  end
+
+  def application(app, didReceiveLocalNotification: notification)
+    AudioServicesPlayAlertSound(KSystemSoundID_Vibrate)
   end
 
   def process_sand_url url, webViewParent = nil
