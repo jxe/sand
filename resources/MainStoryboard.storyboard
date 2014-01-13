@@ -579,7 +579,6 @@
         <image name="droptarget.png" width="146" height="146"/>
         <image name="search" width="16" height="16"/>
         <image name="search-bg-all.png" width="320" height="44"/>
-        <image name="search-bg-all.png" width="320" height="44"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

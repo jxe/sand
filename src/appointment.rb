@@ -182,17 +182,18 @@ class EKEvent
 		NSLog("FETCHING: #{graphPhoto}")
 		BW::HTTP.get(graphPhoto) do |response|
 			if response.ok?
-				return Dispatch::Queue.main.async(proc{
+				Dispatch::Queue.main.async do
 					NSLog "got photo at #{response.url}"
 					if response.url =~ /fbstatic/
 						callback.call(nil)
 					else
 						callback.call(response.body)
 					end
-				})
+				end
+			else
+				NSLog("error response: #{response.body}")
+				fb_reconnect{ fetch_facebook_image_with_retry(objid, params, &callback) } if response.body =~ /access token/
 			end
-			return fb_reconnect{ fetch_facebook_image_with_retry(objid, params, &callback) } if response.body =~ /access token/
-			NSLog("error response: #{response.body}")
 		end
 	end
 
