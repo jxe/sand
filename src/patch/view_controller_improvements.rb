@@ -145,7 +145,7 @@ module ViewControllerImprovements
 		UI.menu *args, &cb
 	end
 
-	def observe msg, &cb
+	def on_notification msg, &cb
 		@observers ||= []
 		@observers << App.notification_center.observe(msg, &cb)
 	end

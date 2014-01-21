@@ -25,6 +25,16 @@ class AppointmentCell < UICollectionViewCell
 		self
 	end
 
+	def setSelected(bool)
+		super
+		# cv = superview
+		# if bool
+		# 	MLPSpotlight.addSpotlightInView(cv, atPoint: cv.convertPoint(center, fromView: self))
+		# else
+		# 	MLPSpotlight.removeSpotlightsInView(cv)
+		# end
+	end
+
 	def personlabel
 		contentView.viewWithTag(102)
 	end

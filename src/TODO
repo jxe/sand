@@ -1,151 +1,110 @@
 TIME TILL v1.0:
-13h ~ 1d
+9h
 
 ====================
 
+v0.7, for myself
+- smart yelp app open.  http://www.yelp.com/developers/documentation/iphone
+- community site with popular / freq scheduled counts
 
 
-Sand
-- CVC dims as affair is dragged up?
 
-- pop the cell animation for rerrange dock
+v0.8, pro groundwork
+- https://github.com/MugunthKumar/MKStoreKit
 
-- add a delete button to affair
 
+v0.7, quickies & top level stuff  {2h30m}
+- 1h, scrolling shouldn't show settings button
+   - introduce a top level navigationcontroller!
+   - trick it out to behave like this:
+      http://stackoverflow.com/questions/19819165/imitate-ios-7-facebook-hide-show-expanding-contracting-navigation-bar
+      (old: http://stackoverflow.com/questions/12364838/pull-to-reveal-hidden-navbar-like-menu-in-ios-as-seen-in-getpocket-app)
+- 30m timer IAP
+- (30m) dock/affairview should trade places and animate with springs
+- [10m] better cell highlight - radial lines?
+- [10m] add a delete button to affair at very bottom
+
+
+
+v0.8 -- (3h) -- final version of affair
+- alarm toggler  (dark, 15m, 1h)
+- add a grip and better bento box backgrounds to affair
+* 10m, animation at midnight / reactivation
+
+
+v0.9 -- polish  {1h30m}
+* (30m) highlight regions immediately as you drag up
+* (30m) write better tutorial text
+* (30m) subtler, quicker sounds
+* (30m) transparent tutorial overlay!
+
+
+v1.0 -- 2h
+* (10m) re-enable EK observer - redraw if we haven't added anything recently
+- (10m) button for "About" along w. settings w/ thanks, and image credits
+- STORE: add default dock items to store
+- STORE: store can't scroll quite to bottom
+- STORE: images and info include separate per user backing and so on
+- (30m) SPEED?: take images out of dock_item coredata entries, and always lazyload images from coredata
+* (30m) "We've detected FB events in your calendar.  LINK FB to SHOW THEM" (ask every time)
+   * reload_all_images() invalidates all loaded images in event store!
+   * Appointment.any_facebook? true if there are any facebook invites
+* (30m) ???trash can floaty view (appears during drag_to_reorder and dock reorder)
+- (1h) ???popping animation on the cell for rerrange dock
+- slimming includes, below
+
+
+PRO - $3
+* (1h) weather w/ forecast or whatever
+- (30m) tap and hold time adjuster to set a timer
+- (2h) tutorial pane to explain this
+- duration support (same as timer, tap and hold, I guess)
+
+
+============================================================
+
+Before 1.0.1
+- fix sizing for dock to be real sizing
+- [FIX] recalc person list when addressbook changes
+* prefer friend/organizer photos to fb images on fb events
 - timer should ding inside app
-
-- submit to app store
-
+- it breaks on the leap forward, because Time.today != Time.today.delta(days: 0).start_of_day
 
 
-Sand
+Before 1.1
    - pull in facebook friends in "add a friend"
       - fetch them in autocomplete thing
       - move fetch to app startup
-   - combine location field and title field
-   - SPEED?: take images out of dock_item coredata entries
-   - SPEED?: always lazyload images from coredata, including in dock?
-
-
-TODO
-- dock/affairview should trade places
-- [FIX] recalc person list when addressbook changes
-- add a grip and better bento box backgrounds to affair
-- fix sizing for dock to be real sizing
-
-====================
-
-- better cell highlight
-
-- add separator dock cells
-
-- styled, adjustable time displays
-- merge title and place
-- location is clickable to go to map
-- location does google places
-- attendees back into view
-
-====================
-
-0.6 - (3h)
-
-* (30m) "We've detected FB events in your calendar.  LINK FB to SHOW THEM" (ask every time)
-* reload_all_images() invalidates all loaded images in event store!
-* Appointment.any_facebook? true if there are any facebook invites
-
-====================
-
-STORE
-- add default dock items to store
-- store has an icon that's too big!
-- store can't scroll quite to bottom
-- naming a different thing than insta search
-
-====================
-
-* (30m) trash can floaty view (appears during drag_to_reorder and dock reorder)
-
-- it breaks on the leap forward, because Time.today != Time.today.delta(days: 0).start_of_day
-- i don't want bg location!
-
-====================
-
-- add friends to dock
-
-====================
-
-(5h 30m)
-
-v0.5.1 -- 2h 30m
-* (20m) only ask for FB events once a week
+   - location does google places
 * (1h) recent friends in ABPicker
-
-v0.5.1 -- 2h 30m
-* (30m) write tutorial text
-* (1h) transparent tutorial overlay!
-* (30m) Dockmenu includes "About" which has thanks, tutorial, and image credits
-
-v0.7 -- 3h
-* (30m) subtler, quicker sounds
-* (30m) highlight regions immediately as you drag up
-
-====================
-
-v1.0 --- 5h 30m
-* (10m) re-enable observer - redraw if we haven't added anything recently
-* (1h) @draggable_img is a whole AppointmentCell, not an image
-* (10m) webViews should complain about bad URLs and close themselves
-* (20m) @draggable_img's time title changes as you hover
-
-====================
-
-v1.0.1
-* (30m) settings pane to toggle sounds
-* Fetch fb friend faces when addr book face blank and fb?
-* Friend faces and event images separate core data fields
-* refetch person photos periodically
-* prefer friend photos to fb images on fb events
-* (15m) an X should appear on the thing when we are about to delete it
-* recenter icon
-* (30m) dock item install animation has image download progress bar
-
-- drag-up installs dockItem in two phases:
-	dockItem.eventFor(startTime)
-	dockItem.didInstall(event) => (:changed, :removed)
-
-
-====================
-
-v1.1
-
-* (30m) multifriend datamodel for events
-* (10m) drag +friend onto event to add a friend
-* (10m) longpress friendlink button on detail page to unlink friend
-* (10m) tap friendlink button gives menu of friends for multifriend
-
+- add friends to dock
+- attendees back into view
+- multiple friends per event
 - (30m) Configure / deconfigure check mark overlay
 - (30m) find checkmark and x-out overlay images
 - (1h) Tap ghosted to rate
 - little red and green counters for tws/suboptimal
 
-====================
 
+??
+- CVC dims as affair is dragged up?
+* (20m) only ask for FB events once a week
+* (15m) an X should appear on the thing when we are about to delete it
+* (30m) dock item install animation has image download progress bar
+- drag-up installs dockItem in two phases:
+	dockItem.eventFor(startTime)
+	dockItem.didInstall(event) => (:changed, :removed)
 * (5h) Add friends to dock
 * (5h) longTap in suggestions webview does some kind of share
-* (1h) weather w/ forecast or whatever
+
+====================
+
 - Swipe right for do it now instead
 - Swipe right for defer
 - Swipe left for move to present
 - Swipe left for done
-- Drag add friend to event to link friend
-- Multiple friends per event
-* animation at midnight
-* (15m) friend photo on event page (use autolayout macros)
-* edit title and notes in place on event page, using https://github.com/jverdi/JVFloatLabeledTextField
 * option to show allday events
 * rate appts by tapping/holding/sliding, after they're done
-- move some Event.* stuff to DeviceCalendar and CalendarDatabase
-- remove sugarcube
 
 ====================
 

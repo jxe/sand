@@ -6,6 +6,7 @@
         <attribute name="image_url" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="is_hidden" attributeType="Boolean" defaultValueString="NO" indexed="YES" syncable="YES"/>
         <attribute name="regex" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="store_url" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="suggestions_desc" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="suggestions_url" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="title" attributeType="String" indexed="YES" syncable="YES"/>

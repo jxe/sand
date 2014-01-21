@@ -258,12 +258,16 @@ class EKEvent
 			end
 		end
 		@end_time = Time.now + @time_left
+
 		@notification = UILocalNotification.alloc.init
 		@notification.fireDate = @end_time
 		@notification.alertBody = 'Done'
 		@notification.soundName = UILocalNotificationDefaultSoundName
 		UIApplication.sharedApplication.scheduleLocalNotification @notification
 		@timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: :update_timer, userInfo: nil, repeats: true)
+
+		endDate = @end_time
+		Event.save(self)
 	end
 
 	def timer_running?

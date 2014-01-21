@@ -89,11 +89,13 @@ class AffairController < UIViewController
 		timeLabel.peekInset = UIEdgeInsetsMake(0, 8, 0, 8)
 		# timeLabel.rowIndent = 10.0
 		timeLabel.showGlass = true
+		timeLabel.gestureRecognizers[0].addTarget(self, action: :timer_menu)
 
 		# set up actions
 		# closeButton.addTarget(self, action: :hide_animated, forControlEvents: UIControlEventTouchUpInside)
 		friendButton.addTarget(self, action: :go_friend, forControlEvents: UIControlEventTouchUpInside)
 		urlButton.addTarget(self, action: :go_url, forControlEvents: UIControlEventTouchUpInside)
+		locationButton.addTarget(self, action: :go_loc, forControlEvents: UIControlEventTouchUpInside)
 
 		friendField.autoCompleteDataSource = self
 		friendField.autoCompleteDelegate = self
@@ -110,9 +112,7 @@ class AffairController < UIViewController
 		# add the swiping main menu gesture
 		view.addGestureRecognizer(UIPanGestureRecognizer.alloc.initWithTarget(self, action: :swipeHandler))
 
-		# urlButton.addTarget(self, action: :suggestions, forControlEvents: UIControlEventTouchUpInside)
 		xFriendButton.addTarget(self, action: :xFriend, forControlEvents: UIControlEventTouchUpInside)
-		# locationButton.addTarget(self, action: :suggestions, forControlEvents: UIControlEventTouchUpInside)
 
 		l = view.layer
 		l.masksToBounds = false
@@ -129,6 +129,24 @@ class AffairController < UIViewController
 		Event.save(event)
 		@superdelegate.redraw(event)
 		layout
+	end
+
+	def timer_menu gr = nil
+		case gr.state
+		when UIGestureRecognizerStateBegan
+			UI.menu ["10m", "20m", "30m"] do |chose|
+				if event.title =~ /^\d+(m|s) (.*)/
+					event.title = "#{chose} #{$2}"
+				else
+					event.title = "#{chose} #{event.title}"
+				end
+
+				event.reset_timer
+				Event.save(event)
+				@superdelegate.redraw(event)
+				layout
+			end
+		end
 	end
 
 	def swipeHandler(gr = nil)
@@ -266,8 +284,12 @@ class AffairController < UIViewController
 			suggsButton.hidden = true
 			if event.URL
 				urlButton.hidden = false
-				urlText = event.URL.absoluteString
-				urlButton.setTitle urlText, forState: UIControlStateNormal
+				case urlText = event.URL.absoluteString
+				when /facebook.com/
+					urlButton.setTitle "View on FB", forState: UIControlStateNormal
+				else
+					urlButton.setTitle urlText, forState: UIControlStateNormal
+				end
 			else
 				urlButton.hidden = true
 			end
@@ -310,6 +332,17 @@ class AffairController < UIViewController
 		@superdelegate.go_to_url event.URL.absoluteString
 	end
 
+	def go_loc sender = nil
+		loc = event.location.gsub(/ /, '+')
+		if UIApplication.sharedApplication.canOpenURL(NSURL.URLWithString("comgooglemaps://"))
+			NSLog "%@", "googlemaps: #{loc}"
+			UIApplication.sharedApplication.openURL(NSURL.URLWithString("comgooglemaps://?q=#{loc}"))
+		else
+			NSLog "applemaps"
+			UIApplication.sharedApplication.openURL(NSURL.URLWithString("http://maps.apple.com/?q=#{loc}"))
+		end
+	end
+
 	def go_suggs sender = nil
 		@superdelegate.display_suggestions event
 	end
@@ -317,6 +350,7 @@ class AffairController < UIViewController
 	def start_stop_timer sender = nil
 		event.start_stop_timer @superdelegate
 		layout
+		hide_animated if event.timer_running?
 	end
 
 	def initWithEventAndParent(ev, eventStore, superdelegate)

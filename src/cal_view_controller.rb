@@ -9,7 +9,7 @@ end
 class CalViewController < UICollectionViewController
 	include ViewControllerImprovements
 	include CollectionViewControllerImprovements
-
+	include BW::KVO
 
 
 	############
@@ -19,7 +19,15 @@ class CalViewController < UICollectionViewController
 		super
 
 		# set up the screen
-		collectionView.contentInset = UIEdgeInsetsMake(26,0,50,0)
+		# collectionView.contentInset = UIEdgeInsetsMake(26,0,50,0)  # top left bottom right
+		collectionView.contentInset = UIEdgeInsetsMake(96,0,50,0)  # top left bottom right
+
+		# about button
+		button = UIButton.buttonWithType(UIButtonTypeRoundedRect)
+		button.addTarget(self, action: :about, forControlEvents:UIControlEventTouchDown)
+		button.setTitle("Settings", forState:UIControlStateNormal)
+		button.frame = CGRectMake(80.0, -75.0, 160.0, 30.0)  #xywh
+		collectionView.addSubview(button)
 
 		# set up the dock
 		@dock_controller = storyboard.instantiateViewControllerWithIdentifier('Dock')
@@ -64,6 +72,25 @@ class CalViewController < UICollectionViewController
 		return false
 	end
 
+	def about
+		@form = Formotion::Form.new({
+		  sections: [{
+		    title: "Settings",
+		    rows: [{
+		      title: "Sounds",
+		      key: :sounds,
+		      type: :switch,
+		    }]
+		  }]
+		})
+		observe(@form.row(:sounds), :value) do |oldv, newv|
+			NSLog "sounds #{newv.inspect}"
+			NSUserDefaults['mute'] = !newv
+		end
+		@form_controller = Formotion::FormController.alloc.initWithForm(@form)
+		display_controller_in_navcontroller @form_controller
+	end
+
 	def singleTap
 		case @stgr.state
 		when UIGestureRecognizerStateEnded
@@ -76,7 +103,8 @@ class CalViewController < UICollectionViewController
 		@dock_controller.size_yourself_bro(self)
 		@affairController.hide(self)
 		configure_animator
-		observe("ReloadCalendar"){ |x| reload }
+		on_notification("ReloadCalendar"){ |x| reload }
+		collectionView.setContentOffset(CGPointMake(0.0, -20.0))
 		# @ekobserver = App.notification_center.observe(EKEventStoreChangedNotification){ |x| reload }
 	end
 

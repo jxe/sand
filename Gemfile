@@ -7,6 +7,7 @@ gem 'motion-layout'
 gem 'geomotion'
 gem 'motion-addressbook', :git => 'git://github.com/jxe/motion-addressbook.git'
 gem 'ib'
+gem 'formotion'
 
 gem 'sugarcube', :require => [
 	'sugarcube-nsdate', 

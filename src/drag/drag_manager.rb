@@ -112,6 +112,7 @@ class DragManager
     @@system_sounds = {}
  
     def sound(file_name)
+      return if NSUserDefaults['mute']
       path = "#{BASE_AUDIO_PATH}#{file_name}"
       sound_id = find_or_create_sound_id(path)
       AudioServicesPlaySystemSound(sound_id[0])

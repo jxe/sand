@@ -19,7 +19,7 @@ class DockItem < MotionDataWrapper::Model
 		vis = visible
 		obj = vis.delete_at(i)
 		vis.insert(j, obj)
-		vis.each_with_index do |o, i|
+		vis.compact.each_with_index do |o, i|
 			o.dock_position = i
 			o.save
 		end
@@ -90,7 +90,9 @@ class DockItem < MotionDataWrapper::Model
 	end
 
 	def event_at(placeholder)
-		Event.add_event(placeholder.startDate, nil, title)
+		ev = Event.add_event(placeholder.startDate, nil, title)
+		BW::HTTP.post(ping_url, payload: {did: 'scheduled', at: placeholder.startDate}) if ping_url
+		ev
 	end
 
 	def matcher_type

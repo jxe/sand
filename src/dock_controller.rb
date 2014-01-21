@@ -23,7 +23,7 @@ class DockController < UICollectionViewController
 
 	def viewWillAppear(animated=nil)
 		super
-		observe 'ReloadDock' do |x|
+		on_notification 'ReloadDock' do |x|
 			puts "observed!"
 		    collectionView.reloadData
 		end
@@ -71,19 +71,12 @@ class DockController < UICollectionViewController
 			pt = @dtgr.locationInView(collectionView)
 			path = collectionView.indexPathForItemAtPoint(pt)
 			cell = path && collectionView.cellForItemAtIndexPath(path)
-			return unless cell && cell.system_item == 'upcarret'
-			go_to_url nil, "http://nxhx.org/hourglass/"
-			return
-			options = ["Get More DockItems"]
-			# options << "Hide #{cell.dock_item.title}" if cell and cell.dock_item
-			menu options do |chose|
-				case chose
-				when /More/
-					go_to_url nil, "http://nxhx.org/hourglass/"
-				# when /Hide/
-				# 	cell.dock_item.hide!
-				# 	collectionView.reloadData
-				end
+			return unless cell
+			if cell.system_item == 'upcarret'
+				go_to_url nil, "http://nxhx.org/hourglass/"
+			elsif cell.dock_item.store_url
+				NSLog "going to: %@", cell.dock_item.store_url
+				go_to_url nil, cell.dock_item.store_url
 			end
 		end
 	end
