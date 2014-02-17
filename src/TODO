@@ -3,60 +3,122 @@ TIME TILL v1.0:
 
 ====================
 
+- update Thanks
+   - TK, JS, my investors from CL... @worrydream
+   - Investors... while neither our volunteer coordination platform nor our activity suggestion engine worked out as commercial plays, both lead our little team to think a lot about scheduling and how to do it better.
+
+- [2h] ???popping animation on the cell for rerrange dock
+
+
+- eventStore.refreshSourcesIfNecessary  (put it in settings, for now;  later... pull down to refresh?)
+- on EKEventStoreChangedNotification... CVM.needsRedraw?  (returns yes if there are events that have been deleted, for which the time is diff, or added)
+
+- (10m) button for "About" along w. settings w/ thanks, and image credits
+
+
+[2h] NAVCONTROLLER & SETTINGS
+- get navcontroller to start collapsed
+- springlike animation for dock and affair switchups
+
+(2h) DESIGN POLISH
+
+
+====================
+
+
+v0.9 FASTTRACK
+
+(1d)
+
+[4h] SANDBAR
+* [10m] has your facebook token or UDID
+   <script type='text/javascript'
+           src='https://cdn.firebase.com/js/simple-login/1.2.1/firebase-simple-login.js'>
+   </script>
+   var auth = new FirebaseSimpleLogin(chatRef, function(error, user) {
+     ...
+   });
+   auth.login('facebook', {
+      access_token: '',
+     rememberMe: true,
+     scope: 'email,user_likes'
+   });
+   auth.uid
+   user.displayName
+   user.uid
+
+* [30m] switch it up to lifestyles
+* [1h] support data propogation for popular lifestyles and activities
+* [1h] pinging really works
+* [1h30m] support multiple helpful links and personal ones (personally selected link has a checkmark)
+* XCode datamodel has lifestyle
+
+[1h] IAP $3
+- https://github.com/MugunthKumar/MKStoreKit
+- itunes connect provision pro features
+- 30m timer IAP
+
+====================
+
+v1.0 FAST TRACK
+
+(5d)
+
+[1d] TUTORIAL
+* (30m) transparent tutorial overlay!
+
+(3d) DESIGN POLISH
+- better solution for linking to person after their name is set
+- [1h] better cell highlight - radial lines?
+- [8h] single page website
+- [8h] Sandbar looks okay on desktop and suggests app install
+
+(4h) SANDBAR
+* [10m] add a link page
+* [5m] add a link page has "add private helpful link" and "add public" buttons
+* [5m] private links have a lock icon
+- sandbar - public / private toggle on activities and your changes
+- sandbar - multiple images
+- STORE: add default dock items to store
+- STORE: images and info include separate per user backing and so on
+
+====================
+
+
+* "use colors for calendars" setting
+* check for deactivated calendars
+
+
+====================
+
+
 v0.7, for myself
 - smart yelp app open.  http://www.yelp.com/developers/documentation/iphone
-- community site with popular / freq scheduled counts
-
-
-
-v0.8, pro groundwork
-- https://github.com/MugunthKumar/MKStoreKit
-
 
 v0.7, quickies & top level stuff  {2h30m}
-- 1h, scrolling shouldn't show settings button
-   - introduce a top level navigationcontroller!
-   - trick it out to behave like this:
-      http://stackoverflow.com/questions/19819165/imitate-ios-7-facebook-hide-show-expanding-contracting-navigation-bar
-      (old: http://stackoverflow.com/questions/12364838/pull-to-reveal-hidden-navbar-like-menu-in-ios-as-seen-in-getpocket-app)
-- 30m timer IAP
 - (30m) dock/affairview should trade places and animate with springs
-- [10m] better cell highlight - radial lines?
 - [10m] add a delete button to affair at very bottom
-
-
 
 v0.8 -- (3h) -- final version of affair
 - alarm toggler  (dark, 15m, 1h)
 - add a grip and better bento box backgrounds to affair
 * 10m, animation at midnight / reactivation
 
-
 v0.9 -- polish  {1h30m}
 * (30m) highlight regions immediately as you drag up
-* (30m) write better tutorial text
 * (30m) subtler, quicker sounds
-* (30m) transparent tutorial overlay!
-
 
 v1.0 -- 2h
-* (10m) re-enable EK observer - redraw if we haven't added anything recently
-- (10m) button for "About" along w. settings w/ thanks, and image credits
-- STORE: add default dock items to store
-- STORE: store can't scroll quite to bottom
-- STORE: images and info include separate per user backing and so on
 - (30m) SPEED?: take images out of dock_item coredata entries, and always lazyload images from coredata
 * (30m) "We've detected FB events in your calendar.  LINK FB to SHOW THEM" (ask every time)
    * reload_all_images() invalidates all loaded images in event store!
    * Appointment.any_facebook? true if there are any facebook invites
 * (30m) ???trash can floaty view (appears during drag_to_reorder and dock reorder)
-- (1h) ???popping animation on the cell for rerrange dock
 - slimming includes, below
 
 
-PRO - $3
+PRO
 * (1h) weather w/ forecast or whatever
-- (30m) tap and hold time adjuster to set a timer
 - (2h) tutorial pane to explain this
 - duration support (same as timer, tap and hold, I guess)
 

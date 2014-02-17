@@ -10,6 +10,7 @@ class AuthenticationController < UIViewController
 	end
 
 	def please_authenticate_all_with_callback(&cb)
+		NSLog "please_authenticate_all_with_callback"
 		cb.call if cal_authed? and contacts_authed? and fb_authed?
 		@on_all_authenticated = cb
 		prompt_for_cal_auth unless cal_authed?
@@ -18,6 +19,7 @@ class AuthenticationController < UIViewController
 	end
 
 	def prompt_for_cal_auth
+		NSLog "prompt_for_cal_auth"
 		@event_store ||= EKEventStore.alloc.init
 		@event_store.requestAccessToEntityType(EKEntityTypeEvent, completion: proc{ |granted, error|
 			cal_authed! if granted
@@ -25,13 +27,17 @@ class AuthenticationController < UIViewController
 	end
 
 	def prompt_for_contacts_auth
+		NSLog "prompt_for_contacts_auth"
 		AddressBook.request_authorization{ |authed| contacts_authed! }
 	end
 
 	def prompt_for_fb_auth
+		NSLog "prompt_for_fb_auth"
     	FBSession.openActiveSessionWithReadPermissions(%w{user_events friends_events}, allowLoginUI: true, completionHandler: Proc.new do |session, state, error|
       		if state == FBSessionStateOpen and !error
       			fb_authed!
+      		else
+				BW::UIAlertView.default(:title => "Twiddle your facebook settings!").show
       		end
     	end)
 	end

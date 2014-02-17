@@ -3,7 +3,7 @@ class DragUpToAdd < CalDragManager
 	def gestureRecognizerShouldBegin(gr)
 		return false unless @vc.drag_up_from_dock_enabled?
 		vel = @gr.velocityInView(@dock)
-        return false unless vel.x.abs < vel.y.abs and inside_dock?
+        return false unless vel.x.abs < 2*vel.y.abs and inside_dock?
         position = gr.locationInView(@dock)
 		translation = @gr.translationInView(@dock)
 		origin = CGPointMake(position.x - translation.x, position.y - translation.y)

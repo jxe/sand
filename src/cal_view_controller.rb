@@ -6,7 +6,7 @@ class SandFlowLayout < UICollectionViewFlowLayout
 	end
 end
 
-class CalViewController < UICollectionViewController
+class CalViewController < AMScrollingCollectionViewController
 	include ViewControllerImprovements
 	include CollectionViewControllerImprovements
 	include BW::KVO
@@ -18,16 +18,22 @@ class CalViewController < UICollectionViewController
 	def viewDidLoad
 		super
 
+		navigationController.navigationBar.setTranslucent(false)
+		navigationController.navigationBar.setTitleVerticalPositionAdjustment(7, forBarMetrics: UIBarMetricsDefault)
+		followScrollView(collectionView)
+
 		# set up the screen
 		# collectionView.contentInset = UIEdgeInsetsMake(26,0,50,0)  # top left bottom right
-		collectionView.contentInset = UIEdgeInsetsMake(96,0,50,0)  # top left bottom right
+		collectionView.contentInset = UIEdgeInsetsMake(8,0,50,0)  # top left bottom right
 
 		# about button
-		button = UIButton.buttonWithType(UIButtonTypeRoundedRect)
-		button.addTarget(self, action: :about, forControlEvents:UIControlEventTouchDown)
-		button.setTitle("Settings", forState:UIControlStateNormal)
-		button.frame = CGRectMake(80.0, -75.0, 160.0, 30.0)  #xywh
-		collectionView.addSubview(button)
+		navigationItem.rightBarButtonItem.setTarget(self)
+		navigationItem.rightBarButtonItem.setAction(:about)
+		# button = UIButton.buttonWithType(UIButtonTypeRoundedRect)
+		# button.addTarget(self, action: :about, forControlEvents:UIControlEventTouchDown)
+		# button.setTitle("Settings", forState:UIControlStateNormal)
+		# button.frame = CGRectMake(80.0, -75.0, 160.0, 30.0)  #xywh
+		# collectionView.addSubview(button)
 
 		# set up the dock
 		@dock_controller = storyboard.instantiateViewControllerWithIdentifier('Dock')
@@ -81,6 +87,80 @@ class CalViewController < UICollectionViewController
 		      key: :sounds,
 		      type: :switch,
 		    }]
+		  }, {
+		  	title: "Info",
+		  	rows: [
+		  		{
+			  		title: "How to Use",
+			  		type: :subform,
+			  		key: :use,
+			  		subform: {
+			  			sections: [{
+				  			rows: [
+								{
+								  title: "How to play",
+								  type: :web_view,
+				  				  row_height: 300,
+								  value: "Drag appointments up from the dock into the schedule to schedule things. Tap an appointment to see details. Hold to reschedule or delete."
+								}
+				  			]
+				  		}]
+		  			},
+		  		},
+		  		{
+			  		title: "Credits",
+			  		type: :subform,
+			  		key: :use,
+			  		subform: {
+			  			sections: [{
+				  			rows: [
+				  				{
+				  					# title: "Credits",
+				  					type: :web_view,
+				  					row_height: 300,
+				  					value: 
+						  			"Sand is a calendar app by Joe Edelman, under arrangement with my former startup, Citizen Logistics."+
+						  			"Thanks to Sarah Ismail for giving me some tea while I made this app."+
+						  			"And extra special thanks to Tim Koelkebeck and Jordan Stout for talking with me about calendar interfaces for two years."
+				  				},
+								{
+									# title: "Image Credits",
+									type: :web_view,
+									row_height: 300,
+									value: "images by 
+<pre>
+sunshine
+http://www.flickr.com/photos/gigi62/3635592950/
+
+exercise
+http://www.flickr.com/photos/bass_nroll/
+http://www.flickr.com/photos/bass_nroll/2212219500/
+
+breakfast
+http://www.flickr.com/photos/pinksherbet/
+http://www.flickr.com/photos/pinksherbet/415651103/
+
+lunch
+http://www.flickr.com/photos/stuckincustoms/
+http://www.flickr.com/photos/stuckincustoms/3526911857/
+
+afternoon
+http://www.flickr.com/photos/sukanto_debnath/
+http://www.flickr.com/photos/sukanto_debnath/530073549
+
+happy hour
+http://www.flickr.com/photos/14646075@N03/ 
+http://www.flickr.com/photos/14646075@N03/3069089312
+
+quiet
+http://www.flickr.com/photos/h-k-d/5996845093/
+</pre>"
+								}				  				
+				  			]
+				  		}]
+		  			}
+		  		}
+		  	]
 		  }]
 		})
 		observe(@form.row(:sounds), :value) do |oldv, newv|
@@ -88,7 +168,7 @@ class CalViewController < UICollectionViewController
 			NSUserDefaults['mute'] = !newv
 		end
 		@form_controller = Formotion::FormController.alloc.initWithForm(@form)
-		display_controller_in_navcontroller @form_controller
+		display_controller_in_navcontroller @form_controller, navigationController
 	end
 
 	def singleTap

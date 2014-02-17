@@ -5,11 +5,11 @@ class AddressBook::Person
 end
 
 class AffairView < UIView
-	def hitTest(point, withEvent: event)
-		result = super
-		NSLog "AffairView point: #{point.inspect}, event: #{event.inspect}; result: #{result.inspect}"
-		result
-	end
+	# def hitTest(point, withEvent: event)
+	# 	result = super
+	# 	NSLog "AffairView point: #{point.inspect}, event: #{event.inspect}; result: #{result.inspect}"
+	# 	result
+	# end
 end
 
 class AffairController < UIViewController	
@@ -48,32 +48,30 @@ class AffairController < UIViewController
 		@superdelegate && @superdelegate.doneEditing
 	end
 
+	def animate_to_pixels_visible pixels
+		parent_size = view.superview.bounds.size
+		UIView.animateWithDuration 0.2, animations:lambda{
+			f = UIApplication.sharedApplication.keyWindow.frame
+			view.frame = CGRectMake(0, parent_size.height - pixels, parent_size.width, parent_size.height)
+			view.autoresizingMask = UIViewAutoresizingFlexibleTopMargin
+		}
+	end
+
 	def hide_animated(sender = nil)
 		@state = :hidden
 		view.endEditing(true)
 		@superdelegate.doneEditing if @superdelegate
-
-		UIView.animateWithDuration 0.2, animations:lambda{
-			f = UIApplication.sharedApplication.keyWindow.frame
-			view.frame = CGRectMake(0, f.size.height, f.size.width, f.size.height)
-		}
+		animate_to_pixels_visible 0
 	end
 
 	def show_animated
 		@state = :peeking
-		UIView.animateWithDuration 0.2, animations:lambda{
-			f = UIApplication.sharedApplication.keyWindow.frame
-			dock_y = f.size.height - 180
-			view.frame = CGRectMake(0, dock_y, f.size.width, f.size.height)
-		}
+		animate_to_pixels_visible 180
 	end
 
 	def fully_show
 		@state = :visible
-		UIView.animateWithDuration 0.2, animations:lambda{
-			f = UIApplication.sharedApplication.keyWindow.frame
-			view.frame = CGRectMake(0, 0, f.size.width, f.size.height)
-		}
+		animate_to_pixels_visible view.frame.size.height
 	end
 
 	def self.instanceWithEventAndParent(*args)
@@ -134,17 +132,20 @@ class AffairController < UIViewController
 	def timer_menu gr = nil
 		case gr.state
 		when UIGestureRecognizerStateBegan
-			UI.menu ["10m", "20m", "30m"] do |chose|
-				if event.title =~ /^\d+(m|s) (.*)/
-					event.title = "#{chose} #{$2}"
+			UI.menu ["Start a 5m timer", "Start a 10m timer", "Start a 20m timer", "Start a 30m timer"] do |chose|
+				next unless chose =~ /(\d+(m|s))/
+				dur = $1
+				event.title = if event.title =~ /^\d+(m|s) (.*)/
+					"#{dur} #{$2}"
 				else
-					event.title = "#{chose} #{event.title}"
+					"#{dur} #{event.title}"
 				end
 
-				event.reset_timer
 				Event.save(event)
+				event.reset_timer
+				event.start_stop_timer @superdelegate
 				@superdelegate.redraw(event)
-				layout
+				hide_animated
 			end
 		end
 	end
@@ -262,7 +263,11 @@ class AffairController < UIViewController
 	end
 
 	def layout
-		titleField.text = event.title
+		if event.title =~ /^@/
+			titleField.text = ""
+		else
+			titleField.text = event.title
+		end
 
 		timeLabel.reloadData
 		timeLabel.selectItemAtIndex(8, animated: false)

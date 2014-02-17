@@ -15,10 +15,11 @@ class DockController < UICollectionViewController
 
 	def size_yourself_bro(cal)
 		# dock_height = 63
-		dock_height = 75
+		dock_height = 71
 		dock_y = cal.view.frame.size.height - dock_height
 		puts "size yourself called: #{dock_y}"
 		view.frame = CGRectMake(0, dock_y, cal.view.frame.size.width, dock_height)
+		view.autoresizingMask = UIViewAutoresizingFlexibleTopMargin
 	end
 
 	def viewWillAppear(animated=nil)
@@ -47,17 +48,22 @@ class DockController < UICollectionViewController
 		# blurLayer.backgroundFilters = [filter]
 		# collectionView.setWantsLayer(true)
 
-		gradient = CAGradientLayer.layer
-		gradient.frame = collectionView.frame
-		gradient.endPoint = [0.5, 0.04]
-		sandClear = UIColor.colorWithHue(0.12, saturation:0.62, brightness:0.7, alpha:0.6)
-		startColor = UIColor.colorWithHue(0.12, saturation:0.32, brightness:0.28, alpha:0.95)
+		@gradient = CAGradientLayer.layer
+		@gradient.frame = CGRectMake(0,0,320,180)
+		@gradient.endPoint = [0.5, 0.4]
+		# @gradient.endPoint = [0.5, 0.01]
+		# sandClear = UIColor.colorWithHue(0.12, saturation:0.62, brightness:0.7, alpha:0.6)
+		# startColor = UIColor.colorWithHue(0.12, saturation:0.32, brightness:0.28, alpha:0.95)
+
+		sandClear = UIColor.colorWithHue(0.12, saturation:0.0, brightness:0.7, alpha:0.6)
+		startColor = UIColor.colorWithHue(0.12, saturation:0.0, brightness:0.28, alpha:0.95)
+
 		# UIColor.colorWithWhite(0.9, alpha: 1.0)
 		# gradient.colors = [startColor.CGColor, sandClear.CGColor]
-		gradient.colors = [sandClear.CGColor, startColor.CGColor]
+		@gradient.colors = [sandClear.CGColor, startColor.CGColor]
 
 		v = UIView.alloc.initWithFrame(collectionView.bounds)
-		v.layer.insertSublayer(gradient, atIndex:0)
+		v.layer.insertSublayer(@gradient, atIndex:0)
 		collectionView.backgroundView = v
 
 		@dtgr = UITapGestureRecognizer.alloc.initWithTarget(self, action: :singleTap)

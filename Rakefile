@@ -47,6 +47,8 @@ Motion::Project::App.setup do |app|
     pod 'MLPAutoCompleteTextField', '~> 1.5'
     pod 'MLPSpotlight', '~> 1.2'
     pod 'CPPickerView'
+    pod 'MKStoreKit'
+    pod 'AMScrollingNavbar'
     # pod "Reveal-iOS-SDK" 
   }
 
@@ -62,7 +64,7 @@ Motion::Project::App.setup do |app|
   app.development do
     app.codesign_certificate = 'iPhone Developer: Joe Edelman' #  (B7P78ULCXS)
     # app.provisioning_profile = "/Users/joe/Library/MobileDevice/Provisioning Profiles/sand-beans-etc.mobileprovision"
-    app.provisioning_profile = "/Users/joe/Library/MobileDevice/Provisioning Profiles/63FEC68F-AAA4-4E4B-A7DB-6B57A2BF3322.mobileprovision"
+    app.provisioning_profile = "/Users/joe/Library/MobileDevice/Provisioning Profiles/34BC081B-D02B-4677-A484-165DAC4AA3F7.mobileprovision"
   end
 
   app.files += Dir.glob("./src/**/*.rb")
