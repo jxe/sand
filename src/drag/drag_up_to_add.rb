@@ -3,8 +3,8 @@ class DragUpToAdd < CalDragManager
 	def gestureRecognizerShouldBegin(gr)
 		return false unless @vc.drag_up_from_dock_enabled?
 		vel = @gr.velocityInView(@dock)
-        return false unless vel.x.abs < 2*vel.y.abs and inside_dock?
-        position = gr.locationInView(@dock)
+		return false unless vel.x.abs < 2*vel.y.abs and inside_dock?
+		position = gr.locationInView(@dock)
 		translation = @gr.translationInView(@dock)
 		origin = CGPointMake(position.x - translation.x, position.y - translation.y)
 		@dock_path = @dock.indexPathForItemAtPoint(origin)
@@ -14,16 +14,16 @@ class DragUpToAdd < CalDragManager
 		cell = @dock.cellForItemAtIndexPath(@dock_path)
 		@text = cell.contentView.viewWithTag(102).text
 		@dock_item = cell.dock_item
-		return true unless @text =~ /upcarret/
+		return true # unless @text =~ /appt/
 
-		UI.menu ["Get DockItems"] do |chose|
-			case chose
-			when /Get/
-				@dock_controller.go_to_url nil, "http://nxhx.org/hourglass/"
-			end
-		end
+		# UI.menu ["Get DockItems"] do |chose|
+		# 	case chose
+		# 	when /Get/
+		# 		@dock_controller.go_to_url nil, "http://nxhx.org/hourglass/"
+		# 	end
+		# end
 
-		return false
+		# return false
 	end
 
 	def on_drag_started

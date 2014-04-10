@@ -38,7 +38,6 @@ class DockItemCell < UICollectionViewCell
 		label.text = labeltext
 		imageview.image = case labeltext
 		when /appt/;   UIImage.imageNamed('plus.png')
-		when /upcarret/;   UIImage.imageNamed('moreicon.png')
 		end
 
 		label.hidden = true

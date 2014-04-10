@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="13A603" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="g6I-IZ-qEV">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="g6I-IZ-qEV">
     <dependencies>
         <deployment version="1552" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3742"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <scenes>
         <!--Authentication Controller-->
@@ -17,12 +17,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default-568h@2x.png" translatesAutoresizingMaskIntoConstraints="NO" id="gBZ-Pn-qYz">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="3hearts" translatesAutoresizingMaskIntoConstraints="NO" id="gBZ-Pn-qYz">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Sand is a Calendar app and needs to use your contacts, calendar, and facebook (for facebook events)." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="217" translatesAutoresizingMaskIntoConstraints="NO" id="HAl-zT-4HR">
-                                <rect key="frame" x="52" y="159" width="217" height="124"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Sand is a Calendar app and needs to use your contacts, calendar, and facebook (just to show you your facebook events)." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="251" translatesAutoresizingMaskIntoConstraints="NO" id="HAl-zT-4HR">
+                                <rect key="frame" x="35" y="159" width="251" height="135"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
@@ -62,14 +62,14 @@
             </objects>
             <point key="canvasLocation" x="-2284" y="351"/>
         </scene>
-        <!--Cal View Controller - Sand-->
+        <!--Cal View Controller-->
         <scene sceneID="rna-Ai-2GJ">
             <objects>
                 <collectionViewController autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" id="jC6-0L-hTW" customClass="CalViewController" sceneMemberID="viewController">
                     <collectionView key="view" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" id="xa1-yV-bGb">
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="0.96237200498580933" green="0.96385872364044189" blue="0.91415989398956299" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" red="0.95384883880615234" green="0.92257440090179443" blue="0.89315694570541382" alpha="1" colorSpace="calibratedRGB"/>
                         <gestureRecognizers/>
                         <inset key="scrollIndicatorInsets" minX="0.0" minY="20" maxX="0.0" maxY="0.0"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="7" minimumInteritemSpacing="0.0" id="DHo-br-aXn" customClass="SandFlowLayout">
@@ -223,7 +223,8 @@
                             <outlet property="delegate" destination="jC6-0L-hTW" id="8Ot-tv-A6N"/>
                         </connections>
                     </collectionView>
-                    <navigationItem key="navigationItem" title="Sand" id="6Zk-gg-aaA">
+                    <navigationItem key="navigationItem" id="6Zk-gg-aaA">
+                        <barButtonItem key="leftBarButtonItem" title="stats" style="plain" id="os8-h6-yP2"/>
                         <barButtonItem key="rightBarButtonItem" title="Settings" id="NqR-1T-wnn"/>
                     </navigationItem>
                 </collectionViewController>
@@ -237,12 +238,12 @@
                 <navigationController definesPresentationContext="YES" id="g6I-IZ-qEV" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="Ac8-TA-o5u">
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="tintColor" red="0.97846662998199463" green="0.80141574144363403" blue="0.32169976830482483" alpha="0.92000000000000004" colorSpace="calibratedRGB"/>
-                        <color key="barTintColor" red="0.7374035120010376" green="0.7373814582824707" blue="0.73739391565322876" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="tintColor" red="0.80466002225875854" green="0.25280970335006714" blue="0.28953090310096741" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="barTintColor" red="0.94599640369415283" green="0.94582903385162354" blue="0.94593334197998047" alpha="1" colorSpace="calibratedRGB"/>
                         <textAttributes key="titleTextAttributes">
-                            <fontDescription key="fontDescription" name="Chalkduster" family="Chalkduster" pointSize="32"/>
-                            <color key="textColor" red="0.88435852527618408" green="0.88429820537567139" blue="0.88433355093002319" alpha="1" colorSpace="calibratedRGB"/>
-                            <color key="textShadowColor" red="0.0" green="0.0" blue="0.0" alpha="0.37" colorSpace="calibratedRGB"/>
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
+                            <color key="textColor" red="0.99999833106994629" green="0.99974042177200317" blue="0.99990707635879517" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="textShadowColor" red="0.0" green="0.0" blue="0.0" alpha="0.11" colorSpace="calibratedRGB"/>
                             <offsetWrapper key="textShadowOffset" horizontal="0.0" vertical="-1"/>
                         </textAttributes>
                     </navigationBar>
@@ -385,13 +386,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" tag="301" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="Add a title" textAlignment="center" minimumFontSize="17" background="search-bg-all.png" translatesAutoresizingMaskIntoConstraints="NO" id="9a9-vn-yCY">
-                                <rect key="frame" x="6" y="64" width="154" height="44"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="yes" returnKeyType="done"/>
-                            </textField>
                             <button opaque="NO" tag="305" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sjt-po-bip">
                                 <rect key="frame" x="6" y="112" width="308" height="45"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -407,6 +401,13 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </button>
+                            <textField opaque="NO" clipsSubviews="YES" tag="301" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="Add a title" textAlignment="center" minimumFontSize="17" background="search-bg-all.png" translatesAutoresizingMaskIntoConstraints="NO" id="9a9-vn-yCY">
+                                <rect key="frame" x="6" y="64" width="154" height="49"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="yes" returnKeyType="done"/>
+                            </textField>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="307" contentMode="scaleToFill" fixedFrame="YES" keyboardDismissMode="onDrag" text="Notes &amp; Attendees" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TIF-jg-2A7">
                                 <rect key="frame" x="6" y="165" width="308" height="383"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -438,7 +439,7 @@
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" returnKeyType="done"/>
                             </textField>
                             <button opaque="NO" tag="304" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8tj-hy-uXm">
-                                <rect key="frame" x="157" y="66" width="154" height="45"/>
+                                <rect key="frame" x="157" y="66" width="154" height="47"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <state key="normal" title="Your Friend's Name">
@@ -453,6 +454,14 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
+                            <button opaque="NO" tag="322" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Akd-Yn-KrC">
+                                <rect key="frame" x="11" y="28" width="26" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="timer" backgroundImage="timer.png">
+                                    <color key="titleColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
                             <view tag="302" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dfT-rA-TY5" customClass="CPPickerView">
                                 <rect key="frame" x="103" y="26" width="115" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -462,6 +471,14 @@
                                     <outletCollection property="gestureRecognizers" destination="oC6-4r-yfF" appends="YES" id="FXR-Cn-obu"/>
                                 </connections>
                             </view>
+                            <button opaque="NO" tag="321" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YOL-7V-Spv">
+                                <rect key="frame" x="284" y="28" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="review" backgroundImage="check.png">
+                                    <color key="titleColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.97797489166259766" green="0.97790819406509399" blue="0.9779471755027771" alpha="0.91000000000000003" colorSpace="calibratedRGB"/>
                     </view>
@@ -484,11 +501,12 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Default-568h@2x.png" width="200" height="200"/>
+        <image name="3hearts" width="200" height="200"/>
+        <image name="check.png" width="26" height="26"/>
         <image name="close.png" width="128" height="128"/>
         <image name="droptarget.png" width="146" height="146"/>
         <image name="search-bg-all.png" width="320" height="44"/>
-        <image name="search-bg-all.png" width="320" height="44"/>
+        <image name="timer.png" width="23" height="27"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

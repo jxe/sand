@@ -55,8 +55,10 @@ class DockController < UICollectionViewController
 		# sandClear = UIColor.colorWithHue(0.12, saturation:0.62, brightness:0.7, alpha:0.6)
 		# startColor = UIColor.colorWithHue(0.12, saturation:0.32, brightness:0.28, alpha:0.95)
 
-		sandClear = UIColor.colorWithHue(0.12, saturation:0.0, brightness:0.7, alpha:0.6)
-		startColor = UIColor.colorWithHue(0.12, saturation:0.0, brightness:0.28, alpha:0.95)
+		#sandClear = UIColor.colorWithHue(0.12, saturation:0.0, brightness:0.7, alpha:0.6)
+		#startColor = UIColor.colorWithHue(0.12, saturation:0.0, brightness:0.28, alpha:0.95)
+		sandClear = UIColor.colorWithHue(0.12, saturation:0.0, brightness:1.0, alpha:0.8)
+		startColor = UIColor.colorWithHue(0.12, saturation:0.0, brightness:1.0, alpha:1.0)
 
 		# UIColor.colorWithWhite(0.9, alpha: 1.0)
 		# gradient.colors = [startColor.CGColor, sandClear.CGColor]
@@ -78,7 +80,7 @@ class DockController < UICollectionViewController
 			path = collectionView.indexPathForItemAtPoint(pt)
 			cell = path && collectionView.cellForItemAtIndexPath(path)
 			return unless cell
-			if cell.system_item == 'upcarret'
+			if cell.system_item
 				go_to_url nil, "http://nxhx.org/hourglass/"
 			elsif cell.dock_item.store_url
 				NSLog "going to: %@", cell.dock_item.store_url
@@ -139,7 +141,7 @@ class DockController < UICollectionViewController
 	end
 
 	def collectionView(cv, numberOfItemsInSection: section)
-		DockItem.visible.size + 2
+		DockItem.visible.size + 1
 	end
 
 	def collectionView(cv, cellForItemAtIndexPath: path)
@@ -149,8 +151,6 @@ class DockController < UICollectionViewController
 		case path.row
 		when 0
 			cell.system_item = "appt"
-		when extras.size + 1
-			cell.system_item = "upcarret"
 		else
 			cell.dock_item = extras[path.row - 1]
 		end

@@ -24,6 +24,12 @@ class AffairController < UIViewController
 	def detailsView;    view.viewWithTag(307); end
 	def locationButton; view.viewWithTag(308); end
 	def urlButton;      view.viewWithTag(309); end
+
+
+	def reviewButton;      view.viewWithTag(321); end
+	def timerButton;      view.viewWithTag(322); end
+
+
 	# def closeButton;    view.viewWithTag(310); end
 
 	def self.instance
@@ -84,10 +90,15 @@ class AffairController < UIViewController
 		timeLabel.delegate = self
 		timeLabel.dataSource = self
 		timeLabel.itemFont = UIFont.boldSystemFontOfSize(12.0)
-		timeLabel.peekInset = UIEdgeInsetsMake(0, 8, 0, 8)
+		# timeLabel.peekInset = UIEdgeInsetsMake(0, 8, 0, 8)
 		# timeLabel.rowIndent = 10.0
 		timeLabel.showGlass = true
+
+
 		timeLabel.gestureRecognizers[0].addTarget(self, action: :timer_menu)
+		timerButton.addTarget(self, action: :show_timer_menu, forControlEvents: UIControlEventTouchUpInside)
+		reviewButton.addTarget(self, action: :show_review_menu, forControlEvents: UIControlEventTouchUpInside)
+
 
 		# set up actions
 		# closeButton.addTarget(self, action: :hide_animated, forControlEvents: UIControlEventTouchUpInside)
@@ -129,24 +140,36 @@ class AffairController < UIViewController
 		layout
 	end
 
+	def show_timer_menu
+		UI.menu ["Start a 5m timer", "Start a 10m timer", "Start a 20m timer", "Start a 30m timer"] do |chose|
+			next unless chose =~ /(\d+(m|s))/
+			dur = $1
+			event.title = if event.title =~ /^\d+(m|s) (.*)/
+				"#{dur} #{$2}"
+			else
+				"#{dur} #{event.title}"
+			end
+
+			Event.save(event)
+			event.reset_timer
+			event.start_stop_timer @superdelegate
+			@superdelegate.redraw(event)
+			hide_animated
+		end
+	end
+
+	def show_review_menu
+		UI.menu ["It was good", "Waste of time", "Reschedule", "Skip"] do |chose|
+			# do some stuff
+			@superdelegate.redraw(event)
+			hide_animated
+		end
+	end
+
 	def timer_menu gr = nil
 		case gr.state
 		when UIGestureRecognizerStateBegan
-			UI.menu ["Start a 5m timer", "Start a 10m timer", "Start a 20m timer", "Start a 30m timer"] do |chose|
-				next unless chose =~ /(\d+(m|s))/
-				dur = $1
-				event.title = if event.title =~ /^\d+(m|s) (.*)/
-					"#{dur} #{$2}"
-				else
-					"#{dur} #{event.title}"
-				end
-
-				Event.save(event)
-				event.reset_timer
-				event.start_stop_timer @superdelegate
-				@superdelegate.redraw(event)
-				hide_animated
-			end
+			show_timer_menu
 		end
 	end
 
@@ -258,8 +281,8 @@ class AffairController < UIViewController
 		event.endDate += offset
 		Event.save(event)
 		@superdelegate.redraw(event)
-		timeLabel.reloadData
-		timeLabel.selectItemAtIndex(8, animated: false)
+		# timeLabel.reloadData
+		# timeLabel.selectItemAtIndex(8, animated: false)
 	end
 
 	def layout

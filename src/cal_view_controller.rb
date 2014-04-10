@@ -19,7 +19,7 @@ class CalViewController < AMScrollingCollectionViewController
 		super
 
 		navigationController.navigationBar.setTranslucent(false)
-		navigationController.navigationBar.setTitleVerticalPositionAdjustment(7, forBarMetrics: UIBarMetricsDefault)
+		# navigationController.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: UIBarMetricsDefault)
 		followScrollView(collectionView)
 
 		# set up the screen
@@ -29,6 +29,16 @@ class CalViewController < AMScrollingCollectionViewController
 		# about button
 		navigationItem.rightBarButtonItem.setTarget(self)
 		navigationItem.rightBarButtonItem.setAction(:about)
+		hearts =  UIImageView.alloc.initWithImage(UIImage.imageNamed("3hearts"))
+		navigationItem.leftBarButtonItem.customView = hearts
+		# hearts.opaque = false
+		# hearts.layer.opacity = 0.5
+		# hearts.alpha = 0.5
+
+		# navigationItem.titleView = hearts
+		# frame.origin.x = 10;
+		# hearts.frame = frame
+
 		# button = UIButton.buttonWithType(UIButtonTypeRoundedRect)
 		# button.addTarget(self, action: :about, forControlEvents:UIControlEventTouchDown)
 		# button.setTitle("Settings", forState:UIControlStateNormal)
@@ -61,6 +71,13 @@ class CalViewController < AMScrollingCollectionViewController
 		# add the reordering longpress gestures
 		mgr = DragToReorder.new(view, collectionView, @dock_controller, self)
 		addDragManager(mgr, UILongPressGestureRecognizer)
+
+		# pull to refresh
+
+		collectionView.addPullToRefreshWithActionHandler lambda{
+			Event.event_store.refreshSourcesIfNecessary
+    			collectionView.pullToRefreshView.stopAnimating
+		}
 
 		# recognize random single taps
 		@stgr = UITapGestureRecognizer.alloc.initWithTarget(self, action: :singleTap)
@@ -118,7 +135,7 @@ class CalViewController < AMScrollingCollectionViewController
 				  					# title: "Credits",
 				  					type: :web_view,
 				  					row_height: 300,
-				  					value: 
+				  					value:
 						  			"Sand is a calendar app by Joe Edelman, under arrangement with my former startup, Citizen Logistics."+
 						  			"Thanks to Sarah Ismail for giving me some tea while I made this app."+
 						  			"And extra special thanks to Tim Koelkebeck and Jordan Stout for talking with me about calendar interfaces for two years."
@@ -127,7 +144,7 @@ class CalViewController < AMScrollingCollectionViewController
 									# title: "Image Credits",
 									type: :web_view,
 									row_height: 300,
-									value: "images by 
+									value: "images by
 <pre>
 sunshine
 http://www.flickr.com/photos/gigi62/3635592950/
@@ -149,13 +166,13 @@ http://www.flickr.com/photos/sukanto_debnath/
 http://www.flickr.com/photos/sukanto_debnath/530073549
 
 happy hour
-http://www.flickr.com/photos/14646075@N03/ 
+http://www.flickr.com/photos/14646075@N03/
 http://www.flickr.com/photos/14646075@N03/3069089312
 
 quiet
 http://www.flickr.com/photos/h-k-d/5996845093/
 </pre>"
-								}				  				
+								}
 				  			]
 				  		}]
 		  			}
@@ -375,7 +392,7 @@ http://www.flickr.com/photos/h-k-d/5996845093/
 			alert = BW::UIAlertView.plain_text_input(:title => "Do what?") do |alert|
 				cb.call nil, alert.plain_text_field.text
 			end
-			alert.show			
+			alert.show
 		else
 			cb.call(nil, text)
 		end

@@ -134,7 +134,7 @@ class EKEvent
 				fetch_facebook_image(callback)
 				return default_image
 
-			elsif organizer and not organizer.isCurrentUser and record = organizer.ABRecordWithAddressBook(AddressBook.address_book)
+			elsif organizer and not organizer.isCurrentUser and record = organizer.ABRecordWithAddressBook(AddressBook.address_book) and record.respond_to? :uniqueId
 				# do we already have an image of the guy?
 		    	if self.record!.image = Image.find_by_ab_record_id(record.uniqueId)
 		    		friend_record = Friend.find_by_ab_record_id(person.uid)
@@ -261,7 +261,7 @@ class EKEvent
 
 		@notification = UILocalNotification.alloc.init
 		@notification.fireDate = @end_time
-		@notification.alertBody = 'Done'
+		@notification.alertBody = title || 'Timer Done'
 		@notification.soundName = UILocalNotificationDefaultSoundName
 		UIApplication.sharedApplication.scheduleLocalNotification @notification
 		@timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: :update_timer, userInfo: nil, repeats: true)

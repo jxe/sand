@@ -4,10 +4,10 @@ $:.unshift("/Library/RubyMotion/lib")
 Bundler.require
 Motion::Project::App.setup do |app|
 
-  app.name = 'Sand'
+  app.name = 'Two Lives'
   app.version =  `git describe --dirty`.strip.sub(/^v0\./, '1.0')   #'1.05.2'
 
-  app.sdk_version = "7.0"
+  app.sdk_version = "7.1"
   app.deployment_target = "6.1"
   app.device_family = [:iphone]
 
@@ -18,7 +18,7 @@ Motion::Project::App.setup do |app|
       'CFBundleURLSchemes' => ['sandapp', 'fb544764115578692'] }
   ]
   app.seed_id = 'B7P78ULCXS'
-  app.icons = ['cloudy-dune-57.png', 'cloudy-dune-114.png', 'cloudy-dune-120.png']
+  app.icons = ['cloudy-dune-57.png', 'cloudy-dune-114.png', 'twolivesicon120.png']
 
   app.info_plist['UILaunchImages'] = [
    {
@@ -49,6 +49,7 @@ Motion::Project::App.setup do |app|
     pod 'CPPickerView'
     pod 'MKStoreKit'
     pod 'AMScrollingNavbar'
+    pod 'KoaPullToRefresh'
     # pod "Reveal-iOS-SDK" 
   }
 

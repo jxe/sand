@@ -42,17 +42,28 @@ class AppointmentCell < UICollectionViewCell
 	def update_timer_label seconds_remaining
 		return kill_timer_label unless seconds_remaining
 		@timer_label ||= begin
-			label = UILabel.alloc.initWithFrame(CGRectMake(0, 12, bounds.width, 30))
-			label.textColor = UIColor.redColor
+			label = UILabel.alloc.initWithFrame(CGRectMake(15, 32, bounds.width - 30, 20))
+			label.font = UIFont.systemFontOfSize(13)
+			label.backgroundColor =  UIColor.colorWithHue(0.0, saturation:0.00, brightness:0.0, alpha:0.5)
+			label.textColor = UIColor.colorWithHue(0.0, saturation:0.5, brightness:1.0, alpha:1.0)
+			label.layer.cornerRadius = 7
+			label.layer.masksToBounds = true
+
+			label.layer.shadowOpacity = 1.0;   
+			label.layer.shadowRadius = 0.0;
+			label.layer.shadowColor = UIColor.whiteColor.CGColor
+			label.layer.shadowOffset = CGSizeMake(0.0, -1.0)
+
 			label.textAlignment = NSTextAlignmentCenter
 			contentView.addSubview(label)
 			label
 		end
-		if seconds_remaining > 100
-			@timer_label.text = "#{(seconds_remaining / 60).to_i}m";
-		else
-			@timer_label.text = "#{seconds_remaining}s"
-		end
+		@timer_label.text = Time.at(seconds_remaining).utc.strftime("%M:%S")
+		# if seconds_remaining > 100
+		# 	@timer_label.text = "#{(seconds_remaining / 60).to_i}m";
+		# else
+		# 	@timer_label.text = "#{seconds_remaining}s"
+		# end
 	end
 
 

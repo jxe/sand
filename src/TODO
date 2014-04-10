@@ -3,24 +3,48 @@ TIME TILL v1.0:
 
 ====================
 
-- update Thanks
+3h
+
+- [10m] don't offer "suggestons for @tristan harris" ... suggestion for LUNCH
+* [1h] highlight regions immediately as you drag up... draw a yellow square BEHIND the events???
+
+- [30m] update Thanks
    - TK, JS, my investors from CL... @worrydream
    - Investors... while neither our volunteer coordination platform nor our activity suggestion engine worked out as commercial plays, both lead our little team to think a lot about scheduling and how to do it better.
 
-- [2h] ???popping animation on the cell for rerrange dock
+- [1h] ???popping animation on the cell for rerrange dock
 
+- [10m] smart yelp app open.  http://www.yelp.com/developers/documentation/iphone
+
+=====================
+
+3h
+
+- [2h] alarm toggler  (dark, 15m, 1h)
+
+- [30m] on EKEventStoreChangedNotification... CVM.needsRedraw?  (returns yes if there are events that have been deleted, for which the time is diff, or added)
+
+=====================
+
+1h30m
+
+* [1h] "use colors for calendars" setting
+
+* (30m) subtler, quicker sounds
+
+=====================
+
+[1h] IAP $3
+- https://github.com/MugunthKumar/MKStoreKit
+- itunes connect provision pro features
+- 30m timer IAP
 
 - eventStore.refreshSourcesIfNecessary  (put it in settings, for now;  later... pull down to refresh?)
-- on EKEventStoreChangedNotification... CVM.needsRedraw?  (returns yes if there are events that have been deleted, for which the time is diff, or added)
-
-- (10m) button for "About" along w. settings w/ thanks, and image credits
 
 
 [2h] NAVCONTROLLER & SETTINGS
 - get navcontroller to start collapsed
 - springlike animation for dock and affair switchups
-
-(2h) DESIGN POLISH
 
 
 ====================
@@ -53,11 +77,6 @@ v0.9 FASTTRACK
 * [1h30m] support multiple helpful links and personal ones (personally selected link has a checkmark)
 * XCode datamodel has lifestyle
 
-[1h] IAP $3
-- https://github.com/MugunthKumar/MKStoreKit
-- itunes connect provision pro features
-- 30m timer IAP
-
 ====================
 
 v1.0 FAST TRACK
@@ -82,31 +101,16 @@ v1.0 FAST TRACK
 - STORE: add default dock items to store
 - STORE: images and info include separate per user backing and so on
 
-====================
-
-
-* "use colors for calendars" setting
-* check for deactivated calendars
-
 
 ====================
-
-
-v0.7, for myself
-- smart yelp app open.  http://www.yelp.com/developers/documentation/iphone
 
 v0.7, quickies & top level stuff  {2h30m}
 - (30m) dock/affairview should trade places and animate with springs
 - [10m] add a delete button to affair at very bottom
 
 v0.8 -- (3h) -- final version of affair
-- alarm toggler  (dark, 15m, 1h)
 - add a grip and better bento box backgrounds to affair
 * 10m, animation at midnight / reactivation
-
-v0.9 -- polish  {1h30m}
-* (30m) highlight regions immediately as you drag up
-* (30m) subtler, quicker sounds
 
 v1.0 -- 2h
 - (30m) SPEED?: take images out of dock_item coredata entries, and always lazyload images from coredata
