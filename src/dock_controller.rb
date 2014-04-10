@@ -90,8 +90,8 @@ class DockController < UICollectionViewController
 	end
 
 	def webView(wv, shouldStartLoadWithRequest: req, navigationType: type)
-		if req.URL.scheme =~ /sandapp/
-			App.delegate.process_sand_url(req.URL, self)
+		if req.URL.scheme =~ /desires/
+			App.delegate.process_desires_url(req.URL, self)
 			false
 		else
 			true

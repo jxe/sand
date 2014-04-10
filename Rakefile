@@ -15,7 +15,7 @@ Motion::Project::App.setup do |app|
   app.info_plist['FacebookAppID'] = '544764115578692'
   app.info_plist['CFBundleURLTypes'] = [
     { 'CFBundleURLName' => 'org.nxhx.sand',
-      'CFBundleURLSchemes' => ['sandapp', 'fb544764115578692'] }
+      'CFBundleURLSchemes' => ['desires', 'fb544764115578692'] }
   ]
   app.seed_id = 'B7P78ULCXS'
   app.icons = ['cloudy-dune-57.png', 'cloudy-dune-114.png', 'twolivesicon120.png']

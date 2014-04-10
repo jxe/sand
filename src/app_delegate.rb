@@ -64,7 +64,7 @@ class AppDelegate
   end
 
   def application(application, openURL: url, sourceApplication: from_app, annotation: blah)
-    process_sand_url url
+    process_desires_url url
     FBSession.activeSession.handleOpenURL(url)
     true
   end
@@ -73,25 +73,26 @@ class AppDelegate
     AudioServicesPlayAlertSound(KSystemSoundID_Vibrate)
   end
 
-  def process_sand_url url, webViewParent = nil
-    case spec = url.resourceSpecifier
-    when /^reset-dock$/
+  def process_desires_url url, webViewParent = nil
+    data = url.query.URLQueryParameters
+    NSLog data.inspect
+    if data['soon'] == 'none'
       webViewParent.dismissViewController if webViewParent
       UI.confirm "Reset Dock", "Reset Dock to Factory Defaults?", "Engage" do |yes|
         DockItem.load_defaults if yes
       end
-
-    when /^dockitem\?(.*)$/
-      data = $1.URLQueryParameters
+    elsif data['soon']
+      json = data['soon'].dataUsingEncoding(NSUTF8StringEncoding)
+      NSLog BW::JSON.parse(json).inspect
       webViewParent.dismissViewController if webViewParent
       SVProgressHUD.show
       Dispatch::Queue.concurrent.async do 
         begin
-          DockItem.install(data)
+          DockItem.install(BW::JSON.parse(json))
         rescue Exception => e
           Dispatch::Queue.main.async{
             SVProgressHUD.dismiss rescue nil
-            BW::UIAlertView.default(:title => e.message)
+            BW::UIAlertView.default(:title => e.inspect)
           }
         ensure
           Dispatch::Queue.main.async{ SVProgressHUD.dismiss rescue nil }

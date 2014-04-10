@@ -28,34 +28,48 @@ class DockItem < MotionDataWrapper::Model
 
 	def self.install(data)
 		puts "data: #{data.inspect}"
+		data.each do |k,v|
+			raise "No image" unless v['image']
+			v['title'] = k
+			v['regex'] ||= k
 
-		raise "No title" unless data['title']
-		raise "No image" unless data['image_url']
+			NSLog 'fetching image'
+			v['image'] = NSData.dataWithContentsOfURL(NSURL.URLWithString(v["image"]))
+			NSLog 'got image'
+			NSLog '%@', v.inspect
 
-		if data["image_url"] and !data['image']
-			data['image'] = NSData.dataWithContentsOfURL(NSURL.URLWithString(data["image_url"]))
+			NSLog 'setting up links'
+			v['link'] = v['links'].first if v['links']
+			if v['link']
+				v['suggestions_desc'] = v['link'].keys.first
+				v['suggestions_url'] = v['link'].values.first
+			end
+			NSLog 'set up links'
+			NSLog '%@', v.inspect
+
+			v['suggestions_desc'] ||= "Suggestions for #{k}"
+			v['suggestions_url']  ||= "http://www.yelp.com/search?find_desc=#{k.sub(' ', '+')}&find_loc=%%"
+
+			v.delete('links')
+			v.delete('link')
+
+			NSLog '%@', v.inspect
+			if prev = find_by_title(k)
+				v.each{ |k,v| prev.send("#{k}=", v) }
+				prev.is_hidden = false
+				prev.save
+				NSLog 'saved'
+			else
+				create(v)
+				NSLog 'created'
+			end
 		end
-
-		data['regex'] ||= data['title']
-		data['suggestions_desc'] ||= "Suggestions for #{data['title']}"
-		data['suggestions_url']  ||= "http://www.yelp.com/search?find_desc=#{data['title'].sub(' ', '+')}&find_loc=%%"
-
-		item = if prev = find_by_title(data['title'])
-			data.each{ |k,v| prev.send("#{k}=", v) }
-			prev.is_hidden = false
-			prev.save
-			prev
-		else
-			create(data)
-		end
+	
 		reset_cache
 		Dispatch::Queue.concurrent.async{
 			sleep 0.1
-			Dispatch::Queue.main.async{
-				App.notification_center.post 'ReloadDock'
-			}
+			Dispatch::Queue.main.async{ App.notification_center.post 'ReloadDock'}
 		}
-		item
 	end
 
 	# TODO: match by time of day, match default
