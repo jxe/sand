@@ -12,7 +12,7 @@ class AffairView < UIView
 	# end
 end
 
-class AffairController < UIViewController	
+class AffairController < UIViewController
 	attr_reader :event
 
 	def titleField;     view.viewWithTag(301); end
@@ -276,13 +276,16 @@ class AffairController < UIViewController
 	end
 
 	def pickerView(pv, didSelectItem:i)
+		return if @recursive_call
+		@recursive_call = true
 		offset = ((i - 8)*15).minutes
 		event.startDate += offset
 		event.endDate += offset
 		Event.save(event)
 		@superdelegate.redraw(event)
-		# timeLabel.reloadData
-		# timeLabel.selectItemAtIndex(8, animated: false)
+		timeLabel.reloadData
+		timeLabel.selectItemAtIndex(8, animated: false)
+		@recursive_call = false
 	end
 
 	def layout
@@ -292,8 +295,10 @@ class AffairController < UIViewController
 			titleField.text = event.title
 		end
 
+		@recursive_call = true
 		timeLabel.reloadData
 		timeLabel.selectItemAtIndex(8, animated: false)
+		@recursive_call = false
 
 		friend_name = event.person_name
 		if friend_name
@@ -344,7 +349,7 @@ class AffairController < UIViewController
 			end
 			suggsButton.addTarget(self, action: :start_stop_timer, forControlEvents: UIControlEventTouchUpInside)
 		elsif for_what = DockItem.suggestion_descriptor(event)
-			suggsButton.hidden = false			
+			suggsButton.hidden = false
 			suggsButton.setTitle for_what, forState: UIControlStateNormal
 			suggsButton.addTarget(self, action: :go_suggs, forControlEvents: UIControlEventTouchUpInside)
 		else
@@ -389,4 +394,3 @@ class AffairController < UIViewController
 		self
 	end
 end
-

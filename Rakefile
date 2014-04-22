@@ -4,7 +4,7 @@ $:.unshift("/Library/RubyMotion/lib")
 Bundler.require
 Motion::Project::App.setup do |app|
 
-  app.name = 'Two Lives'
+  app.name = 'Lives Left'
   app.version =  `git describe --dirty`.strip.sub(/^v0\./, '1.0')   #'1.05.2'
 
   app.sdk_version = "7.1"
@@ -50,7 +50,7 @@ Motion::Project::App.setup do |app|
     pod 'MKStoreKit'
     pod 'AMScrollingNavbar'
     pod 'KoaPullToRefresh'
-    # pod "Reveal-iOS-SDK" 
+    # pod "Reveal-iOS-SDK"
   }
 
   app.entitlements['application-identifier'] = "#{app.seed_id}.#{app.identifier}"
