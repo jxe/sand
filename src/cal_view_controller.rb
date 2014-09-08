@@ -11,7 +11,7 @@ class CalViewController < AMScrollingCollectionViewController
 	include CollectionViewControllerImprovements
 	include BW::KVO
 
-
+  
 	############
 	# lifecycle
 

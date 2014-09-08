@@ -7,7 +7,7 @@ Motion::Project::App.setup do |app|
   app.name = 'Lives Left'
   app.version =  `git describe --dirty`.strip.sub(/^v0\./, '1.0')   #'1.05.2'
 
-  app.sdk_version = "7.1"
+  app.sdk_version = "8.0"
   app.deployment_target = "6.1"
   app.device_family = [:iphone]
 
@@ -65,7 +65,7 @@ Motion::Project::App.setup do |app|
   app.development do
     app.codesign_certificate = 'iPhone Developer: Joe Edelman' #  (B7P78ULCXS)
     # app.provisioning_profile = "/Users/joe/Library/MobileDevice/Provisioning Profiles/sand-beans-etc.mobileprovision"
-    app.provisioning_profile = "/Users/joe/Library/MobileDevice/Provisioning Profiles/34BC081B-D02B-4677-A484-165DAC4AA3F7.mobileprovision"
+    app.provisioning_profile = "/Users/joe/Library/MobileDevice/Provisioning Profiles/bc40ca55-3377-4ea9-9483-ad7561f216d4.mobileprovision"
   end
 
   app.files += Dir.glob("./src/**/*.rb")
