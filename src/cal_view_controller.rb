@@ -45,18 +45,6 @@ class CalViewController < AMScrollingCollectionViewController
 		# button.frame = CGRectMake(80.0, -75.0, 160.0, 30.0)  #xywh
 		# collectionView.addSubview(button)
 
-		# set up the dock
-		@dock_controller = storyboard.instantiateViewControllerWithIdentifier('Dock')
-		addChildViewController(@dock_controller)
-		@dock_controller.didMoveToParentViewController(self)
-		view.addSubview(@dock_controller.view)
-
-		# put the event viewer offscreen
-		@affairController = AffairController.instance
-		addChildViewController(@affairController)
-		@affairController.didMoveToParentViewController(self)
-		view.addSubview(@affairController.view)
-
 		# populate myself
 		@cvm = CalViewModel.new
 		collectionView.delegate = self
@@ -64,12 +52,8 @@ class CalViewController < AMScrollingCollectionViewController
 		@cvm.load_events
 		update_today_events_styles
 
-		# add the drag gestures from the dock
-		mgr = DragUpToAdd.new(view, collectionView, @dock_controller, self)
-		addDragManager(mgr, UIPanGestureRecognizer)
-
 		# add the reordering longpress gestures
-		mgr = DragToReorder.new(view, collectionView, @dock_controller, self)
+		mgr = DragToReorder.new(view, collectionView, nil, self)
 		addDragManager(mgr, UILongPressGestureRecognizer)
 
 		# pull to refresh
@@ -90,8 +74,6 @@ class CalViewController < AMScrollingCollectionViewController
 
 	def gestureRecognizerShouldBegin(gr)
 		return true unless gr == @stgr
-		return false if @affairController.fully_visible?
-		return true if @affairController.visible?
 		return false
 	end
 
@@ -191,14 +173,12 @@ http://www.flickr.com/photos/h-k-d/5996845093/
 	def singleTap
 		case @stgr.state
 		when UIGestureRecognizerStateEnded
-			@affairController.hide_animated
+          # unfocus
 		end
 	end
 
 	def viewWillAppear(animated)
 		super
-		@dock_controller.size_yourself_bro(self)
-		@affairController.hide(self)
 		configure_animator
 		on_notification("ReloadCalendar"){ |x| reload }
 		collectionView.setContentOffset(CGPointMake(0.0, -20.0))
@@ -357,7 +337,7 @@ http://www.flickr.com/photos/h-k-d/5996845093/
 	end
 
 	def scrollViewWillBeginDragging(sv)
-		@affairController.hide_animated
+      # unfocus
 	end
 
 	def update_today_events_styles
@@ -410,7 +390,6 @@ http://www.flickr.com/photos/h-k-d/5996845093/
 	def collectionView(cv, shouldSelectItemAtIndexPath:path)
 		return true if !@selected_path or !path.eql?(@selected_path)
 		doneEditing
-		@affairController.hide_animated
 		@selected_path = nil
 		false
 	end
@@ -422,11 +401,11 @@ http://www.flickr.com/photos/h-k-d/5996845093/
 	end
 
 	def drag_up_from_dock_enabled?
-		return !@affairController.visible?
+      return false
 	end
 
 	def drag_to_reorder_enabled?
-		return !@affairController.fully_visible?
+      return true
 	end
 
 	def doneEditing
@@ -438,8 +417,6 @@ http://www.flickr.com/photos/h-k-d/5996845093/
 		return false unless ev
 		@selected_path = @cvm.index_path_for_thing(ev)
 		@selected_path && collectionView.selectItemAtIndexPath(@selected_path, animated:true, scrollPosition: UICollectionViewScrollPositionNone)
-		@affairController.initWithEventAndParent(ev, Event.event_store, self)
-		@affairController.show_animated
 	end
 
 

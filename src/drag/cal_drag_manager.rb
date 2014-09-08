@@ -5,9 +5,6 @@ class CalDragManager < DragManager
 
     def initialize(v, cv, dock, vc)
     	super(v, cv)
-    	@dock_controller = dock
-    	@dockView = dock.view
-    	@dock = dock.collectionView
     	@vc = vc
     end
 
@@ -16,7 +13,7 @@ class CalDragManager < DragManager
 	end
 
     def inside_dock?
-		gr.locationInView(@dock).inside?(@dock.bounds)
+      false
     end
 
 	def flip_cell cell
